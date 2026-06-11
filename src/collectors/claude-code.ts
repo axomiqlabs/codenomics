@@ -42,7 +42,7 @@ interface RawUsage {
 
 export const claudeCodeCollector: Collector = {
   vendor: 'claude-code',
-  parserVersion: 1,
+  parserVersion: 2,
   capabilities: {
     commits: true,
     activeTime: 'exact',
@@ -144,7 +144,11 @@ export const claudeCodeCollector: Collector = {
         continue;
       }
 
-      const KNOWN_PASSIVE = ['summary', 'system', 'file-history-snapshot', 'attachment', 'last-prompt', 'ai-title', 'queue-operation', 'mode', 'progress'];
+      const KNOWN_PASSIVE = [
+        'summary', 'system', 'file-history-snapshot', 'attachment', 'last-prompt', 'ai-title',
+        'queue-operation', 'mode', 'progress', 'permission-mode', 'agent-name', 'custom-title',
+        'started', 'result', 'fork-context-ref',
+      ];
       if (type !== 'user' && type !== 'assistant' && type !== null && !KNOWN_PASSIVE.includes(type)) {
         drift(`unknown-type:${type}`);
       }

@@ -1,0 +1,47 @@
+{
+  "sessions": [
+    {
+      "schemaVersion": 1,
+      "vendor": "claude-code",
+      "id": "machine-sdk",
+      "source": "machine",
+      "project": "/home/user/project",
+      "projectPath": "/home/user/project",
+      "startedAt": 1780881804900,
+      "endedAt": 1780881840435,
+      "wallMs": 35535,
+      "activeMs": 35578,
+      "counts": {
+        "userPrompts": 1,
+        "assistantTurns": 13,
+        "toolCalls": 6,
+        "commits": 0,
+        "sidechainCalls": 0
+      },
+      "toolCounts": {
+        "Read": 4,
+        "Bash": 1,
+        "Grep": 1
+      },
+      "models": {
+        "claude-haiku-4-5-20251001": {
+          "calls": 4,
+          "input": 34,
+          "output": 2831,
+          "cacheRead": 153819,
+          "cacheWrite5m": 0,
+          "cacheWrite1h": 32610,
+          "reasoning": 0
+        }
+      },
+      "primaryModel": "claude-haiku-4-5-20251001",
+      "meta": {
+        "gitBranch": "main",
+        "cliVersion": "2.1.168",
+        "firstPrompt": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "lastAssistantText": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+    }
+  ],
+  "driftStats": {}
+}

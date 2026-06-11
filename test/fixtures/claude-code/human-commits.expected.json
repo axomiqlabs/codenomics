@@ -1,0 +1,51 @@
+{
+  "sessions": [
+    {
+      "schemaVersion": 1,
+      "vendor": "claude-code",
+      "id": "human-commits",
+      "source": "human",
+      "project": "/home/user/project",
+      "projectPath": "/home/user/project",
+      "startedAt": 1779474650167,
+      "endedAt": 1779485393007,
+      "wallMs": 10742840,
+      "activeMs": 1553581,
+      "counts": {
+        "userPrompts": 4,
+        "assistantTurns": 49,
+        "toolCalls": 21,
+        "commits": 1,
+        "sidechainCalls": 0
+      },
+      "toolCounts": {
+        "Read": 3,
+        "ToolSearch": 1,
+        "Bash": 14,
+        "AskUserQuestion": 1,
+        "Edit": 1,
+        "Write": 1
+      },
+      "models": {
+        "claude-opus-4-7": {
+          "calls": 19,
+          "input": 4461,
+          "output": 12690,
+          "cacheRead": 1394324,
+          "cacheWrite5m": 0,
+          "cacheWrite1h": 206214,
+          "reasoning": 0
+        }
+      },
+      "primaryModel": "claude-opus-4-7",
+      "meta": {
+        "gitBranch": "main",
+        "cliVersion": "2.1.148",
+        "slashCommand": "/clear",
+        "firstPrompt": "/clear  xxxxxxxx",
+        "lastAssistantText": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+    }
+  ],
+  "driftStats": {}
+}

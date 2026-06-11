@@ -59,8 +59,10 @@ const TEXT_KEYS = new Set([
   'firstPrompt', 'lastAssistantText', 'thinking', 'data', 'last_agent_message',
   'stdout', 'stderr', 'unified_diff', 'auto_compact_summary',
   'developer_instructions', 'input', // string-valued only: custom_tool_call patches etc.
+  'content', 'lastPrompt', 'addedBlocks', 'oldString', 'newString', 'originalFile',
+  'plan', 'result', 'response', 'leafText', 'question', 'header', 'label', 'aiTitle', 'title',
 ]);
-const PATH_KEYS = new Set(['cwd', 'workdir', 'path', 'projectPath']);
+const PATH_KEYS = new Set(['cwd', 'workdir', 'path', 'projectPath', 'filePath', 'file_path', 'sourceFilePath']);
 
 function walk(value, key, ctx) {
   if (Array.isArray(value)) return value.map((v) => walk(v, key, ctx));
@@ -86,7 +88,15 @@ function walk(value, key, ctx) {
         out[k] = 'xxxx';
       } else if (k === 'command' && Array.isArray(v) && v.every((x) => typeof x === 'string')) {
         out[k] = COMMIT_RE.test(v.join(' ')) ? ['git', 'commit', '-m', 'xxx'] : ['echo', 'xxxxxxxx'];
+      } else if (k === 'command' && typeof v === 'string') {
+        out[k] = COMMIT_RE.test(v) ? FAKE_COMMIT_CMD : FAKE_CMD;
+      } else if (k === 'signature' && typeof v === 'string') {
+        out[k] = 'xxxx';
       } else if (k === 'parsed_cmd') {
+        out[k] = [];
+      } else if (k === 'lines' && Array.isArray(v) && v.every((x) => typeof x === 'string')) {
+        out[k] = v.map(() => 'xxxx'); // structured-patch diff lines
+      } else if (k === 'structuredPatch') {
         out[k] = [];
       } else if (k === 'changes' && v !== null && typeof v === 'object') {
         out[k] = {}; // patch change-sets are keyed by absolute file paths

@@ -1,0 +1,46 @@
+{
+  "sessions": [
+    {
+      "schemaVersion": 1,
+      "vendor": "claude-code",
+      "id": "slash-command",
+      "source": "human",
+      "project": "/home/user/project",
+      "projectPath": "/home/user/project",
+      "startedAt": 1780545387311,
+      "endedAt": 1780549632131,
+      "wallMs": 4244820,
+      "activeMs": 375116,
+      "counts": {
+        "userPrompts": 2,
+        "assistantTurns": 12,
+        "toolCalls": 4,
+        "commits": 0,
+        "sidechainCalls": 0
+      },
+      "toolCounts": {
+        "Bash": 4
+      },
+      "models": {
+        "claude-opus-4-8": {
+          "calls": 4,
+          "input": 3110,
+          "output": 3489,
+          "cacheRead": 125383,
+          "cacheWrite5m": 0,
+          "cacheWrite1h": 23598,
+          "reasoning": 0
+        }
+      },
+      "primaryModel": "claude-opus-4-8",
+      "meta": {
+        "gitBranch": "main",
+        "cliVersion": "2.1.159",
+        "slashCommand": "/clear",
+        "firstPrompt": "/clear  xxxxxxxx",
+        "lastAssistantText": "xxxxxxxxxxxxxxxxxxxxxx"
+      }
+    }
+  ],
+  "driftStats": {}
+}

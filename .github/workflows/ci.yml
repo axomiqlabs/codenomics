@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: [20, 22, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: pack + smoke test the tarball
+        run: |
+          npm pack
+          mkdir -p /tmp/codenomics-smoke && cd /tmp/codenomics-smoke
+          npm init -y >/dev/null
+          npm install "$GITHUB_WORKSPACE"/codenomics-*.tgz
+          npx codenomics --version
+          npx codenomics --help
+          CODENOMICS_DATA_DIR=/tmp/codenomics-smoke/data npx codenomics index || true
+        shell: bash

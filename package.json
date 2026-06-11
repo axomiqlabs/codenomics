@@ -1,0 +1,45 @@
+{
+  "name": "codenomics",
+  "version": "0.1.0",
+  "description": "Decode the true economics of your AI coding agents — outcome-normalized cost analytics for Claude Code, Codex CLI, and Gemini CLI.",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://codenomics.ai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codenomicsai/codenomics.git"
+  },
+  "keywords": [
+    "ai",
+    "claude-code",
+    "codex",
+    "gemini-cli",
+    "tokens",
+    "cost",
+    "analytics",
+    "finops",
+    "agents"
+  ],
+  "bin": {
+    "codenomics": "dist/cli/main.js"
+  },
+  "files": [
+    "dist",
+    "public",
+    "README.md",
+    "PRIVACY.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test test/"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.6.0"
+  }
+}

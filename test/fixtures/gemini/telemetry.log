@@ -1,0 +1,76 @@
+{
+  "body": "User prompt",
+  "timestamp": "2026-06-01T10:00:00.000Z",
+  "attributes": {
+    "event.name": "gemini_cli.user_prompt",
+    "session.id": "sess-aaa",
+    "prompt_length": 42
+  }
+}
+{
+  "body": "API response",
+  "timestamp": "2026-06-01T10:00:05.000Z",
+  "attributes": {
+    "event.name": "gemini_cli.api_response",
+    "session.id": "sess-aaa",
+    "model": "gemini-2.5-pro",
+    "input_token_count": 1200,
+    "cached_content_token_count": 200,
+    "output_token_count": 350,
+    "thoughts_token_count": 80,
+    "total_token_count": 1550
+  }
+}
+{
+  "body": "Tool call",
+  "timestamp": "2026-06-01T10:00:09.000Z",
+  "attributes": {
+    "event.name": "gemini_cli.tool_call",
+    "session.id": "sess-aaa",
+    "function_name": "run_shell_command",
+    "success": true
+  }
+}
+{
+  "body": "API response",
+  "timestamp": "2026-06-01T10:01:00.000Z",
+  "attributes": {
+    "event.name": "gemini_cli.api_response",
+    "session.id": "sess-aaa",
+    "model": "gemini-2.5-flash",
+    "input_token_count": 500,
+    "cached_content_token_count": 0,
+    "output_token_count": 90,
+    "total_token_count": 590
+  }
+}
+{
+  "body": "Some future event",
+  "timestamp": "2026-06-01T10:01:30.000Z",
+  "attributes": {
+    "event.name": "gemini_cli.brand_new_event",
+    "session.id": "sess-aaa"
+  }
+}
+{
+  "body": "User prompt",
+  "timestamp": "2026-06-02T08:00:00.000Z",
+  "attributes": {
+    "event.name": "gemini_cli.user_prompt",
+    "session.id": "sess-bbb",
+    "prompt_length": 10
+  }
+}
+{
+  "body": "API response",
+  "timestamp": "2026-06-02T08:00:04.000Z",
+  "attributes": {
+    "event.name": "gemini_cli.api_response",
+    "session.id": "sess-bbb",
+    "model": "gemini-2.5-pro",
+    "input_token_count": 800,
+    "cached_content_token_count": 100,
+    "output_token_count": 120,
+    "total_token_count": 920
+  }
+}

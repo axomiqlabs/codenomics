@@ -1,0 +1,51 @@
+{
+  "sessions": [
+    {
+      "schemaVersion": 1,
+      "vendor": "codex",
+      "id": "019de923-1e7a-79b3-93ba-5c97ae6344cb",
+      "source": "machine",
+      "project": "/home/user/project",
+      "projectPath": "/home/user/project",
+      "startedAt": 1777732892154,
+      "endedAt": 1777732995824,
+      "wallMs": 103670,
+      "activeMs": 103670,
+      "counts": {
+        "userPrompts": 1,
+        "assistantTurns": 5,
+        "toolCalls": 28,
+        "commits": 0,
+        "sidechainCalls": 0
+      },
+      "toolCounts": {
+        "exec_command": 27,
+        "write_stdin": 1
+      },
+      "models": {
+        "gpt-5.5": {
+          "calls": 12,
+          "input": 106086,
+          "output": 6528,
+          "cacheRead": 689152,
+          "cacheWrite5m": 0,
+          "cacheWrite1h": 0,
+          "reasoning": 3708
+        }
+      },
+      "primaryModel": "gpt-5.5",
+      "meta": {
+        "gitBranch": "main",
+        "cliVersion": "0.125.0",
+        "firstPrompt": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "lastAssistantText": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "ext": {
+        "codex": {
+          "planType": "pro"
+        }
+      }
+    }
+  ],
+  "driftStats": {}
+}

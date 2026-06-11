@@ -1,9 +1,9 @@
 {
   "name": "codenomics",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Decode the true economics of your AI coding agents — outcome-normalized cost analytics for Claude Code, Codex CLI, and Gemini CLI.",
   "type": "module",
-  "license": "MIT",
+  "license": "FSL-1.1-MIT",
   "homepage": "https://codenomics.ai",
   "repository": {
     "type": "git",

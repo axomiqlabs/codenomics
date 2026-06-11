@@ -101,6 +101,10 @@ npm install
 npm test        # tsc build + node:test (fixtures are scrubbed real transcripts)
 ```
 
-MIT. Contributions welcome — especially fixtures from agent versions we
-haven't seen. `scripts/scrub-fixture.mjs` redacts a transcript so you can
-share its *shape* without sharing its content.
+Licensed [FSL-1.1-MIT](LICENSE) (Functional Source License): use it, read it,
+modify it, self-host it for anything except offering a competing product —
+and every release becomes plain MIT two years after it ships.
+
+Contributions welcome — especially fixtures from agent versions we haven't
+seen. `scripts/scrub-fixture.mjs` redacts a transcript so you can share its
+*shape* without sharing its content.

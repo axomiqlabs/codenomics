@@ -122,14 +122,63 @@ export async function runIndex(
     }
   }
 
-  sessions.sort((a, b) => (b.endedAt || 0) - (a.endedAt || 0));
-  const index: IndexFileV1 = { schemaVersion: SCHEMA_VERSION, generatedAt: opts.now ?? Date.now(), sessions };
+  const merged = foldSubagentSessions(sessions);
+  merged.sort((a, b) => (b.endedAt || 0) - (a.endedAt || 0));
+  const index: IndexFileV1 = { schemaVersion: SCHEMA_VERSION, generatedAt: opts.now ?? Date.now(), sessions: merged };
 
   writeJson(cachePath(), newCache);
   writeIndex(index);
   writeJson(diagnosticsPath(), { at: index.generatedAt, perVendor, quarantine });
 
   return { index, perVendor, quarantine };
+}
+
+/**
+ * Fold subagent transcript sessions (ext.claudeCode.parentSessionId) into
+ * their parent: token usage, tool calls, and commits roll up; the subagent's
+ * API calls count as the parent's sidechain calls. Active/wall time is NOT
+ * added (subagents run inside the parent's span). Runs on the assembled list
+ * each index, so per-file caching stays intact. Orphans stay standalone.
+ */
+export function foldSubagentSessions(sessions: SessionV1[]): SessionV1[] {
+  const byKey = new Map<string, SessionV1>();
+  for (const s of sessions) byKey.set(`${s.vendor}:${s.id}`, s);
+
+  const out: SessionV1[] = [];
+  for (const s of sessions) {
+    const parentId = (s.ext?.claudeCode as { parentSessionId?: string } | undefined)?.parentSessionId;
+    const parent = parentId ? byKey.get(`${s.vendor}:${parentId}`) : undefined;
+    if (!parent || parent === s) {
+      out.push(s);
+      continue;
+    }
+    for (const [model, u] of Object.entries(s.models)) {
+      const pm = (parent.models[model] ??= { calls: 0, input: 0, output: 0, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, reasoning: 0 });
+      pm.calls += u.calls;
+      pm.input += u.input;
+      pm.output += u.output;
+      pm.cacheRead += u.cacheRead;
+      pm.cacheWrite5m += u.cacheWrite5m;
+      pm.cacheWrite1h += u.cacheWrite1h;
+      pm.reasoning += u.reasoning;
+    }
+    parent.counts.sidechainCalls += Object.values(s.models).reduce((a, m) => a + m.calls, 0);
+    parent.counts.toolCalls += s.counts.toolCalls;
+    if (s.counts.commits) parent.counts.commits = (parent.counts.commits ?? 0) + s.counts.commits;
+    for (const [tool, n] of Object.entries(s.toolCounts)) {
+      parent.toolCounts[tool] = (parent.toolCounts[tool] || 0) + n;
+    }
+  }
+  // primary model may have shifted after folding
+  for (const s of out) {
+    let best: string | null = null;
+    let bestOut = -1;
+    for (const [name, m] of Object.entries(s.models)) {
+      if (m.output > bestOut) { best = name; bestOut = m.output; }
+    }
+    if (best !== null) s.primaryModel = best;
+  }
+  return out;
 }
 
 export function diagnosticsPath(): string {

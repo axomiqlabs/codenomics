@@ -42,7 +42,7 @@ interface RawUsage {
 
 export const claudeCodeCollector: Collector = {
   vendor: 'claude-code',
-  parserVersion: 2,
+  parserVersion: 3,
   capabilities: {
     commits: true,
     activeTime: 'exact',
@@ -177,12 +177,21 @@ export const claudeCodeCollector: Collector = {
     // project slug dir name is the fallback when no cwd was recorded
     const slug = path.basename(path.dirname(filePath));
 
+    // nested subagent transcript: <project>/<parentSessionId>/subagents/agent-*.jsonl
+    // usage lives ONLY here (verified: message ids appear nowhere else), so the
+    // engine folds these into the parent session after collection.
+    const dir = path.dirname(filePath);
+    const parentSessionId =
+      path.basename(dir) === 'subagents' ? path.basename(path.dirname(dir)) : null;
+
     const session: SessionV1 = {
       schemaVersion: SCHEMA_VERSION,
       vendor: 'claude-code',
       id: path.basename(filePath, '.jsonl'),
-      source: entrypoint === 'sdk-cli' ? 'machine' : entrypoint === 'cli' ? 'human' : 'unknown',
-      project: cwd ? projectKeyFromPath(cwd) : slug,
+      source: parentSessionId
+        ? 'machine' // standalone fallback only; normally merged into the parent
+        : entrypoint === 'sdk-cli' ? 'machine' : entrypoint === 'cli' ? 'human' : 'unknown',
+      project: cwd ? projectKeyFromPath(cwd) : parentSessionId ? path.basename(path.dirname(path.dirname(dir))) : slug,
       projectPath: cwd,
       startedAt: activity.firstTs,
       endedAt: activity.lastTs,
@@ -199,6 +208,7 @@ export const claudeCodeCollector: Collector = {
         ...(firstPrompt ? { firstPrompt } : {}),
         ...(lastAssistantText ? { lastAssistantText } : {}),
       },
+      ...(parentSessionId ? { ext: { claudeCode: { parentSessionId } } } : {}),
     };
 
     return { sessions: [session], driftStats };

@@ -86,3 +86,38 @@ test('engine: disabled vendor is skipped', async () => {
   assert.equal(r.index.sessions.length, 0);
   assert.equal(r.perVendor['claude-code'], undefined);
 });
+
+test('engine: subagent sessions fold into their parent', async () => {
+  freshEnv();
+  const { foldSubagentSessions } = await import('../dist/core/engine.js');
+  const mk = (id, over = {}) => ({
+    schemaVersion: 1, vendor: 'claude-code', id, source: 'human', project: '/p', projectPath: '/p',
+    startedAt: 0, endedAt: 1000, wallMs: 1000, activeMs: 500,
+    counts: { userPrompts: 2, assistantTurns: 3, toolCalls: 4, commits: 1, sidechainCalls: 0 },
+    toolCounts: { Bash: 4 },
+    models: { 'claude-fable-5': { calls: 3, input: 100, output: 200, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, reasoning: 0 } },
+    primaryModel: 'claude-fable-5', meta: {}, ...over,
+  });
+  const parent = mk('parent-1');
+  const agent = mk('agent-x', {
+    source: 'machine',
+    counts: { userPrompts: 0, assistantTurns: 0, toolCalls: 6, commits: 1, sidechainCalls: 0 },
+    toolCounts: { Read: 6 },
+    models: { 'claude-haiku-4-5': { calls: 5, input: 50, output: 999, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, reasoning: 0 } },
+    primaryModel: 'claude-haiku-4-5',
+    ext: { claudeCode: { parentSessionId: 'parent-1' } },
+  });
+  const orphan = mk('agent-orphan', { ext: { claudeCode: { parentSessionId: 'gone' } } });
+
+  const out = foldSubagentSessions([parent, agent, orphan]);
+  assert.equal(out.length, 2); // agent folded, orphan kept
+  const p = out.find((s) => s.id === 'parent-1');
+  assert.equal(p.models['claude-haiku-4-5'].output, 999);
+  assert.equal(p.counts.toolCalls, 10);
+  assert.equal(p.counts.commits, 2);
+  assert.equal(p.counts.sidechainCalls, 5);
+  assert.equal(p.counts.userPrompts, 2); // unchanged: attention is the parent's
+  assert.equal(p.activeMs, 500); // unchanged: subagent ran inside the span
+  assert.equal(p.primaryModel, 'claude-haiku-4-5'); // recomputed after fold
+  assert.ok(out.find((s) => s.id === 'agent-orphan'));
+});

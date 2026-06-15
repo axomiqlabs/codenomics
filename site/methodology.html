@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Methodology — Codenomics</title>
-<meta name="description" content="How Codenomics computes true cost per commit: cache-aware pricing, human attention and time drivers, commit detection, multi-agent normalization, and a local-first privacy model.">
+<meta name="description" content="How Codenomics computes true cost per commit: cache-aware pricing, human attention and time drivers, commit detection, multi-agent normalization, a local-first privacy model, and an aggregates-only, k-anonymous cross-org benchmark.">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
 <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
@@ -93,6 +93,17 @@
       <li><b>The future team sync sends aggregates only.</b> Its payload type has no free-text fields — daily token/commit/prompt counts per model and project. The one identifying value is the <b>project label</b>, derived from a working-directory path (and hashable); prompts, code, transcripts, and full file paths never leave the machine. It's opt-in, inspectable (<code>codenomics sync --json</code>), and versioned.</li>
       <li><b>It's open source.</b> Read exactly what the collectors do and verify these claims line by line.</li>
     </ul>
+
+    <h2 id="benchmark">The benchmark: how "is that good?" gets answered (Team, planned)</h2>
+    <p>Locally, Codenomics tells you your true $/commit and which of <em>your</em> models wins. The question one machine structurally can't answer is whether that number is <em>good</em> — that needs a view across many teams. The Team benchmark answers it, built from the same opt-in, aggregates-only sync described above. Because it's the one feature that sends anything off-machine, here are the rules a technical buyer should hold us to:</p>
+    <ul>
+      <li><b>What forms it.</b> Only the opt-in <code>RollupV1</code> aggregates — daily token / commit / prompt / active-time counts per vendor, model, and project label. No prompts, code, transcripts, or file paths; the payload type has no free-text fields. Inspect the exact bytes with <code>codenomics sync --json</code> before anything leaves the machine.</li>
+      <li><b>What's compared — structural ratios, not your private drivers.</b> Benchmarking runs on the portable, compute-and-outcome backbone (prompts-per-commit, cache-hit share, tokens-per-commit, model mix), so a $300/hr shop and a $0/hr shop are still comparable. Your <code>attentionUsdPerPrompt</code> and hourly rate stay local and are never part of the cohort math.</li>
+      <li><b>De-anonymization protections.</b> No benchmark cell is computed or shown below a minimum cohort size (k-anonymity); cohorts too small to anonymize are withheld, not estimated. Project labels are hashable before they leave the machine, and every benchmark output is a percentile over a population — never another org's row.</li>
+      <li><b>Honest about sample size.</b> The baseline is early and growing — seeded from design partners and a multi-month founder dataset. We show the <em>n</em> behind every comparison and make no "industry standard" claim until the cohort can support it.</li>
+      <li><b>Contributing is separable from using.</b> The local tool is fully useful with zero sync. You opt in to contribute aggregates in exchange for seeing where you stand — and you can run Team without contributing, or contribute nothing but aggregates.</li>
+    </ul>
+    <div class="note"><b>Status:</b> the local metrics above ship today; the cross-org benchmark is the Team plane (Phase 2), being built from founding-cohort opt-ins. Until the cohort can support a claim, the benchmark is labeled early and shows its sample size — no number is presented as a market norm before it is one.</div>
 
     <div class="cta-row mt-l">
       <a class="btn primary lg" href="index.html#start">Try it on your own data</a>

@@ -12,7 +12,7 @@
       "wallMs": 4244820,
       "activeMs": 375116,
       "counts": {
-        "userPrompts": 2,
+        "userPrompts": 1,
         "assistantTurns": 12,
         "toolCalls": 4,
         "commits": 0,
@@ -36,8 +36,7 @@
       "meta": {
         "gitBranch": "main",
         "cliVersion": "2.1.159",
-        "slashCommand": "/clear",
-        "firstPrompt": "/clear  xxxxxxxx",
+        "firstPrompt": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         "lastAssistantText": "xxxxxxxxxxxxxxxxxxxxxx"
       }
     }

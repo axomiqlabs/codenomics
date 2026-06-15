@@ -13,7 +13,7 @@ import {
   type SessionV1,
 } from '../core/schema.js';
 import type { Collector, DiscoveredFile, ParseResult } from './types.js';
-import { ActivityTracker, countCommits, findFiles, projectKeyFromPath, readJsonlObjects, truncate } from './shared.js';
+import { ActivityTracker, countCommits, findFiles, isControlSlashCommand, projectKeyFromPath, readJsonlObjects, truncate } from './shared.js';
 
 function asObj(v: unknown): Record<string, unknown> | null {
   return v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : null;
@@ -44,7 +44,7 @@ interface RawUsage {
 
 export const claudeCodeCollector: Collector = {
   vendor: 'claude-code',
-  parserVersion: 3,
+  parserVersion: 4, // control slash commands no longer count as prompts
   capabilities: {
     commits: true,
     activeTime: 'exact',
@@ -109,9 +109,14 @@ export const claudeCodeCollector: Collector = {
           userPrompts++;
           if (!firstPrompt) firstPrompt = truncate(text, 400);
         } else if (text && text.startsWith('<command-name>')) {
-          userPrompts++;
-          if (!slashCommand) slashCommand = (text.match(/<command-name>([^<]+)<\/command-name>/) || [])[1];
-          if (!firstPrompt) firstPrompt = truncate(text.replace(/<[^>]+>/g, ' ').trim(), 400);
+          const cmd = (text.match(/<command-name>([^<]+)<\/command-name>/) || [])[1] ?? '';
+          // built-in control commands (/clear, /compact, ...) aren't work prompts:
+          // don't count them, don't let them be the recap or the session's command.
+          if (!isControlSlashCommand(cmd)) {
+            userPrompts++;
+            if (!slashCommand) slashCommand = cmd;
+            if (!firstPrompt) firstPrompt = truncate(text.replace(/<[^>]+>/g, ' ').trim(), 400);
+          }
         }
         continue;
       }

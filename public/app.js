@@ -160,9 +160,13 @@ function render(){
     `<th class="${left?'l ':''}${state.sort===k?'sorted':''}" data-k="${k}">${label}${state.sort===k?(state.sortDir<0?' ▾':' ▴'):''}</th>`).join('') + '</tr></thead><tbody>';
   for (const s of sorted.slice(0, 300)){
     const key = s.vendor + ':' + s.id;
-    const recap = s.summary ? esc(s.summary) : `<span class="fp">${esc((s.meta.firstPrompt||'(no prompt text)').slice(0,160))}</span>`;
+    const recap = s.summary
+      ? esc(s.summary)
+      : s.meta.firstPrompt
+        ? `<span class="fp">${esc(s.meta.firstPrompt.slice(0,160))}</span>`
+        : `<span class="fp faint">${isMachine(s) ? 'automated · no prompt' : (DATA.summarizing ? 'recap pending…' : 'no opening prompt')}</span>`;
     html += `<tr data-id="${esc(key)}">
-      <td class="dim">${fmt.date(s.lastTs)}${isMachine(s)?' <span class="src">⚙</span>':''}</td>
+      <td class="dim">${fmt.date(s.lastTs)}${isMachine(s)?' <span class="src" title="automated (machine/SDK) session — no human attention charged">⚙ auto</span>':''}</td>
       <td class="l">${badge(s.primaryModel)} <span class="vendor-tag">${VENDOR_TAG[s.vendor]||s.vendor}</span></td>
       <td class="l recap">${recap}</td>
       <td>${s.userPrompts}</td><td class="dim">${s.assistantTurns}</td><td class="dim">${s.toolCalls}</td>

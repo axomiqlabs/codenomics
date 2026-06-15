@@ -19,7 +19,7 @@ import {
   type Source,
 } from '../core/schema.js';
 import type { Collector, DiscoveredFile, ParseResult } from './types.js';
-import { ActivityTracker, countCommits, findFiles, projectKeyFromPath, readJsonlObjects, truncate } from './shared.js';
+import { ActivityTracker, countCommits, findFiles, isControlSlashCommand, projectKeyFromPath, readJsonlObjects, truncate } from './shared.js';
 
 interface TokenUsage {
   input_tokens?: number;
@@ -54,7 +54,7 @@ function commandFromArguments(args: unknown): string | null {
 
 export const codexCollector: Collector = {
   vendor: 'codex',
-  parserVersion: 1,
+  parserVersion: 2, // bare control slash commands no longer count as prompts
   capabilities: {
     commits: true,
     activeTime: 'exact',
@@ -150,8 +150,11 @@ export const codexCollector: Collector = {
           const pt = asStr(payload.type);
           switch (pt) {
             case 'user_message': {
-              userPrompts++;
               const msg = asStr(payload.message);
+              // a bare control slash command (e.g. "/clear") isn't a work prompt
+              const trimmed = msg?.trim() ?? '';
+              if (/^\/[a-z][\w-]*$/i.test(trimmed) && isControlSlashCommand(trimmed)) break;
+              userPrompts++;
               if (msg && !firstPrompt) firstPrompt = truncate(msg, 400);
               break;
             }

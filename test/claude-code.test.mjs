@@ -15,6 +15,30 @@ for (const name of ['human-commits', 'machine-sdk', 'slash-command']) {
   });
 }
 
+test('claude-code: control slash commands (/clear) are not prompts; custom commands are', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cmd-'));
+  const p = path.join(dir, 'session.jsonl');
+  const userCmd = (name) => JSON.stringify({
+    type: 'user', timestamp: '2026-01-01T00:00:00.000Z', entrypoint: 'cli',
+    message: { role: 'user', content: `<command-name>${name}</command-name><command-message>x</command-message>` },
+  });
+  const userText = (t) => JSON.stringify({
+    type: 'user', timestamp: '2026-01-01T00:00:01.000Z', entrypoint: 'cli',
+    message: { role: 'user', content: t },
+  });
+  fs.writeFileSync(p, [
+    userCmd('/clear'),          // control: ignored
+    userCmd('/compact'),        // control: ignored
+    userText('fix the parser'), // real prompt
+    userCmd('/deploy'),         // custom command: counts
+  ].join('\n'));
+  const { sessions } = await claudeCodeCollector.parseFile(p);
+  const s = sessions[0];
+  assert.equal(s.counts.userPrompts, 2);            // real prompt + /deploy, not /clear or /compact
+  assert.equal(s.meta.firstPrompt, 'fix the parser'); // recap is the real prompt, not /clear
+  assert.equal(s.meta.slashCommand, '/deploy');     // only the work command is recorded
+});
+
 test('claude-code: model name normalization strips [1m] and date suffix', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccn-'));
   const p = path.join(dir, 'session.jsonl');

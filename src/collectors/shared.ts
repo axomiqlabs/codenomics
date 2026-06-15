@@ -8,6 +8,26 @@ import readline from 'node:readline';
 import type { DiscoveredFile } from './types.js';
 
 /**
+ * Built-in CLI control/UI slash commands. These reset context, change settings,
+ * or show info — they don't ask the agent to do task work, so they should NOT
+ * count as interactive prompts (no review attention) and should never be a
+ * session's opening recap. Work-driving commands (/init, /review, /pr-comments,
+ * /security-review) and any custom user command are NOT here — they count.
+ */
+const CONTROL_SLASH_COMMANDS = new Set([
+  'clear', 'compact', 'config', 'cost', 'doctor', 'exit', 'quit', 'help',
+  'hooks', 'ide', 'login', 'logout', 'mcp', 'memory', 'model', 'permissions',
+  'privacy-settings', 'resume', 'status', 'statusline', 'terminal-setup',
+  'theme', 'upgrade', 'vim', 'output-style', 'add-dir', 'release-notes',
+  'bug', 'feedback', 'agents', 'context', 'todos', 'export', 'bashes',
+]);
+
+/** True if `name` (without leading slash, lowercased) is a built-in control command. */
+export function isControlSlashCommand(name: string): boolean {
+  return CONTROL_SLASH_COMMANDS.has(name.replace(/^\//, '').trim().toLowerCase());
+}
+
+/**
  * Count real `git commit` invocations in a shell command.
  *
  * The denominator of the headline metric, so it's deliberate about what counts:

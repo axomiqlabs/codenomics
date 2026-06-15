@@ -39,6 +39,32 @@ Hard commitments for when sync ships:
 3. **Opt-in, inspectable, versioned.** `sync --json` always shows the exact
    payload; schema changes bump `schemaVersion`.
 
+## The cross-org benchmark (Team, not yet available)
+
+The Team plane's benchmark — "is your true $/commit good, vs the field?" — is
+built entirely from the opt-in `RollupV1` aggregates above. It is the only
+feature that uses off-machine data, so it carries its own hard commitments:
+
+1. **Aggregates only, same payload.** The benchmark consumes nothing the sync
+   contract doesn't already cover — no prompts, code, transcripts, tool output,
+   file paths, or text excerpts. There is no second, richer upload path.
+2. **k-anonymity, k = 5.** No benchmark cell is computed or shown unless at
+   least **5 distinct contributing orgs** fall in it. Cohorts below the
+   threshold are withheld, never estimated or back-filled.
+3. **Structural ratios, not your drivers.** Benchmarking runs on portable
+   compute-and-outcome metrics (prompts-per-commit, cache-hit share,
+   tokens-per-commit, model mix). Your `attentionUsdPerPrompt` and
+   `engHourlyRateUsd` stay local and are never part of the cohort math.
+4. **Percentiles, never rows.** Benchmark output is a percentile over a
+   population — never another org's underlying row.
+5. **Project labels hashable before they leave.** As with sync, the one
+   potentially identifying string can be aliased/hashed on the machine first.
+6. **Contributing is separable from using.** The local tool is fully useful
+   with zero sync. You opt in to contribute aggregates in exchange for seeing
+   where you stand; you can use Team without contributing.
+7. **Honest sample size.** Every comparison shows the *n* behind it; no figure
+   is presented as a market norm before the cohort can support the claim.
+
 ## Fixtures in this repository
 
 Test fixtures under `test/fixtures/` are derived from real transcripts passed

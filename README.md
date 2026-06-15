@@ -94,6 +94,13 @@ These are undocumented, fast-moving formats. Parsers are tolerant by design:
 malformed lines are skipped, unknown event types are counted (`doctor` shows
 drift), and a file that fails to parse is quarantined without killing the run.
 
+On first use, codenomics prints a one-time disclosure listing exactly which
+directories it scans (read-only), where it stores its own data, and that
+nothing is uploaded — then records your acknowledgement under the data dir.
+In non-interactive contexts (CI, service managers) it discloses and proceeds
+without prompting; set `CODENOMICS_ACCEPT_DISCLOSURE=1` to accept up front and
+silence it.
+
 ## Development
 
 ```bash

@@ -56,6 +56,9 @@ async function main(): Promise<number> {
     printHelp();
     return 1;
   }
+  // One-time transparency disclosure before any local data is read.
+  const { ensureDisclosure } = await import('./first-run.js');
+  if (!(await ensureDisclosure())) return 1;
   const mod = await entry.load();
   return mod.run(rest);
 }

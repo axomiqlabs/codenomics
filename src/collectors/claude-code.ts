@@ -44,7 +44,7 @@ interface RawUsage {
 
 export const claudeCodeCollector: Collector = {
   vendor: 'claude-code',
-  parserVersion: 4, // control slash commands no longer count as prompts
+  parserVersion: 5, // detect deeply-nested (workflow) subagent transcripts for folding
   capabilities: {
     commits: true,
     activeTime: 'exact',
@@ -184,12 +184,18 @@ export const claudeCodeCollector: Collector = {
     // project slug dir name is the fallback when no cwd was recorded
     const slug = path.basename(path.dirname(filePath));
 
-    // nested subagent transcript: <project>/<parentSessionId>/subagents/agent-*.jsonl
-    // usage lives ONLY here (verified: message ids appear nowhere else), so the
-    // engine folds these into the parent session after collection.
-    const dir = path.dirname(filePath);
-    const parentSessionId =
-      path.basename(dir) === 'subagents' ? path.basename(path.dirname(dir)) : null;
+    // Subagent transcripts live somewhere under a `subagents/` dir. The simple
+    // case is <project>/<parentSessionId>/subagents/agent-*.jsonl, but workflow-
+    // spawned agents nest deeper, e.g.
+    //   <project>/<parentSessionId>/subagents/workflows/<wf>/agent-*.jsonl.
+    // Locate the `subagents` segment anywhere in the path; the parent session id
+    // is the directory directly above it, and the project slug is the dir above
+    // that. Usage lives ONLY in these files, so the engine folds them into the
+    // parent after collection.
+    const segments = filePath.split(path.sep);
+    const si = segments.lastIndexOf('subagents');
+    const parentSessionId = si > 0 ? (segments[si - 1] ?? null) : null;
+    const subagentSlug = si >= 2 ? (segments[si - 2] ?? slug) : slug;
 
     const session: SessionV1 = {
       schemaVersion: SCHEMA_VERSION,
@@ -198,7 +204,7 @@ export const claudeCodeCollector: Collector = {
       source: parentSessionId
         ? 'machine' // standalone fallback only; normally merged into the parent
         : entrypoint === 'sdk-cli' ? 'machine' : entrypoint === 'cli' ? 'human' : 'unknown',
-      project: cwd ? projectKeyFromPath(cwd) : parentSessionId ? path.basename(path.dirname(path.dirname(dir))) : slug,
+      project: cwd ? projectKeyFromPath(cwd) : parentSessionId ? subagentSlug : slug,
       projectPath: cwd,
       startedAt: activity.firstTs,
       endedAt: activity.lastTs,

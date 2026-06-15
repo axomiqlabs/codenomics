@@ -128,11 +128,14 @@ test('engine: re-indexing does NOT double-count folded subagent tokens (cache ro
   const SUB = new URL('./fixtures/cc-subagents/', import.meta.url).pathname;
   const cfg = cfgWithRoot(DEFAULT_CONFIG, SUB);
 
-  const haikuOut = (idx) => idx.sessions.find((s) => s.id === 'PARENT-1')?.models['claude-haiku-4-5']?.output;
+  const parentOf = (index) => index.sessions.find((s) => s.id === 'PARENT-1');
+  const haikuOut = (index) => parentOf(index)?.models['claude-haiku-4-5']?.output;
+  const sonnetOut = (index) => parentOf(index)?.models['claude-sonnet-4-6']?.output;
 
   const r1 = await runIndex(cfg, [claudeCodeCollector], { now: 1000 });
-  assert.equal(r1.index.sessions.length, 1); // subagent folded into parent
-  assert.equal(haikuOut(r1.index), 1000);
+  assert.equal(r1.index.sessions.length, 1); // BOTH subagents fold into the parent — no standalone agent rows
+  assert.equal(haikuOut(r1.index), 1000); // direct subagents/agent-x.jsonl
+  assert.equal(sonnetOut(r1.index), 500); // nested subagents/workflows/<wf>/agent-wf.jsonl
 
   // second + third runs serve the parent and subagent from cache; folding must
   // not mutate the cached objects, so the total stays put (regression: it grew).

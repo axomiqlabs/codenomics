@@ -3,3 +3,9 @@ dist/
 *.tgz
 data/
 .DS_Store
+
+# captured screenshots (brand assets under */assets/brand are tracked explicitly)
+screenshots/
+*[Ss]creenshot*
+Screen Shot *
+dash-*.png

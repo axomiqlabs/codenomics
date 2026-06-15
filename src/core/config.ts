@@ -34,6 +34,15 @@ export interface DriverConfig {
   engHourlyRateUsd: number;
 }
 
+export interface SyncConfig {
+  /** base URL of the codenomics-cloud backend (no path), or null to disable */
+  endpoint: string | null;
+  /** bearer token; prefer CODENOMICS_SYNC_TOKEN env over storing it on disk */
+  token: string | null;
+  /** optional salt mixed into project-key hashes before upload (privacy #5) */
+  salt: string | null;
+}
+
 export interface CodenomicsConfig {
   configVersion: 1;
   drivers: DriverConfig;
@@ -42,6 +51,7 @@ export interface CodenomicsConfig {
   collectors: Record<string, { enabled: boolean; root?: string }>;
   report: { slackWebhookUrl: string | null };
   server: { port: number; host: string };
+  sync: SyncConfig;
 }
 
 export const DEFAULT_CONFIG: CodenomicsConfig = {
@@ -56,6 +66,7 @@ export const DEFAULT_CONFIG: CodenomicsConfig = {
   },
   report: { slackWebhookUrl: null },
   server: { port: 3737, host: '127.0.0.1' },
+  sync: { endpoint: null, token: null, salt: null },
 };
 
 export function configDir(): string {
@@ -126,6 +137,10 @@ function envOverrides(): Record<string, unknown> {
     const v = Number(process.env.CODENOMICS_ATTENTION_USD);
     if (Number.isFinite(v)) o.drivers = { attentionUsdPerPrompt: v };
   }
+  const sync: Record<string, unknown> = {};
+  if (process.env.CODENOMICS_SYNC_ENDPOINT) sync.endpoint = process.env.CODENOMICS_SYNC_ENDPOINT;
+  if (process.env.CODENOMICS_SYNC_TOKEN) sync.token = process.env.CODENOMICS_SYNC_TOKEN;
+  if (Object.keys(sync).length) o.sync = sync;
   return o;
 }
 

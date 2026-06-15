@@ -71,8 +71,48 @@ function filtered(){
   );
 }
 
+// ---- filter control: one path for every filter change ----
+// Segmented controls, dropdowns, model table, legend, and the active-filter
+// chips all read from `state` and route changes through setFilters, so they
+// can never disagree. Model filtering is family-level to match the dropdown,
+// chart, and badge colors.
+const FILTER_DEFAULTS = { vendor: '', src: 'human', proj: '', model: '' };
+
+function setFilters(patch){
+  Object.assign(state, patch);
+  syncControls();
+  render();
+}
+// click a model anywhere (table row / legend) to focus on it; click again to clear
+function toggleModel(fam){ setFilters({ model: state.model === fam ? '' : fam }); }
+
+// mirror `state` back into the top controls so chip/table clicks move them too
+function syncControls(){
+  for (const [id, attr, val] of [['rangeSeg','d',String(state.days)], ['vendorSeg','v',state.vendor], ['srcSeg','s',state.src]]){
+    document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('on', (b.dataset[attr] ?? '') === val));
+  }
+  const ms = $('#modelSel'); if (ms) ms.value = state.model;
+  const ps = $('#projSel'); if (ps) ps.value = state.proj;
+}
+
+// active-filter chips: always show what's narrowing the view, one click to drop
+function renderFilterBar(){
+  const bar = $('#filterBar'); if (!bar) return;
+  const chips = [];
+  if (state.vendor) chips.push(['agent', VENDOR_TAG[state.vendor] || state.vendor, 'vendor']);
+  if (state.src !== FILTER_DEFAULTS.src) chips.push(['source', state.src, 'src']);
+  if (state.proj) chips.push(['project', projShort(state.proj), 'proj']);
+  if (state.model) chips.push(['model', state.model, 'model']);
+  if (!chips.length){ bar.hidden = true; bar.innerHTML = ''; return; }
+  bar.hidden = false;
+  bar.innerHTML = '<span class="fb-lbl">filtering</span>' +
+    chips.map(([k, v, f]) => `<button class="chip" data-clear="${f}" title="remove filter">${k}: <b>${esc(v)}</b> <span class="x">✕</span></button>`).join('') +
+    '<button class="chip-clear" data-clear="all">clear all</button>';
+}
+
 function render(){
   const rows = filtered();
+  renderFilterBar();
   const attn = DATA.config.drivers.attentionUsdPerPrompt;
 
   // ---- KPIs ----
@@ -107,24 +147,23 @@ function render(){
     </div>`;
   }).join('');
 
-  // ---- Model economics (by family) ----
-  const byFam = {};
+  // ---- Model economics (by model) ----
+  const byModel = {};
   for (const s of rows){
     for (const [model,m] of Object.entries(s.models||{})){
-      const f = famOf(model);
-      const g = byFam[f] || (byFam[f] = { fam:f, cost:0, out:0, calls:0, sessions:new Set(), prompts:0, commits:0, activeMs:0, costList:[], attnUsd:0 });
+      const g = byModel[model] || (byModel[model] = { model, fam:famOf(model), cost:0, out:0, calls:0, sessions:new Set(), prompts:0, commits:0, activeMs:0, costList:[], attnUsd:0 });
       g.cost += (s.modelCosts && s.modelCosts[model]) || 0;
       g.out += m.output; g.calls += m.calls;
       g.sessions.add(s.vendor + ':' + s.id);
     }
-    const f = famOf(s.primaryModel);
-    if (byFam[f]){
-      byFam[f].prompts += s.userPrompts; byFam[f].commits += s.commits||0; byFam[f].activeMs += s.activeMs;
-      byFam[f].costList.push(s.costUsd);
-      byFam[f].attnUsd += s.derived.attentionUsd + s.derived.timeUsd;
+    const pm = s.primaryModel;
+    if (pm && byModel[pm]){
+      byModel[pm].prompts += s.userPrompts; byModel[pm].commits += s.commits||0; byModel[pm].activeMs += s.activeMs;
+      byModel[pm].costList.push(s.costUsd);
+      byModel[pm].attnUsd += s.derived.attentionUsd + s.derived.timeUsd;
     }
   }
-  const fams = Object.values(byFam).sort((a,b)=>{
+  const fams = Object.values(byModel).sort((a,b)=>{
     const ta = a.commits ? (a.cost+a.attnUsd)/a.commits : Infinity;
     const tb = b.commits ? (b.cost+b.attnUsd)/b.commits : Infinity;
     return ta === tb ? b.cost - a.cost : ta - tb;
@@ -133,8 +172,8 @@ function render(){
     <th class="l">model</th><th>true $/commit</th><th>sessions</th><th>api calls</th><th>$ total</th><th>$ median/sess</th>
     <th>prompts</th><th>$ / prompt</th><th>commits</th><th>$ / commit</th><th>prompts/commit</th>
     <th>out tok</th><th>out-tok/prompt</th><th>out-tok/min</th></tr></thead><tbody>` +
-    (fams.map(g => `<tr>
-      <td class="l"><span class="badge m-${g.fam}">${g.fam}</span></td>
+    (fams.map(g => `<tr data-fam="${g.fam}" class="clickable${state.model===g.fam?' active':''}" title="filter to ${g.fam}">
+      <td class="l"><span class="badge m-${g.fam}">${shortModel(g.model)}</span></td>
       <td class="hero">${g.commits ? fmt.usdP((g.cost+g.attnUsd)/g.commits) : '—'}</td>
       <td>${g.sessions.size}</td><td class="dim">${fmt.num(g.calls)}</td>
       <td class="money">${fmt.usd(g.cost)}</td><td class="dim">${fmt.usdP(median(g.costList))}</td>
@@ -232,7 +271,7 @@ function renderChart(rows){
   $('#chart').innerHTML = svg;
   const present = new Set();
   for (const d of days) for (const f of Object.keys(byDay[d])) present.add(f);
-  $('#legend').innerHTML = FAMS.filter(f=>present.has(f)).map(f=>`<span><i style="background:${FAM_COLOR[f]}"></i>${f}</span>`).join('');
+  $('#legend').innerHTML = FAMS.filter(f=>present.has(f)).map(f=>`<span data-fam="${f}" class="clickable${state.model===f?' active':''}" title="filter to ${f}"><i style="background:${FAM_COLOR[f]}"></i>${f}</span>`).join('');
 }
 
 function populateFilters(){
@@ -313,23 +352,23 @@ async function load(){
   if (DATA.summarizing) setTimeout(load, 8000);
 }
 
-$('#rangeSeg').addEventListener('click', e=>{
-  if (e.target.dataset.d === undefined) return;
-  state.days = +e.target.dataset.d;
-  $('#rangeSeg .on')?.classList.remove('on'); e.target.classList.add('on'); render();
+$('#rangeSeg').addEventListener('click', e=>{ if (e.target.dataset.d !== undefined) setFilters({ days: +e.target.dataset.d }); });
+$('#vendorSeg').addEventListener('click', e=>{ if (e.target.dataset.v !== undefined) setFilters({ vendor: e.target.dataset.v }); });
+$('#srcSeg').addEventListener('click', e=>{ if (e.target.dataset.s) setFilters({ src: e.target.dataset.s }); });
+$('#projSel').addEventListener('change', e=>setFilters({ proj: e.target.value }));
+$('#modelSel').addEventListener('change', e=>setFilters({ model: e.target.value }));
+
+// click-to-filter parity: a model row or legend item behaves like the dropdown
+$('#modelTable').addEventListener('click', e=>{ const r = e.target.closest('tr[data-fam]'); if (r) toggleModel(r.dataset.fam); });
+$('#legend').addEventListener('click', e=>{ const s = e.target.closest('span[data-fam]'); if (s) toggleModel(s.dataset.fam); });
+// active-filter chips: remove one, or clear all
+$('#filterBar').addEventListener('click', e=>{
+  const c = e.target.closest('[data-clear]'); if (!c) return;
+  const f = c.dataset.clear;
+  if (f === 'all') setFilters({ ...FILTER_DEFAULTS });
+  else setFilters({ [f === 'vendor' ? 'vendor' : f === 'src' ? 'src' : f === 'proj' ? 'proj' : 'model']: f === 'src' ? FILTER_DEFAULTS.src : '' });
 });
-$('#vendorSeg').addEventListener('click', e=>{
-  if (e.target.dataset.v === undefined) return;
-  state.vendor = e.target.dataset.v;
-  $('#vendorSeg .on')?.classList.remove('on'); e.target.classList.add('on'); render();
-});
-$('#srcSeg').addEventListener('click', e=>{
-  if (!e.target.dataset.s) return;
-  state.src = e.target.dataset.s;
-  $('#srcSeg .on')?.classList.remove('on'); e.target.classList.add('on'); render();
-});
-$('#projSel').addEventListener('change', e=>{ state.proj = e.target.value; render(); });
-$('#modelSel').addEventListener('change', e=>{ state.model = e.target.value; render(); });
+
 $('#sessTable').addEventListener('click', e=>{
   const th = e.target.closest('th');
   if (th && th.dataset.k){

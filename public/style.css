@@ -122,8 +122,29 @@ tr.detail b{color:var(--txt);font-weight:600}
 
 /* chart */
 .chart-wrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
-.legend{display:flex;gap:14px;font-size:11px;color:var(--dim);margin-top:8px;flex-wrap:wrap}
+.legend{display:flex;gap:8px;font-size:11px;color:var(--dim);margin-top:8px;flex-wrap:wrap}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.legend span.clickable{cursor:pointer;padding:1px 7px;border-radius:6px;transition:background .12s,color .12s}
+.legend span.clickable:hover{background:var(--soft-2);color:var(--txt)}
+.legend span.active{background:var(--brand-soft);color:var(--brand);font-weight:600}
+
+/* click-to-filter affordances */
+#modelTable tbody tr.clickable{cursor:pointer}
+#modelTable tbody tr.active td{background:var(--brand-soft);box-shadow:inset 3px 0 0 var(--brand)}
+#modelTable tbody tr.active:hover td{background:var(--brand-soft)}
+#sessTable tbody tr[data-id]{cursor:pointer}
+
+/* active-filter chips */
+.filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-2px 0 14px}
+.filter-bar[hidden]{display:none}
+.fb-lbl{font-size:10px;letter-spacing:.1em;color:var(--faint);font-weight:700;text-transform:uppercase}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:11.5px;color:var(--ink-2);background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:999px;padding:3px 11px;cursor:pointer;transition:background .12s}
+.chip:hover{background:#e0e3ff}
+.chip b{color:var(--brand);font-weight:700}
+.chip .x{color:var(--faint);font-size:10px;font-weight:700}
+.chip:hover .x{color:var(--red)}
+.chip-clear{font-family:var(--sans);font-size:11.5px;color:var(--dim);background:transparent;border:0;cursor:pointer;text-decoration:underline;padding:3px 4px}
+.chip-clear:hover{color:var(--txt)}
 
 /* reports */
 .reports{display:flex;flex-direction:column;gap:6px;font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}

@@ -40,12 +40,14 @@
   <button class="btn" id="sumBtn">✦ GENERATE RECAPS</button>
 </div>
 
+<div class="filter-bar" id="filterBar" hidden></div>
+
 <div id="budgetStrip"></div>
 
 <div class="kpis" id="kpis"></div>
 
 <section>
-  <h2>Model Economics <span class="hint">sorted by TRUE $/COMMIT = (compute $ + prompts × attention $) per shipped commit — lower wins</span></h2>
+  <h2>Model Economics <span class="hint">sorted by TRUE $/COMMIT = (compute $ + prompts × attention $) per shipped commit — lower wins · click a model to filter</span></h2>
   <div class="panel-table"><div style="overflow-x:auto"><table id="modelTable"></table></div></div>
 </section>
 

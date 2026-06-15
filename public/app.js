@@ -13,7 +13,7 @@ const fmt = {
 };
 
 const FAMS = ['fable','opus','sonnet','haiku','gpt','gemini','other'];
-const FAM_COLOR = { fable:'#ffd34d', opus:'#ff8a4d', sonnet:'#6ec7d4', haiku:'#7dd87d', gpt:'#e8e3d3', gemini:'#b58ee6', other:'#7a856e' };
+const FAM_COLOR = { fable:'#d97706', opus:'#ea580c', sonnet:'#0891b2', haiku:'#16a34a', gpt:'#475569', gemini:'#7c3aed', other:'#94a3b8' };
 const VENDOR_TAG = { 'claude-code':'claude', codex:'codex', gemini:'gemini' };
 
 function famOf(model){
@@ -199,8 +199,8 @@ function renderChart(rows){
   let svg = `<svg viewBox="0 0 ${W} ${H+22}" width="100%" preserveAspectRatio="none" style="font-family:var(--mono)">`;
   for (const frac of [0.25,0.5,0.75,1]){
     const y = H - H*frac;
-    svg += `<line x1="${PAD}" x2="${W}" y1="${y}" y2="${y}" stroke="#232a21" stroke-width="1"/>
-      <text x="${PAD-5}" y="${y+4}" fill="#4a5443" font-size="9" text-anchor="end">$${(max*frac).toFixed(0)}</text>`;
+    svg += `<line x1="${PAD}" x2="${W}" y1="${y}" y2="${y}" stroke="#e7e9ee" stroke-width="1"/>
+      <text x="${PAD-5}" y="${y+4}" fill="#94a3b8" font-size="9" text-anchor="end">$${(max*frac).toFixed(0)}</text>`;
   }
   days.forEach((d,i)=>{
     let y = H;
@@ -210,10 +210,10 @@ function renderChart(rows){
       if (!v) continue;
       const h = (v/max)*H;
       y -= h;
-      svg += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${FAM_COLOR[f]}" opacity=".85"><title>${d} ${f}: $${v.toFixed(2)}</title></rect>`;
+      svg += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${FAM_COLOR[f]}" opacity=".9"><title>${d} ${f}: $${v.toFixed(2)}</title></rect>`;
     }
     if (days.length <= 40 || i % Math.ceil(days.length/30) === 0)
-      svg += `<text x="${x+bw/2}" y="${H+14}" fill="#4a5443" font-size="8.5" text-anchor="middle">${d.slice(5)}</text>`;
+      svg += `<text x="${x+bw/2}" y="${H+14}" fill="#94a3b8" font-size="8.5" text-anchor="middle">${d.slice(5)}</text>`;
   });
   svg += '</svg>';
   $('#chart').innerHTML = svg;

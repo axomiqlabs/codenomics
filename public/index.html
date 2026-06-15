@@ -8,7 +8,7 @@
 </head>
 <body>
 <header>
-  <div class="wordmark">CODE<b>NOMICS</b></div>
+  <div class="wordmark"><span class="dot"></span>Codenomics</div>
   <div class="meta" id="meta">loading…</div>
   <div class="spacer"></div>
   <div class="note">$ figures are API-equivalent compute cost (cache-aware pricing). On a subscription, marginal $ is 0 — read as a compute-burn meter. TRUE $ adds the human attention you spend.</div>
@@ -42,7 +42,7 @@
 
 <section>
   <h2>Model Economics <span class="hint">sorted by TRUE $/COMMIT = (compute $ + prompts × attention $) per shipped commit — lower wins</span></h2>
-  <div style="overflow-x:auto"><table id="modelTable"></table></div>
+  <div class="panel-table"><div style="overflow-x:auto"><table id="modelTable"></table></div></div>
 </section>
 
 <section>
@@ -52,7 +52,7 @@
 
 <section>
   <h2>Sessions <span class="hint">click a row for detail · recaps are AI-generated (haiku)</span></h2>
-  <div style="overflow-x:auto"><table id="sessTable"></table></div>
+  <div class="panel-table"><div style="overflow-x:auto"><table id="sessTable"></table></div></div>
 </section>
 
 <section id="reportsSection" style="display:none">

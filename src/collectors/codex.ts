@@ -54,7 +54,7 @@ function commandFromArguments(args: unknown): string | null {
 
 export const codexCollector: Collector = {
   vendor: 'codex',
-  parserVersion: 2, // bare control slash commands no longer count as prompts
+  parserVersion: 3, // merge pre-turn_context 'unknown' usage; seed model for zero-usage sessions
   capabilities: {
     commits: true,
     activeTime: 'exact',
@@ -221,6 +221,34 @@ export const codexCollector: Collector = {
           drift(`unknown-type:${type ?? 'none'}`);
           break;
       }
+    }
+
+    // Token counts that arrive before the first `turn_context` (which carries the
+    // model) land in an 'unknown' bucket — common in folded workflow transcripts
+    // where the model isn't resolved until deep into the file. When the session
+    // resolved to exactly one real model, that usage is unambiguously its: merge
+    // 'unknown' back so it isn't reported as a separate 'unknown' model.
+    const unknown = models.unknown;
+    if (unknown) {
+      const real = Object.keys(models).filter((m) => m !== 'unknown');
+      if (real.length === 1) {
+        const dst = usageFor(real[0]!);
+        dst.calls += unknown.calls;
+        dst.input += unknown.input;
+        dst.output += unknown.output;
+        dst.cacheRead += unknown.cacheRead;
+        dst.cacheWrite5m += unknown.cacheWrite5m;
+        dst.cacheWrite1h += unknown.cacheWrite1h;
+        dst.reasoning += unknown.reasoning;
+        delete models.unknown;
+      }
+    }
+
+    // A session can resolve a real model (via turn_context) yet bill no turns —
+    // e.g. aborted right after the prompt. Record that model with zero usage so it
+    // reports as the model rather than a null '-' primaryModel.
+    if (userPrompts > 0 && Object.keys(models).length === 0 && currentModel !== 'unknown') {
+      usageFor(currentModel);
     }
 
     const hasUsage = Object.keys(models).length > 0;

@@ -87,6 +87,46 @@ test('codex: counter-reset clamp on totals-only stream', async () => {
   assert.equal(m.output, 50 + 30 + 20);
 });
 
+test('codex: usage before the first turn_context merges into the single resolved model', async () => {
+  // In folded workflow transcripts, token_count can precede the turn_context that
+  // names the model. Such usage lands in an 'unknown' bucket and must be merged
+  // into the one real model the session resolves to — not reported as 'unknown'.
+  const tc = (input, cached, output) =>
+    JSON.stringify({
+      timestamp: '2026-01-01T00:00:00.000Z',
+      type: 'event_msg',
+      payload: { type: 'token_count', info: { last_token_usage: { input_tokens: input, cached_input_tokens: cached, output_tokens: output, reasoning_output_tokens: 0 } } },
+    });
+  const lines = [
+    JSON.stringify({ timestamp: '2026-01-01T00:00:00.000Z', type: 'session_meta', payload: { id: 'x', cwd: '/tmp' } }),
+    tc(800, 100, 40), // arrives before any turn_context → 'unknown' bucket
+    JSON.stringify({ timestamp: '2026-01-01T00:00:00.000Z', type: 'turn_context', payload: { model: 'gpt-5.5', cwd: '/tmp' } }),
+    tc(500, 100, 30), // attributed to gpt-5.5
+  ].join('\n');
+  const { sessions } = await codexCollector.parseFile(tmpFile(lines));
+  assert.equal(sessions[0].primaryModel, 'gpt-5.5');
+  assert.deepEqual(Object.keys(sessions[0].models), ['gpt-5.5']); // no 'unknown' bucket
+  const m = sessions[0].models['gpt-5.5'];
+  assert.equal(m.calls, 2);
+  assert.equal(m.input + m.cacheRead, 800 + 500);
+  assert.equal(m.output, 40 + 30);
+});
+
+test('codex: a resolved model with no billed turns is reported, not a null primaryModel', async () => {
+  // Aborted right after the prompt: turn_context names the model but no token_count
+  // is ever emitted. Record the model (zero usage) instead of a null '-' model.
+  const lines = [
+    JSON.stringify({ timestamp: '2026-01-01T00:00:00.000Z', type: 'session_meta', payload: { id: 'x', cwd: '/tmp' } }),
+    JSON.stringify({ timestamp: '2026-01-01T00:00:00.000Z', type: 'turn_context', payload: { model: 'gpt-5.5', cwd: '/tmp' } }),
+    JSON.stringify({ timestamp: '2026-01-01T00:00:00.000Z', type: 'event_msg', payload: { type: 'user_message', message: 'do a thing' } }),
+  ].join('\n');
+  const { sessions } = await codexCollector.parseFile(tmpFile(lines));
+  assert.equal(sessions.length, 1);
+  assert.equal(sessions[0].primaryModel, 'gpt-5.5');
+  assert.equal(sessions[0].models['gpt-5.5'].calls, 0);
+  assert.equal(sessions[0].counts.userPrompts, 1);
+});
+
 test('codex: UI re-emit on the totals-only path is not double-counted', async () => {
   const ev = (input, cached, output) =>
     JSON.stringify({

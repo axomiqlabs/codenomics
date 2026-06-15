@@ -227,6 +227,23 @@ export function startServer(opts: ServerOptions = {}): http.Server {
         serveStatic(res, 'style.css', 'text/css; charset=utf-8');
         return;
       }
+      if (url.pathname === '/favicon.ico') {
+        serveStatic(res, 'assets/brand/favicon.ico', 'image/x-icon');
+        return;
+      }
+      if (url.pathname.startsWith('/assets/brand/')) {
+        const name = path.basename(url.pathname); // no traversal
+        const ASSET_TYPES: Record<string, string> = {
+          '.svg': 'image/svg+xml',
+          '.png': 'image/png',
+          '.ico': 'image/x-icon',
+        };
+        const type = ASSET_TYPES[path.extname(name).toLowerCase()];
+        if (type) {
+          serveStatic(res, path.join('assets/brand', name), type);
+          return;
+        }
+      }
 
       res.writeHead(404, { 'content-type': 'text/plain' });
       res.end('not found');

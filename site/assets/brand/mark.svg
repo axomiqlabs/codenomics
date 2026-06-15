@@ -1,0 +1,14 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Codenomics">
+  <defs>
+    <linearGradient id="cn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#cn)"/>
+  <!-- value rising: the economics of what ships -->
+  <path d="M17 42 L28 34 L36 39 L48 23" fill="none" stroke="#fff"
+        stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M48 23 L41 23 M48 23 L48 30" fill="none" stroke="#fff"
+        stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

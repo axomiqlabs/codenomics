@@ -13,7 +13,7 @@ import {
   type SessionV1,
 } from '../core/schema.js';
 import type { Collector, DiscoveredFile, ParseResult } from './types.js';
-import { ActivityTracker, COMMIT_RE, findFiles, projectKeyFromPath, readJsonlObjects, truncate } from './shared.js';
+import { ActivityTracker, countCommits, findFiles, projectKeyFromPath, readJsonlObjects, truncate } from './shared.js';
 
 function asObj(v: unknown): Record<string, unknown> | null {
   return v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : null;
@@ -27,9 +27,11 @@ function num(v: unknown): number {
   return typeof v === 'number' && Number.isFinite(v) ? v : 0;
 }
 
-/** strip date suffix and context-window markers: claude-opus-4-8-20260115[1m] -> claude-opus-4-8 */
+/** strip date suffix and context-window markers: claude-opus-4-8-20260115[1m] -> claude-opus-4-8.
+ *  Must match pricing.ts normalizeModel so one model keys identically across
+ *  collector, rollup, dashboard and pricing (else a model fragments by date). */
 function normalizeModel(model: string): string {
-  return model.replace(/\[1m\]$/, '');
+  return model.replace(/\[1m\]$/, '').replace(/-\d{8}$/, '');
 }
 
 interface RawUsage {
@@ -133,8 +135,8 @@ export const claudeCodeCollector: Collector = {
               const name = asStr(b.name) ?? 'unknown';
               toolCounts[name] = (toolCounts[name] || 0) + 1;
               const input = asObj(b.input);
-              if (name === 'Bash' && input && typeof input.command === 'string' && COMMIT_RE.test(input.command)) {
-                commits++;
+              if (name === 'Bash' && input && typeof input.command === 'string') {
+                commits += countCommits(input.command);
               }
             } else if (b.type === 'text' && typeof b.text === 'string' && !e.isSidechain) {
               lastAssistantText = truncate(b.text, 600);

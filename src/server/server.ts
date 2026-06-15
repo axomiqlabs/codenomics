@@ -4,6 +4,7 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { loadConfig, saveUserConfig, mergeConfig, validateConfig, type CodenomicsConfig } from '../core/config.js';
 import { readIndex, readSummaries, reportsDir } from '../core/store.js';
 import { runIndex } from '../core/engine.js';
@@ -66,17 +67,73 @@ async function readBody(req: http.IncomingMessage): Promise<string> {
   return Buffer.concat(chunks).toString('utf8');
 }
 
+export function isLoopbackHost(host: string): boolean {
+  return host === '127.0.0.1' || host === 'localhost' || host === '::1';
+}
+
+/** Hostname (no port) from a Host or Origin header value. */
+function hostnameOf(value: string | undefined): string | null {
+  if (!value) return null;
+  try {
+    return new URL(value.includes('://') ? value : `http://${value}`).hostname;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * CSRF guard for state-changing requests. A browser always sends Origin on
+ * cross-site POST/PUT; we require it to be loopback. Same-origin tools (curl,
+ * the dashboard itself) either send a loopback Origin or none, and we fall back
+ * to the Host header. Blocks drive-by POSTs from arbitrary web pages.
+ */
+function sameOriginOk(req: http.IncomingMessage): boolean {
+  const origin = req.headers.origin;
+  if (typeof origin === 'string') {
+    const h = hostnameOf(origin);
+    return h !== null && isLoopbackHost(h);
+  }
+  // no Origin (non-browser client): require a loopback Host header
+  const h = hostnameOf(req.headers.host);
+  return h !== null && isLoopbackHost(h);
+}
+
 export interface ServerOptions {
   port?: number;
   host?: string;
 }
 
 export function startServer(opts: ServerOptions = {}): http.Server {
+  const { config: bootCfg } = loadConfig();
+  const host = opts.host ?? bootCfg.server.host;
+  const port = opts.port ?? bootCfg.server.port;
+  const remote = !isLoopbackHost(host);
+  // Non-loopback binds expose usage data to the network; gate /api/* behind a
+  // token printed once at startup. Loopback binds rely on the CSRF check only.
+  const token = remote ? crypto.randomBytes(16).toString('hex') : null;
+
+  const tokenOk = (req: http.IncomingMessage, url: URL): boolean => {
+    if (!token) return true;
+    const supplied = req.headers['x-codenomics-token'] ?? url.searchParams.get('token');
+    return typeof supplied === 'string' && supplied.length === token.length &&
+      crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(token));
+  };
+
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const { config } = loadConfig(); // fresh each request: config edits apply instantly
 
     try {
+      const isApi = url.pathname.startsWith('/api/') || url.pathname.startsWith('/reports/');
+      if (isApi && !tokenOk(req, url)) {
+        json(res, 401, { error: 'missing or invalid token' });
+        return;
+      }
+      const mutating = req.method === 'PUT' || req.method === 'POST';
+      if (mutating && !sameOriginOk(req)) {
+        json(res, 403, { error: 'cross-origin request refused' });
+        return;
+      }
       if (url.pathname === '/api/data') {
         const stale = Date.now() - readIndex().generatedAt > REINDEX_STALE_MS;
         if (stale) await reindex(config);
@@ -179,13 +236,14 @@ export function startServer(opts: ServerOptions = {}): http.Server {
     }
   });
 
-  const { config } = loadConfig();
-  const port = opts.port ?? config.server.port;
-  const host = opts.host ?? config.server.host;
   server.listen(port, host, () => {
-    console.log(`codenomics dashboard: http://${host}:${port}`);
-    if (host !== '127.0.0.1' && host !== 'localhost') {
+    const base = `http://${host}:${port}`;
+    if (remote) {
       console.warn('warning: binding beyond localhost exposes your usage data to the network');
+      console.log(`codenomics dashboard: ${base}/?token=${token}`);
+      console.log('  access token required on /api requests — open the URL above.');
+    } else {
+      console.log(`codenomics dashboard: ${base}`);
     }
   });
   return server;

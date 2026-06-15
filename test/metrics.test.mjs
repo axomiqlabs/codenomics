@@ -49,6 +49,30 @@ test('pricing: config override wins over builtin and fills cache defaults', () =
   assert.equal(p.cacheWrite5mUsd, 25); // 1.25x in
 });
 
+test('pricing: a coarse config override prefix applies to matching models', () => {
+  // documents the trap: a short override key hijacks every model it prefixes,
+  // winning even over an exact builtin.
+  const cfg = { ...DEFAULT_CONFIG, pricing: { gpt: { in: 99, out: 199 } } };
+  assert.equal(priceFor('gpt-5', cfg).inUsd, 99);
+  assert.equal(priceFor('gpt-5-mini', cfg).inUsd, 99);
+  assert.equal(priceFor('claude-opus-4-8', cfg).inUsd, 5); // untouched
+});
+
+test('pricing: non-default cache multipliers (gemini 0.25 read, gpt/gemini zero write)', () => {
+  // gemini: cacheRead = 0.25×in, no write charge
+  const gem = priceFor('gemini-2.5-pro', DEFAULT_CONFIG);
+  assert.equal(gem.cacheReadUsd, 1.25 * 0.25);
+  assert.equal(gem.cacheWrite5mUsd, 0);
+  assert.equal(gem.cacheWrite1hUsd, 0);
+  // gpt: default 0.1× read, zero write
+  const gpt = priceFor('gpt-5', DEFAULT_CONFIG);
+  assert.equal(gpt.cacheReadUsd, 1.25 * 0.1);
+  assert.equal(gpt.cacheWrite5mUsd, 0);
+  // a gemini write token must cost nothing even if present
+  const c = usageCostUsd('gemini-2.5-pro', usage({ cacheRead: 1e6, cacheWrite5m: 1e6 }), DEFAULT_CONFIG);
+  assert.ok(Math.abs(c - (1e6 * 1.25 * 0.25) / 1e6) < 1e-9);
+});
+
 test('pricing: anthropic cache math matches the original indexer formula', () => {
   // 1M in + 0.1M out + 2M cacheRead + 0.5M cw5m + 0.2M cw1h on fable (10/50)
   const u = usage({ input: 1e6, output: 1e5, cacheRead: 2e6, cacheWrite5m: 5e5, cacheWrite1h: 2e5 });
@@ -70,6 +94,23 @@ test('deriveCosts: attention and hourly apply to human sessions only', () => {
   assert.equal(machine.attentionUsd, 0);
   assert.equal(machine.timeUsd, 0);
   assert.equal(machine.trueUsd, machine.costUsd);
+
+  // 'unknown' source must NOT be billed as human (regression: it was)
+  const unknown = deriveCosts(session({ source: 'unknown' }), cfg);
+  assert.equal(unknown.attentionUsd, 0);
+  assert.equal(unknown.timeUsd, 0);
+  assert.equal(unknown.trueUsd, unknown.costUsd);
+});
+
+test('aggregate: unknown-source sessions are bucketed separately and unbilled', () => {
+  const cfg = { ...DEFAULT_CONFIG, drivers: { attentionUsdPerPrompt: 5, engHourlyRateUsd: 100 } };
+  const a = aggregate([session({ source: 'unknown' })], cfg);
+  assert.equal(a.unknownSessions, 1);
+  assert.equal(a.humanSessions, 0);
+  assert.equal(a.machineSessions, 0);
+  assert.equal(a.attentionUsd, 0);
+  assert.equal(a.timeUsd, 0);
+  assert.equal(a.trueUsd, a.costUsd);
 });
 
 test('deriveCosts: unpriced models contribute $0 and are reported', () => {

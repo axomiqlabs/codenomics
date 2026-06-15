@@ -55,7 +55,7 @@
         <p class="sectionlede">Coding agents now out-spend every other AI tool in engineering. Teams burn tens of thousands a month and can't answer the only question that matters: <b>is the expensive model actually worse value?</b> Tokens and traces don't tell you. Shipped work does.</p>
       </div>
       <div class="metric-card">
-        <div class="label">True $ / commit</div>
+        <div class="label">True $ / commit <span class="example-tag">illustrative</span></div>
         <div class="value">$16.60</div>
         <div class="formula">
           <b>compute $</b> + prompts × <b>attention $</b> + active time × <b>hourly $</b><br>
@@ -75,7 +75,8 @@
     <p class="sectionlede" style="margin:16px auto 0">A model that costs 2× per token but needs half the prompts, fewer corrections, and less of your time to ship the same commit <em>wins</em> on true cost. That comparison is invisible on a token meter — and it's the whole point of Codenomics.</p>
     <div class="insight mt-l" style="text-align:left">
       <span class="tag">From real usage</span>
-      <p>Across one month of mixed Claude, Codex, and subagent work, true cost per commit <b>dropped 21%</b> while commit volume rose 60% — by shifting which model did which kind of work. You can't tune what you can't see.</p>
+      <p>In one developer's 7-week dataset — 884 sessions, 811 commits across Claude Code and Codex — the model priced <b>2× higher per token</b> shipped commits at <b>~⅓ lower true cost</b> than a model half its token price, because it needed fewer prompts and less hands-on time. The compute bill alone wouldn't show it. <a href="methodology.html">How this is measured →</a></p>
+      <p class="fineprint">Single-developer sample; drivers set to $4/prompt and $300/hr; "commit" is a proxy for shipped work (see methodology). Your numbers depend on your drivers and task mix — run <code>npx codenomics report</code> on your own logs.</p>
     </div>
   </div>
 </section>
@@ -160,7 +161,7 @@
       <div class="lock">🔒</div>
       <div>
         <div class="big">Your code never leaves your machine.</div>
-        <p>Codenomics reads logs that already exist on disk and derives metrics locally. Nothing is uploaded by any command. When team sync arrives, it sends aggregate numbers only — never prompts, code, or transcripts. <a href="methodology.html#privacy" style="color:#a5b4fc">See the privacy model →</a></p>
+        <p>Codenomics reads logs that already exist on disk and derives metrics locally. Nothing is uploaded by any command today. When team sync arrives, it sends aggregate token/cost numbers and project labels only — never prompts, code, or transcripts (project labels are path-derived and can be hashed). <a href="methodology.html#privacy" style="color:#a5b4fc">See the privacy model →</a></p>
       </div>
     </div>
   </div>

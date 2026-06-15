@@ -1,0 +1,2 @@
+{"type":"user","timestamp":"2026-06-10T10:00:00Z","cwd":"/home/u/myproj","entrypoint":"cli","message":{"role":"user","content":"do a thing"}}
+{"type":"assistant","timestamp":"2026-06-10T10:00:05Z","message":{"id":"msg_parent_1","model":"claude-opus-4-8","usage":{"input_tokens":100,"output_tokens":200,"cache_read_input_tokens":0},"content":[{"type":"text","text":"ok"}]}}

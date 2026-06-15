@@ -75,6 +75,41 @@ test('engine: quarantines throwing files without killing the run', async () => {
   assert.equal(r2.quarantine.length, 1);
 });
 
+test('engine: --vendor filter keeps other vendors\' cached sessions in the index', async () => {
+  freshEnv();
+  const { runIndex, DEFAULT_CONFIG, claudeCodeCollector } = await load();
+  // a tiny second collector so the index spans two vendors
+  const fakeCodex = {
+    vendor: 'codex',
+    parserVersion: 1,
+    capabilities: { commits: true, activeTime: 'exact', cacheWriteSplit: false, sourceDetection: true, promptText: true },
+    defaultRoots: () => ['/nonexistent'],
+    discover: async () => [{ path: '/virtual/rollout-1.jsonl', mtimeMs: 1, size: 1 }],
+    parseFile: async () => ({
+      sessions: [{
+        schemaVersion: 1, vendor: 'codex', id: 'cdx-1', source: 'human', project: '/p', projectPath: '/p',
+        startedAt: 0, endedAt: 10, wallMs: 10, activeMs: 10,
+        counts: { userPrompts: 1, assistantTurns: 1, toolCalls: 0, commits: 0, sidechainCalls: 0 },
+        toolCounts: {}, models: {}, primaryModel: null, meta: {},
+      }],
+      driftStats: {},
+    }),
+  };
+  const cfg = {
+    ...DEFAULT_CONFIG,
+    collectors: { 'claude-code': { enabled: true, root: FIX }, codex: { enabled: true }, gemini: { enabled: false } },
+  };
+
+  const r1 = await runIndex(cfg, [claudeCodeCollector, fakeCodex], { now: 1000 });
+  assert.ok(r1.index.sessions.some((s) => s.vendor === 'codex'));
+  const claudeCount = r1.index.sessions.filter((s) => s.vendor === 'claude-code').length;
+
+  // re-index ONLY claude-code: codex sessions must survive from cache
+  const r2 = await runIndex(cfg, [claudeCodeCollector, fakeCodex], { now: 2000, vendor: 'claude-code' });
+  assert.ok(r2.index.sessions.some((s) => s.vendor === 'codex'), 'codex sessions dropped by --vendor reindex');
+  assert.equal(r2.index.sessions.filter((s) => s.vendor === 'claude-code').length, claudeCount);
+});
+
 test('engine: disabled vendor is skipped', async () => {
   freshEnv();
   const { runIndex, DEFAULT_CONFIG, claudeCodeCollector } = await load();
@@ -85,6 +120,26 @@ test('engine: disabled vendor is skipped', async () => {
   const r = await runIndex(cfg, [claudeCodeCollector], { now: 1000 });
   assert.equal(r.index.sessions.length, 0);
   assert.equal(r.perVendor['claude-code'], undefined);
+});
+
+test('engine: re-indexing does NOT double-count folded subagent tokens (cache round-trip)', async () => {
+  freshEnv();
+  const { runIndex, DEFAULT_CONFIG, claudeCodeCollector } = await load();
+  const SUB = new URL('./fixtures/cc-subagents/', import.meta.url).pathname;
+  const cfg = cfgWithRoot(DEFAULT_CONFIG, SUB);
+
+  const haikuOut = (idx) => idx.sessions.find((s) => s.id === 'PARENT-1')?.models['claude-haiku-4-5']?.output;
+
+  const r1 = await runIndex(cfg, [claudeCodeCollector], { now: 1000 });
+  assert.equal(r1.index.sessions.length, 1); // subagent folded into parent
+  assert.equal(haikuOut(r1.index), 1000);
+
+  // second + third runs serve the parent and subagent from cache; folding must
+  // not mutate the cached objects, so the total stays put (regression: it grew).
+  const r2 = await runIndex(cfg, [claudeCodeCollector], { now: 2000 });
+  assert.equal(haikuOut(r2.index), 1000);
+  const r3 = await runIndex(cfg, [claudeCodeCollector], { now: 3000 });
+  assert.equal(haikuOut(r3.index), 1000);
 });
 
 test('engine: subagent sessions fold into their parent', async () => {

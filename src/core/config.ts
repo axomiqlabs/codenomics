@@ -98,13 +98,16 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
 }
 
+/** Keys that must never be assigned from untrusted input (prototype pollution). */
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
 /** Deep merge: source values win; arrays and scalars replace wholesale. */
 export function mergeConfig<T>(base: T, source: unknown): T {
   if (!isPlainObject(source)) return base;
   if (!isPlainObject(base)) return source as T;
   const out: Record<string, unknown> = { ...base };
   for (const [k, v] of Object.entries(source)) {
-    if (v === undefined) continue;
+    if (v === undefined || UNSAFE_KEYS.has(k)) continue; // drop __proto__/constructor/prototype
     out[k] = isPlainObject(v) && isPlainObject(out[k]) ? mergeConfig(out[k], v) : v;
   }
   return out as T;
@@ -197,6 +200,9 @@ export function getPath(obj: unknown, dotted: string): unknown {
 
 export function setPath(obj: Record<string, unknown>, dotted: string, value: unknown): void {
   const parts = dotted.split('.');
+  if (parts.some((p) => UNSAFE_KEYS.has(p))) {
+    throw new Error(`refusing to set unsafe path: ${dotted}`);
+  }
   let cur: Record<string, unknown> = obj;
   for (const part of parts.slice(0, -1)) {
     if (!isPlainObject(cur[part])) cur[part] = {};

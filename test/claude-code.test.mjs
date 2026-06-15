@@ -15,6 +15,25 @@ for (const name of ['human-commits', 'machine-sdk', 'slash-command']) {
   });
 }
 
+test('claude-code: model name normalization strips [1m] and date suffix', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccn-'));
+  const p = path.join(dir, 'session.jsonl');
+  const ev = (model) => JSON.stringify({
+    type: 'assistant', timestamp: '2026-01-01T00:00:00.000Z', entrypoint: 'cli',
+    message: { id: 'id-' + model, model, usage: { input_tokens: 1, output_tokens: 1 }, content: [] },
+  });
+  // dated, [1m]-marked, and dated+[1m] must all collapse to one key
+  fs.writeFileSync(p, [
+    ev('claude-opus-4-8'),
+    ev('claude-opus-4-8-20260115'),
+    ev('claude-opus-4-8[1m]'),
+    ev('claude-opus-4-8-20260115[1m]'),
+  ].join('\n'));
+  const { sessions } = await claudeCodeCollector.parseFile(p);
+  assert.deepEqual(Object.keys(sessions[0].models), ['claude-opus-4-8']);
+  assert.equal(sessions[0].models['claude-opus-4-8'].calls, 4);
+});
+
 test('claude-code: entrypoint drives source', async () => {
   const human = await claudeCodeCollector.parseFile(path.join(FIX, 'human-commits.jsonl'));
   const machine = await claudeCodeCollector.parseFile(path.join(FIX, 'machine-sdk.jsonl'));

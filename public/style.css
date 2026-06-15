@@ -27,6 +27,7 @@ header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:1px
 .meta{color:var(--dim);font-size:11.5px}
 .spacer{flex:1}
 .note{color:var(--faint);font-size:11px;max-width:460px;text-align:right}
+.exp-banner{margin:0 0 12px;padding:8px 12px;border:1px solid #fcd9a8;background:#fffbeb;color:#b45309;font-size:12px;border-radius:8px}
 
 /* controls */
 .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}

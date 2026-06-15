@@ -65,6 +65,23 @@ test('getPath/setPath dotted access', () => {
   assert.equal(getPath(obj, 'a.b.c'), undefined);
 });
 
+test('mergeConfig rejects prototype-pollution keys', () => {
+  const merged = mergeConfig(
+    { drivers: { attentionUsdPerPrompt: 5 } },
+    JSON.parse('{"drivers":{"__proto__":{"polluted":1}},"constructor":{"x":1}}'),
+  );
+  assert.equal(({}).polluted, undefined, 'Object.prototype must not be polluted');
+  assert.equal(merged.drivers.attentionUsdPerPrompt, 5);
+  assert.equal(Object.prototype.hasOwnProperty.call(merged, 'constructor'), false);
+});
+
+test('setPath refuses unsafe dotted paths', () => {
+  const obj = {};
+  assert.throws(() => setPath(obj, '__proto__.polluted', 1), /unsafe path/);
+  assert.equal(({}).polluted, undefined);
+  assert.throws(() => setPath(obj, 'a.constructor.x', 1), /unsafe path/);
+});
+
 test('validateConfig catches bad limits and drivers', () => {
   const bad = {
     ...DEFAULT_CONFIG,

@@ -22,6 +22,11 @@ import {
 import type { Collector, DiscoveredFile, ParseResult } from './types.js';
 import { ActivityTracker, findFiles } from './shared.js';
 
+// See the note at gemini_cli.api_response: whether input_token_count is
+// inclusive of cached tokens is unverified. Single point of control so a
+// validated answer is a one-line change.
+const GEMINI_INPUT_INCLUDES_CACHED = true;
+
 function asObj(v: unknown): Record<string, unknown> | null {
   return v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : null;
 }
@@ -153,6 +158,7 @@ export const geminiCollector: Collector = {
     cacheWriteSplit: false,
     sourceDetection: false,
     promptText: false,
+    experimental: true, // built against the documented OTEL schema, not validated on real data
   },
 
   defaultRoots() {
@@ -207,7 +213,12 @@ export const geminiCollector: Collector = {
             const input = num(attrs.input_token_count);
             const cached = num(attrs.cached_content_token_count);
             m.calls++;
-            m.input += Math.max(0, input - cached);
+            // ASSUMPTION (unvalidated against real Gemini telemetry): like Codex,
+            // input_token_count is treated as INCLUSIVE of cached tokens, so we
+            // subtract to get uncached input. If real data shows Gemini reports
+            // these exclusively, flip GEMINI_INPUT_INCLUDES_CACHED to false. This
+            // is the single highest-risk Gemini assumption — see collectors.md.
+            m.input += GEMINI_INPUT_INCLUDES_CACHED ? Math.max(0, input - cached) : input;
             m.cacheRead += cached;
             m.output += num(attrs.output_token_count);
             m.reasoning += num(attrs.thoughts_token_count);

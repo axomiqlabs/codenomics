@@ -78,6 +78,34 @@ test('budgets: project and vendor scopes filter sessions', () => {
   assert.equal(statuses[1].used, 10);
 });
 
+test('budgets: window end is exclusive (session at windowEnd excluded)', () => {
+  const now = new Date(2026, 5, 11, 12, 0);
+  const { end } = windowFor('day', now);
+  const atEnd = sessionAt(end.getTime()); // exactly midnight tomorrow
+  const justBefore = sessionAt(end.getTime() - 1);
+  const [status] = evaluateBudgets(
+    [atEnd, justBefore],
+    cfgWith([{ id: 'd', metric: 'costUsd', period: 'day', max: 100, scope: 'global' }]),
+    now,
+  );
+  assert.equal(status.used, 10); // only justBefore counts
+});
+
+test('budgets: trueUsd metric includes attention for human sessions', () => {
+  const now = new Date(2026, 5, 11, 12, 0);
+  const cfg = { ...DEFAULT_CONFIG, drivers: { attentionUsdPerPrompt: 5, engHourlyRateUsd: 0 } };
+  const s = sessionAt(new Date(2026, 5, 11, 9, 0).getTime(), {
+    source: 'human',
+    counts: { userPrompts: 4, assistantTurns: 1, toolCalls: 0, commits: 0, sidechainCalls: 0 },
+  });
+  const [status] = evaluateBudgets(
+    [s],
+    { ...cfg, limits: [{ id: 't', metric: 'trueUsd', period: 'day', max: 100, scope: 'global' }] },
+    now,
+  );
+  assert.equal(status.used, 30); // $10 compute + 4×$5 attention
+});
+
 test('budgets: token metrics', () => {
   const now = new Date(2026, 5, 11, 12, 0);
   const s = sessionAt(new Date(2026, 5, 11, 9, 0).getTime(), {

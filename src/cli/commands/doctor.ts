@@ -26,11 +26,14 @@ export async function run(_argv: string[]): Promise<number> {
     const roots = vcfg?.root ? [vcfg.root] : c.defaultRoots();
     const existing = roots.filter((r) => fs.existsSync(r));
     const state = !enabled ? 'disabled' : existing.length ? `roots: ${existing.join(', ')}` : `no logs found (looked in ${roots.join(', ')})`;
-    console.log(`${c.vendor.padEnd(12)} ${state}`);
+    console.log(`${c.vendor.padEnd(12)} ${state}${c.capabilities.experimental ? '  [experimental]' : ''}`);
     const caps = c.capabilities;
     console.log(
       `             capabilities: commits=${caps.commits} activeTime=${caps.activeTime} cacheSplit=${caps.cacheWriteSplit} source=${caps.sourceDetection} promptText=${caps.promptText}`,
     );
+    if (caps.experimental) {
+      console.log('             note: parser built against documented schema, not validated on real logs — token figures are best-effort');
+    }
   }
 
   console.log('\n# last index run');

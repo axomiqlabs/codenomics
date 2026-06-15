@@ -2,6 +2,15 @@
 let DATA = null;
 const state = { days: 30, vendor: '', src: 'human', proj: '', model: '', sort: 'lastTs', sortDir: -1, expanded: null };
 
+// Access token (only required when the server is bound beyond localhost). Read
+// once from ?token= and persisted for the tab; loopback servers ignore it.
+const API_TOKEN = new URLSearchParams(location.search).get('token') || sessionStorage.getItem('cdnToken') || '';
+if (API_TOKEN) sessionStorage.setItem('cdnToken', API_TOKEN);
+function cfetch(url, init = {}) {
+  const headers = Object.assign({}, init.headers, API_TOKEN ? { 'x-codenomics-token': API_TOKEN } : {});
+  return fetch(url, Object.assign({}, init, { headers }));
+}
+
 const $ = s => document.querySelector(s);
 const fmt = {
   usd: v => v >= 1000 ? '$' + (v/1000).toFixed(2) + 'k' : v >= 10 ? '$' + v.toFixed(0) : '$' + v.toFixed(2),
@@ -263,7 +272,7 @@ async function saveDrawer(){
     },
     limits: drawerLimits.map(l=>({ ...l, max: parseFloat(l.max) || 0 })),
   };
-  const r = await fetch('/api/config', { method:'PUT', headers:{'content-type':'application/json'}, body: JSON.stringify(body) });
+  const r = await cfetch('/api/config', { method:'PUT', headers:{'content-type':'application/json'}, body: JSON.stringify(body) });
   const out = await r.json();
   if (!out.ok){ $('#drawerMsg').textContent = (out.problems||['save failed']).join(' · '); return; }
   $('#drawerMsg').textContent = 'saved ✓';
@@ -272,7 +281,7 @@ async function saveDrawer(){
 
 async function loadReports(){
   try {
-    const r = await fetch('/api/reports');
+    const r = await cfetch('/api/reports');
     const { reports } = await r.json();
     if (!reports.length) return;
     $('#reportsSection').style.display = '';
@@ -281,10 +290,20 @@ async function loadReports(){
 }
 
 async function load(){
-  const r = await fetch('/api/data');
+  const r = await cfetch('/api/data');
   DATA = await r.json();
   for (const s of DATA.sessions) annotate(s);
   $('#meta').textContent = `${DATA.sessions.length} sessions indexed · refreshed ${new Date(DATA.generatedAt).toTimeString().slice(0,8)}${DATA.summarizing?' · recaps generating…':''}`;
+  // experimental-vendor warning: token math for these isn't validated on real logs
+  const caps = DATA.capabilities || {};
+  const expVendors = [...new Set(DATA.sessions.map(s=>s.vendor))].filter(v=>caps[v] && caps[v].experimental);
+  const banner = $('#expBanner');
+  if (banner) {
+    if (expVendors.length) {
+      banner.textContent = `⚠ ${expVendors.join(', ')} support is experimental — token figures are best-effort and not yet validated against real logs.`;
+      banner.hidden = false;
+    } else banner.hidden = true;
+  }
   populateFilters();
   render();
   if (DATA.summarizing) setTimeout(load, 8000);
@@ -319,7 +338,7 @@ $('#sessTable').addEventListener('click', e=>{
 });
 $('#sumBtn').addEventListener('click', async ()=>{
   const b = $('#sumBtn'); b.disabled = true; b.textContent = '✦ GENERATING…';
-  await fetch('/api/summarize?limit=40', { method:'POST' });
+  await cfetch('/api/summarize?limit=40', { method:'POST' });
   setTimeout(()=>{ load().then(()=>{ b.disabled=false; b.textContent='✦ GENERATE RECAPS'; }); }, 10000);
 });
 $('#settingsBtn').addEventListener('click', openDrawer);

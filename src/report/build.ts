@@ -115,7 +115,7 @@ export function buildReport(
       { label: 'true cost', value: usd(a.trueUsd), delta: delta(a.trueUsd, p.trueUsd, true) },
       { label: 'compute $ (API-equiv)', value: usd(a.costUsd), delta: delta(a.costUsd, p.costUsd, true) },
       { label: 'commits', value: String(a.commits), delta: delta(a.commits, p.commits) },
-      { label: 'sessions', value: `${a.sessions} (${a.humanSessions}h/${a.machineSessions}m)`, delta: delta(a.sessions, p.sessions) },
+      { label: 'sessions', value: `${a.sessions} (${a.humanSessions}h/${a.machineSessions}m${a.unknownSessions ? `/${a.unknownSessions}?` : ''})`, delta: delta(a.sessions, p.sessions) },
       { label: 'prompts', value: String(a.prompts), delta: delta(a.prompts, p.prompts) },
       { label: 'active time', value: mins(a.activeMs), delta: delta(a.activeMs, p.activeMs) },
       { label: 'cache hit', value: a.cacheReadShare !== null ? `${(a.cacheReadShare * 100).toFixed(1)}%` : '—', delta: delta(a.cacheReadShare, p.cacheReadShare) },

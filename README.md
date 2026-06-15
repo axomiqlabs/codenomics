@@ -12,7 +12,7 @@ TRUE $/COMMIT = (compute $ + prompts × attention $ + active time × hourly $) /
 
 A model that burns more tokens but needs fewer corrections and less
 babysitting *wins* on this number. That's the comparison that actually matters
-when you pick a model or an agent — and no token counter shows it.
+when you pick a model or an agent — and a token counter alone won't show it.
 
 ## Quick start
 

@@ -3,7 +3,7 @@
 // quarantines per-file failures so one bad file never kills a run, and rolls
 // up drift stats for `doctor`.
 
-import { SCHEMA_VERSION, type IndexFileV1, type SessionV1 } from './schema.js';
+import { SCHEMA_VERSION, primaryModelOf, type IndexFileV1, type SessionV1 } from './schema.js';
 import type { CodenomicsConfig } from './config.js';
 import type { Collector } from '../collectors/types.js';
 import { cachePath, ensureDataDir, readJson, writeIndex, writeJson } from './store.js';
@@ -137,48 +137,76 @@ export async function runIndex(
  * Fold subagent transcript sessions (ext.claudeCode.parentSessionId) into
  * their parent: token usage, tool calls, and commits roll up; the subagent's
  * API calls count as the parent's sidechain calls. Active/wall time is NOT
- * added (subagents run inside the parent's span). Runs on the assembled list
- * each index, so per-file caching stays intact. Orphans stay standalone.
+ * added (subagents run inside the parent's span). Orphans stay standalone.
+ *
+ * IMPORTANT: this never mutates its inputs. The session objects passed in are
+ * shared by reference with the persisted per-file cache; mutating a parent in
+ * place would be written back to cache.json and re-folded on every subsequent
+ * index, inflating subagent tokens without bound. Parents that receive a fold
+ * are deep-cloned first so the cached (raw, unfolded) objects stay pristine.
  */
 export function foldSubagentSessions(sessions: SessionV1[]): SessionV1[] {
-  const byKey = new Map<string, SessionV1>();
-  for (const s of sessions) byKey.set(`${s.vendor}:${s.id}`, s);
+  // Which parents actually receive a subagent? Only those get cloned.
+  const foldsByParentKey = new Map<string, SessionV1[]>();
+  const sessionByKey = new Map<string, SessionV1>();
+  for (const s of sessions) sessionByKey.set(`${s.vendor}:${s.id}`, s);
+  for (const s of sessions) {
+    const parentId = (s.ext?.claudeCode as { parentSessionId?: string } | undefined)?.parentSessionId;
+    if (!parentId) continue;
+    const parentKey = `${s.vendor}:${parentId}`;
+    const parent = sessionByKey.get(parentKey);
+    if (!parent || parent === s) continue; // orphan or self → stays standalone
+    (foldsByParentKey.get(parentKey) ?? foldsByParentKey.set(parentKey, []).get(parentKey)!).push(s);
+  }
 
   const out: SessionV1[] = [];
   for (const s of sessions) {
+    const key = `${s.vendor}:${s.id}`;
+    // a folded subagent is absorbed into its parent: drop it from the output
     const parentId = (s.ext?.claudeCode as { parentSessionId?: string } | undefined)?.parentSessionId;
-    const parent = parentId ? byKey.get(`${s.vendor}:${parentId}`) : undefined;
-    if (!parent || parent === s) {
-      out.push(s);
+    if (parentId) {
+      const parent = sessionByKey.get(`${s.vendor}:${parentId}`);
+      if (parent && parent !== s) continue;
+    }
+
+    const folds = foldsByParentKey.get(key);
+    if (!folds) {
+      out.push(s); // untouched: safe to share the reference, never mutated
       continue;
     }
-    for (const [model, u] of Object.entries(s.models)) {
-      const pm = (parent.models[model] ??= { calls: 0, input: 0, output: 0, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, reasoning: 0 });
-      pm.calls += u.calls;
-      pm.input += u.input;
-      pm.output += u.output;
-      pm.cacheRead += u.cacheRead;
-      pm.cacheWrite5m += u.cacheWrite5m;
-      pm.cacheWrite1h += u.cacheWrite1h;
-      pm.reasoning += u.reasoning;
+
+    // clone the parent before accumulating so cached objects stay raw
+    const parent = cloneSession(s);
+    for (const sub of folds) {
+      for (const [model, u] of Object.entries(sub.models)) {
+        const pm = (parent.models[model] ??= { calls: 0, input: 0, output: 0, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, reasoning: 0 });
+        pm.calls += u.calls;
+        pm.input += u.input;
+        pm.output += u.output;
+        pm.cacheRead += u.cacheRead;
+        pm.cacheWrite5m += u.cacheWrite5m;
+        pm.cacheWrite1h += u.cacheWrite1h;
+        pm.reasoning += u.reasoning;
+      }
+      parent.counts.sidechainCalls += Object.values(sub.models).reduce((a, m) => a + m.calls, 0);
+      parent.counts.toolCalls += sub.counts.toolCalls;
+      if (sub.counts.commits) parent.counts.commits = (parent.counts.commits ?? 0) + sub.counts.commits;
+      for (const [tool, n] of Object.entries(sub.toolCounts)) {
+        parent.toolCounts[tool] = (parent.toolCounts[tool] || 0) + n;
+      }
     }
-    parent.counts.sidechainCalls += Object.values(s.models).reduce((a, m) => a + m.calls, 0);
-    parent.counts.toolCalls += s.counts.toolCalls;
-    if (s.counts.commits) parent.counts.commits = (parent.counts.commits ?? 0) + s.counts.commits;
-    for (const [tool, n] of Object.entries(s.toolCounts)) {
-      parent.toolCounts[tool] = (parent.toolCounts[tool] || 0) + n;
-    }
-  }
-  // primary model may have shifted after folding
-  for (const s of out) {
-    let best: string | null = null;
-    let bestOut = -1;
-    for (const [name, m] of Object.entries(s.models)) {
-      if (m.output > bestOut) { best = name; bestOut = m.output; }
-    }
-    if (best !== null) s.primaryModel = best;
+    // primary model may have shifted after folding
+    parent.primaryModel = primaryModelOf(parent.models) ?? parent.primaryModel;
+    out.push(parent);
   }
   return out;
+}
+
+/** Deep-clone the mutable fields a fold touches; other fields can be shared. */
+function cloneSession(s: SessionV1): SessionV1 {
+  const models: SessionV1['models'] = {};
+  for (const [k, m] of Object.entries(s.models)) models[k] = { ...m };
+  return { ...s, counts: { ...s.counts }, toolCounts: { ...s.toolCounts }, models };
 }
 
 export function diagnosticsPath(): string {

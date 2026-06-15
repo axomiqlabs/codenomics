@@ -19,6 +19,8 @@ export interface CollectorCapabilities {
   sourceDetection: boolean;
   /** prompt/recap text available */
   promptText: boolean;
+  /** parser/token-semantics not yet validated against real logs; surface a warning */
+  experimental?: boolean;
 }
 
 export interface ParseResult {

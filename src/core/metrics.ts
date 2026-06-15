@@ -59,9 +59,12 @@ export function deriveCosts(s: SessionV1, cfg: CodenomicsConfig): DerivedCosts {
     if (c === null) unpricedModels.push(model);
     else costUsd += c;
   }
-  const isMachine = s.source === 'machine';
-  const attentionUsd = isMachine ? 0 : s.counts.userPrompts * cfg.drivers.attentionUsdPerPrompt;
-  const timeUsd = isMachine ? 0 : (s.activeMs / 3_600_000) * cfg.drivers.engHourlyRateUsd;
+  // Drivers model HUMAN cost. Only sessions positively identified as human
+  // incur attention/time; 'machine' AND 'unknown' contribute $0 (capability-
+  // gating, not a fabricated non-zero — see schema Source).
+  const isHuman = s.source === 'human';
+  const attentionUsd = isHuman ? s.counts.userPrompts * cfg.drivers.attentionUsdPerPrompt : 0;
+  const timeUsd = isHuman ? (s.activeMs / 3_600_000) * cfg.drivers.engHourlyRateUsd : 0;
   return {
     costUsd: round4(costUsd),
     attentionUsd: round4(attentionUsd),
@@ -79,6 +82,8 @@ export interface Aggregate {
   sessions: number;
   humanSessions: number;
   machineSessions: number;
+  /** source could not be determined; contributes $0 attention/time */
+  unknownSessions: number;
   costUsd: number;
   attentionUsd: number;
   timeUsd: number;
@@ -103,6 +108,7 @@ export function aggregate(sessions: SessionV1[], cfg: CodenomicsConfig): Aggrega
     sessions: 0,
     humanSessions: 0,
     machineSessions: 0,
+    unknownSessions: 0,
     costUsd: 0,
     attentionUsd: 0,
     timeUsd: 0,
@@ -125,7 +131,8 @@ export function aggregate(sessions: SessionV1[], cfg: CodenomicsConfig): Aggrega
     const d = deriveCosts(s, cfg);
     agg.sessions++;
     if (s.source === 'machine') agg.machineSessions++;
-    else agg.humanSessions++;
+    else if (s.source === 'human') agg.humanSessions++;
+    else agg.unknownSessions++;
     agg.costUsd += d.costUsd;
     agg.attentionUsd += d.attentionUsd;
     agg.timeUsd += d.timeUsd;

@@ -19,7 +19,7 @@ import {
   type Source,
 } from '../core/schema.js';
 import type { Collector, DiscoveredFile, ParseResult } from './types.js';
-import { ActivityTracker, COMMIT_RE, findFiles, projectKeyFromPath, readJsonlObjects, truncate } from './shared.js';
+import { ActivityTracker, countCommits, findFiles, projectKeyFromPath, readJsonlObjects, truncate } from './shared.js';
 
 interface TokenUsage {
   input_tokens?: number;
@@ -204,7 +204,7 @@ export const codexCollector: Collector = {
             const name = asStr(payload.name) ?? 'unknown';
             toolCounts[name] = (toolCounts[name] || 0) + 1;
             const cmd = commandFromArguments(payload.arguments);
-            if (cmd !== null && COMMIT_RE.test(cmd)) commits++;
+            if (cmd !== null) commits += countCommits(cmd);
           }
           // message/reasoning/function_call_output items carry no metrics we need
           break;

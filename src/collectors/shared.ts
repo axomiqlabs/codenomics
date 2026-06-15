@@ -7,7 +7,44 @@ import os from 'node:os';
 import readline from 'node:readline';
 import type { DiscoveredFile } from './types.js';
 
-export const COMMIT_RE = /\bgit\b[^\n]*\bcommit\b/;
+/**
+ * Count real `git commit` invocations in a shell command.
+ *
+ * The denominator of the headline metric, so it's deliberate about what counts:
+ * - splits chained commands (`&&`, `||`, `;`, `|`, newlines) so
+ *   `git add . && git commit && git commit` counts as two;
+ * - requires `commit` to be the git SUBCOMMAND, not a substring — so
+ *   `git log ...commit`, `git show`, `git config commit.template`, `git diff`
+ *   do NOT count;
+ * - skips git global options/args (`-C dir`, `-c k=v`, `--git-dir=...`);
+ * - excludes `--dry-run` (creates no commit).
+ *
+ * It cannot see exit status (transcripts rarely carry it), so a commit that
+ * failed because nothing was staged still counts — a known approximation,
+ * documented on the methodology page.
+ */
+export function countCommits(command: string): number {
+  let n = 0;
+  for (const segment of command.split(/&&|\|\||;|\||\n/)) {
+    if (isGitCommit(segment)) n++;
+  }
+  return n;
+}
+
+const GIT_GLOBAL_OPTS_WITH_ARG = new Set(['-C', '-c', '--git-dir', '--work-tree', '--namespace', '--exec-path']);
+
+function isGitCommit(segment: string): boolean {
+  const tokens = segment.trim().split(/\s+/).filter(Boolean);
+  let i = tokens.findIndex((t) => t === 'git' || t.endsWith('/git'));
+  if (i === -1) return false;
+  i++;
+  // skip git's own global options (and their values) to reach the subcommand
+  while (i < tokens.length && tokens[i]!.startsWith('-')) {
+    i += GIT_GLOBAL_OPTS_WITH_ARG.has(tokens[i]!) ? 2 : 1;
+  }
+  if (tokens[i] !== 'commit') return false;
+  return !tokens.slice(i + 1).includes('--dry-run');
+}
 
 /** gaps longer than this don't count as active time */
 export const IDLE_CAP_MS = 5 * 60 * 1000;

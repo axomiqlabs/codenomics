@@ -86,3 +86,24 @@ test('codex: counter-reset clamp on totals-only stream', async () => {
   assert.equal(m.cacheRead, 200 + 100 + 100);
   assert.equal(m.output, 50 + 30 + 20);
 });
+
+test('codex: UI re-emit on the totals-only path is not double-counted', async () => {
+  const ev = (input, cached, output) =>
+    JSON.stringify({
+      timestamp: '2026-01-01T00:00:00.000Z',
+      type: 'event_msg',
+      payload: { type: 'token_count', info: { total_token_usage: { input_tokens: input, cached_input_tokens: cached, output_tokens: output, reasoning_output_tokens: 0 } } },
+    });
+  const lines = [
+    JSON.stringify({ timestamp: '2026-01-01T00:00:00.000Z', type: 'turn_context', payload: { model: 'gpt-test', cwd: '/tmp' } }),
+    ev(1000, 200, 50), // turn 1
+    ev(1000, 200, 50), // UI refresh: identical cumulative totals → must be skipped
+    ev(1500, 300, 80), // turn 2: +500/+100/+30
+  ].join('\n');
+  const { sessions } = await codexCollector.parseFile(tmpFile(lines));
+  const m = sessions[0].models['gpt-test'];
+  assert.equal(m.calls, 2); // not 3 — the re-emit added nothing
+  assert.equal(m.input + m.cacheRead, 1500);
+  assert.equal(m.cacheRead, 300);
+  assert.equal(m.output, 80);
+});

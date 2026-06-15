@@ -24,7 +24,7 @@
         "Grep": 1
       },
       "models": {
-        "claude-haiku-4-5-20251001": {
+        "claude-haiku-4-5": {
           "calls": 4,
           "input": 34,
           "output": 2831,
@@ -34,7 +34,7 @@
           "reasoning": 0
         }
       },
-      "primaryModel": "claude-haiku-4-5-20251001",
+      "primaryModel": "claude-haiku-4-5",
       "meta": {
         "gitBranch": "main",
         "cliVersion": "2.1.168",

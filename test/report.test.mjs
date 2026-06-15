@@ -102,3 +102,25 @@ test('rollups: aggregates only, no text fields, session counters on primary mode
   assert.equal(r.commits, 2);
   assert.ok(!JSON.stringify(rollups).includes('SECRET'));
 });
+
+test('rollups: multi-model session attaches counters to the primary row only (no double count)', () => {
+  const s = sess(IN_WEEK, {
+    models: {
+      'claude-fable-5': usage({ output: 10 }), // not primary
+      'claude-opus-4-8': usage({ output: 999 }), // primary (most output)
+    },
+    primaryModel: 'claude-opus-4-8',
+  });
+  const rollups = buildRollups([s]);
+  assert.equal(rollups.length, 2); // one row per model
+  const byModel = Object.fromEntries(rollups.map((r) => [r.model, r]));
+  // session/prompt/commit counters land on exactly the primary model's row
+  assert.equal(byModel['claude-opus-4-8'].sessions, 1);
+  assert.equal(byModel['claude-opus-4-8'].prompts, 5);
+  assert.equal(byModel['claude-opus-4-8'].commits, 2);
+  assert.equal(byModel['claude-fable-5'].sessions, 0);
+  assert.equal(byModel['claude-fable-5'].prompts, 0);
+  assert.equal(byModel['claude-fable-5'].commits, 0);
+  // totals across rows are not inflated
+  assert.equal(rollups.reduce((a, r) => a + r.commits, 0), 2);
+});

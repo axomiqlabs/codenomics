@@ -65,18 +65,18 @@
       <li><code>engHourlyRateUsd</code> — optional loaded rate; adds supervision time to true cost. Default off.</li>
       <li><code>pricing</code> overrides — set exact $/MTok for any model the day a vendor changes it.</li>
     </ul>
-    <p>This is the part competitors can't replicate from an API proxy: the human side of the equation lives where the human is — on your machine, under your assumptions.</p>
+    <p>This is the part an API proxy structurally can't see: the human side of the equation lives where the human is — on your machine, under your assumptions.</p>
 
     <h2 id="commits">What counts as a "deliverable"</h2>
-    <p>Today the proxy for shipped work is a <b>commit</b>, detected from the agent actually running <code>git commit</code> in its tool calls — not merely being asked to. It's a robust, vendor-neutral signal of "something concrete got produced." Where an agent's logs can't reveal commits (Gemini's telemetry, for instance), the field is shown as <code>—</code> rather than faked to zero.</p>
-    <div class="note">On the roadmap: merged-PR ground truth via GitHub, so "deliverable" graduates from a good proxy to the real thing — including review cycles and reverts.</div>
+    <p>Today the proxy for shipped work is a <b>commit</b>, detected from the agent actually running <code>git commit</code> in its tool calls — not merely being asked to. We count it as the git <em>subcommand</em>, so <code>git log</code>, <code>git show</code>, <code>git config commit.template</code> and <code>--dry-run</code> don't count, and chained commands (<code>git commit … &amp;&amp; git commit …</code>) count each. Where an agent's logs can't reveal commits (Gemini's telemetry, for instance), the field is shown as <code>—</code> rather than faked to zero.</p>
+    <div class="note">It's a proxy, and we're upfront about its limits: transcripts rarely carry exit status, so a commit that failed (nothing staged) can still count, and a squash/amend is indistinguishable from a new commit. On the roadmap: merged-PR ground truth via GitHub, so "deliverable" graduates from a good proxy to the real thing — including review cycles and reverts.</div>
 
     <h2 id="multivendor">One model across every agent</h2>
     <p>Each agent writes a different, undocumented log format. Codenomics has a dedicated collector per agent that normalizes them into one schema:</p>
     <ul>
       <li><b>Claude Code</b> — full fidelity: cache 5m/1h split, commits, human vs machine, prompts. Subagent transcripts (which most tools miss) are folded into their parent session, so the compute that produced a commit is counted against that commit.</li>
       <li><b>Codex CLI</b> — per-turn token accounting validated to reconcile exactly against the session's cumulative totals, including reasoning tokens and subagent detection.</li>
-      <li><b>Gemini CLI</b> — best-effort from OTEL telemetry (requires telemetry enabled); capability-gated so missing signals read as "—", never as fabricated zeros.</li>
+      <li><b>Gemini CLI</b> — <b>experimental</b>: best-effort from OTEL telemetry (requires telemetry enabled), built against the documented schema but not yet validated on real logs, so its token figures are flagged in the dashboard. Capability-gated so missing signals read as "—", never as fabricated zeros.</li>
     </ul>
     <p>These are fast-moving private formats, so parsers are tolerant by design: malformed lines are skipped, unknown events are counted as drift you can inspect, and a file that won't parse is quarantined without breaking the run.</p>
 
@@ -87,7 +87,7 @@
     <p>Codenomics is local-first, and that's a load-bearing design choice, not a tagline. This tool reads every transcript on your machine — so it has to be one you can trust by inspection.</p>
     <ul>
       <li><b>Nothing is uploaded by any command today.</b> Index, dashboard, and reports are entirely local; the dashboard binds to <code>127.0.0.1</code> and warns loudly if you bind it wider.</li>
-      <li><b>The future team sync sends aggregates only.</b> Its payload type has no text-bearing fields — daily token/commit/prompt counts per model and project, never prompts, code, transcripts, or file paths. It's opt-in, inspectable (<code>codenomics sync --json</code>), and versioned.</li>
+      <li><b>The future team sync sends aggregates only.</b> Its payload type has no free-text fields — daily token/commit/prompt counts per model and project. The one identifying value is the <b>project label</b>, derived from a working-directory path (and hashable); prompts, code, transcripts, and full file paths never leave the machine. It's opt-in, inspectable (<code>codenomics sync --json</code>), and versioned.</li>
       <li><b>It's open source.</b> Read exactly what the collectors do and verify these claims line by line.</li>
     </ul>
 

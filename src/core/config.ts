@@ -35,7 +35,7 @@ export interface DriverConfig {
 }
 
 export interface SyncConfig {
-  /** base URL of the codenomics-cloud backend (no path), or null to disable */
+  /** base URL of the cloud benchmark backend (no path), or null to disable */
   endpoint: string | null;
   /** bearer token; prefer CODENOMICS_SYNC_TOKEN env over storing it on disk */
   token: string | null;

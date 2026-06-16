@@ -33,7 +33,7 @@ interface MetricDef {
   value(a: CohortAgg): number | null;
 }
 
-// Keys + formulas MUST match the backend (codenomics-cloud) src/metrics.ts.
+// Keys + formulas MUST match the cloud backend's benchmark metric definitions.
 const METRICS: MetricDef[] = [
   { key: 'prompts_per_commit', label: 'Prompts / commit', format: 'num', lowerIsBetter: true, value: (a) => (a.commits > 0 ? a.prompts / a.commits : null) },
   { key: 'tokens_per_commit', label: 'Tokens / commit', format: 'tok', lowerIsBetter: true, value: (a) => (a.commits > 0 ? totalTokens(a) / a.commits : null) },

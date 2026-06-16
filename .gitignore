@@ -4,6 +4,10 @@ dist/
 data/
 .DS_Store
 
+# internal-only: agent steering + private deploy runbook (never public)
+.claude/
+docs/deploy-cloudflare.md
+
 # captured screenshots (brand assets under */assets/brand are tracked explicitly)
 screenshots/
 *[Ss]creenshot*

@@ -401,5 +401,57 @@ $('#limitsTable').addEventListener('click', e=>{
   if (del !== undefined){ drawerLimits.splice(+del, 1); renderLimits(); }
 });
 
+// ---- benchmark panel ("How you compare") ----
+function benchFmt(v, format){
+  if (v === null || v === undefined) return '—';
+  if (format === 'pct') return (v*100).toFixed(0) + '%';
+  if (format === 'tok') return fmt.tok(v);
+  if (format === 'min') return v.toFixed(1) + 'm';
+  return v < 10 ? v.toFixed(1) : Math.round(v).toLocaleString('en-US');
+}
+function benchMsg(t){ return `<div class="bench-msg">${esc(t)}</div>`; }
+function benchCard(label, you, bodyHtml){
+  return `<div class="bench-card muted"><div class="bc-head"><span class="bc-label">${esc(label)}</span><span class="bc-you">${you}</span></div>${bodyHtml}</div>`;
+}
+function renderCard(m){
+  const you = benchFmt(m.yourValue, m.format);
+  if (m.status === 'undefined') return benchCard(m.label, you, '<div class="bc-withheld">no commits in window</div>');
+  if (m.status === 'withheld') return benchCard(m.label, you, '<div class="bc-withheld">field hidden — needs ≥8 contributing orgs</div>');
+  if (m.status === 'error') return benchCard(m.label, you, '<div class="bc-withheld">field unavailable</div>');
+  const bp = m.breakpoints, span = bp.p90 - bp.p10;
+  const youPct = Math.max(0, Math.min(100, span > 0 ? ((m.yourValue - bp.p10)/span)*100 : 50));
+  const medPct = Math.max(0, Math.min(100, span > 0 ? ((bp.p50 - bp.p10)/span)*100 : 50));
+  const good = m.lowerIsBetter ? (m.yourValue < bp.p50) : (m.yourValue > bp.p50);
+  const pctText = m.atFloor ? '≤10th pct' : m.atCeil ? '≥90th pct' : (m.percentile != null ? `≈${m.percentile}th pct` : 'mid-range');
+  const dir = m.lowerIsBetter ? 'lower is better' : 'higher is better';
+  return `<div class="bench-card">
+    <div class="bc-head"><span class="bc-label">${esc(m.label)}</span><span class="bc-you ${good?'good':'bad'}">${you}</span></div>
+    <div class="bc-track">
+      <div class="bc-tick" style="left:${medPct}%"></div>
+      <div class="bc-marker ${good?'good':'bad'}" style="left:${youPct}%"></div>
+    </div>
+    <div class="bc-foot"><span class="${good?'good':'bad'}">${pctText}</span><span class="bc-dim">median ${benchFmt(bp.p50,m.format)} · n=${m.n} · ${dir}</span></div>
+  </div>`;
+}
+function renderBench(p){
+  const el = $('#benchPanel');
+  if (!p.configured) return void (el.innerHTML = benchMsg(p.message || 'Benchmark not configured.'));
+  if (p.authError) return void (el.innerHTML = benchMsg('Benchmark token was rejected — check sync.token.'));
+  if (p.unreachable) return void (el.innerHTML = benchMsg('Couldn’t reach the benchmark service.'));
+  if (!p.metrics) return void (el.innerHTML = benchMsg(p.message || 'No data to compare yet.'));
+  const c = p.cohort;
+  const head = `<div class="bench-cohort">your cohort · <b>${esc(VENDOR_TAG[c.vendor]||c.vendor)}</b> · ${badge(c.model)} · ${esc(c.source)} · <b>${c.sessions}</b> sessions, <b>${c.commits}</b> commits · last ${p.windowDays}d</div>`;
+  el.innerHTML = head + `<div class="bench-grid">${p.metrics.map(renderCard).join('')}</div>`;
+}
+async function loadBenchmark(){
+  try {
+    const r = await cfetch('/api/benchmark');
+    renderBench(await r.json());
+  } catch {
+    $('#benchPanel').innerHTML = benchMsg('benchmark unavailable');
+  }
+}
+
 load();
 loadReports();
+loadBenchmark();

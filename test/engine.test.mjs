@@ -179,3 +179,27 @@ test('engine: subagent sessions fold into their parent', async () => {
   assert.equal(p.primaryModel, 'claude-haiku-4-5'); // recomputed after fold
   assert.ok(out.find((s) => s.id === 'agent-orphan'));
 });
+
+test('engine: reclassifies codenomics own claude -p recap runs from human to machine', async () => {
+  freshEnv();
+  const { reclassifySelfRecaps } = await import('../dist/core/engine.js');
+  const { RECAP_PROMPT_MARKER } = await import('../dist/core/schema.js');
+  const mk = (id, firstPrompt, over = {}) => ({
+    schemaVersion: 1, vendor: 'claude-code', id, source: 'human', project: '/p', projectPath: '/p',
+    startedAt: 0, endedAt: 1000, wallMs: 1000, activeMs: 500,
+    counts: { userPrompts: 1, assistantTurns: 1, toolCalls: 0, commits: 0, sidechainCalls: 0 },
+    toolCounts: {},
+    models: { 'claude-haiku-4-5': { calls: 1, input: 50, output: 99, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, reasoning: 0 } },
+    primaryModel: 'claude-haiku-4-5', meta: firstPrompt ? { firstPrompt } : {}, ...over,
+  });
+
+  const recap = mk('recap-1', RECAP_PROMPT_MARKER + '\nBased on the opening request...');
+  const real = mk('real-1', 'Fix the broken nav on the pricing page.');
+  const noPrompt = mk('np-1', undefined);
+  const out = reclassifySelfRecaps([recap, real, noPrompt]);
+
+  assert.equal(out.find((s) => s.id === 'recap-1').source, 'machine'); // self-recap -> machine
+  assert.equal(out.find((s) => s.id === 'real-1').source, 'human');    // genuine work untouched
+  assert.equal(out.find((s) => s.id === 'np-1').source, 'human');      // no firstPrompt, untouched
+  assert.equal(recap.source, 'human'); // input not mutated (aliases the cache)
+});

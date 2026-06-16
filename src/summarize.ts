@@ -3,7 +3,7 @@
 // `${vendor}:${sessionId}` — one API call per session, ever.
 
 import { spawn } from 'node:child_process';
-import { sessionKey, type SessionV1 } from './core/schema.js';
+import { isSelfRecapSession, RECAP_PROMPT_MARKER, sessionKey, type SessionV1 } from './core/schema.js';
 import { readIndex, readSummaries, writeSummaries } from './core/store.js';
 
 const MODEL = 'claude-haiku-4-5';
@@ -26,7 +26,7 @@ function claudeRecap(prompt: string): Promise<string | null> {
 
 function buildPrompt(s: SessionV1): string {
   return [
-    'You are writing a one-line recap for a dashboard of past AI coding sessions.',
+    RECAP_PROMPT_MARKER,
     'Based on the opening request and the final assistant message below, write 1-2 plain sentences',
     'describing what was worked on and (if evident) the outcome. No preamble, no markdown, no quotes.',
     '',
@@ -59,6 +59,7 @@ export async function summarizeSessions(limit: number, log: (line: string) => vo
       (s) =>
         s.vendor === 'claude-code' &&
         s.source === 'human' &&
+        !isSelfRecapSession(s) && // never recap our own recap-generation runs
         !sums[sessionKey(s)] &&
         (s.meta.firstPrompt || s.meta.lastAssistantText) &&
         s.counts.userPrompts > 0 &&

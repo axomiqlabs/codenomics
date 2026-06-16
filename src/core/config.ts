@@ -66,8 +66,11 @@ export const DEFAULT_CONFIG: CodenomicsConfig = {
   },
   report: { slackWebhookUrl: null },
   server: { port: 3737, host: '127.0.0.1' },
-  // endpoint baked in so users never configure it (swap to api.codenomics.ai
-  // once the custom domain lands); a token is obtained via self-serve signup.
+  // endpoint baked in so users never configure it; a token is obtained via
+  // self-serve signup. PRE-LAUNCH TODO: this raw *.workers.dev host names the
+  // private backend deployment (infra leak in the public repo). Swap to the
+  // branded `https://api.codenomics.ai` once that custom domain routes to the
+  // worker — kept as-is for now so sync/benchmark keep working.
   sync: { endpoint: 'https://codenomics-cloud.codenomics.workers.dev', token: null, salt: null },
 };
 

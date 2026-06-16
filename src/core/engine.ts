@@ -3,7 +3,7 @@
 // quarantines per-file failures so one bad file never kills a run, and rolls
 // up drift stats for `doctor`.
 
-import { SCHEMA_VERSION, primaryModelOf, type IndexFileV1, type SessionV1 } from './schema.js';
+import { isSelfRecapSession, SCHEMA_VERSION, primaryModelOf, type IndexFileV1, type SessionV1 } from './schema.js';
 import type { CodenomicsConfig } from './config.js';
 import type { Collector } from '../collectors/types.js';
 import { cachePath, ensureDataDir, readJson, writeIndex, writeJson } from './store.js';
@@ -122,7 +122,7 @@ export async function runIndex(
     }
   }
 
-  const merged = foldSubagentSessions(sessions);
+  const merged = reclassifySelfRecaps(foldSubagentSessions(sessions));
   merged.sort((a, b) => (b.endedAt || 0) - (a.endedAt || 0));
   const index: IndexFileV1 = { schemaVersion: SCHEMA_VERSION, generatedAt: opts.now ?? Date.now(), sessions: merged };
 
@@ -131,6 +131,24 @@ export async function runIndex(
   writeJson(diagnosticsPath(), { at: index.generatedAt, perVendor, quarantine });
 
   return { index, perVendor, quarantine };
+}
+
+/**
+ * Reclassify codenomics' own `claude -p` recap-generation runs from `human` to
+ * `machine`. The collector reads their `entrypoint` as `cli` and would tag them
+ * human, but they are self-generated overhead: counting them inflates human
+ * stats, re-summarizing them wastes API spend, and their `firstPrompt` (the
+ * recap prompt itself) leaks into the dashboard as a recap. As `machine` they
+ * contribute $0 attention/time, are excluded from recap candidates, and render
+ * as "automated · no prompt" — while their compute cost stays visible.
+ *
+ * Like `foldSubagentSessions`, this never mutates inputs (they alias the cache);
+ * a reclassified session is replaced with a shallow clone.
+ */
+export function reclassifySelfRecaps(sessions: SessionV1[]): SessionV1[] {
+  return sessions.map((s) =>
+    s.source === 'human' && isSelfRecapSession(s) ? { ...s, source: 'machine' as const } : s,
+  );
 }
 
 /**

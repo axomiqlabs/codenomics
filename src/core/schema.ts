@@ -91,6 +91,23 @@ export function sessionKey(s: Pick<SessionV1, 'vendor' | 'id'>): string {
   return `${s.vendor}:${s.id}`;
 }
 
+/**
+ * Leading line of the recap prompt (see `buildPrompt` in `summarize.ts`). When
+ * codenomics shells out to `claude -p` to write recaps, those runs leave their
+ * own transcripts on disk; the collector would otherwise index them as human
+ * sessions whose `firstPrompt` IS this marker. The engine uses it to reclassify
+ * such self-generated sessions as `machine` so they stop polluting human stats,
+ * stop being re-summarized (wasted spend), and never surface the prompt as a
+ * dashboard recap. Keep this in exact sync with `buildPrompt`'s first line.
+ */
+export const RECAP_PROMPT_MARKER =
+  'You are writing a one-line recap for a dashboard of past AI coding sessions.';
+
+/** True if a session is codenomics' own `claude -p` recap-generation run. */
+export function isSelfRecapSession(s: Pick<SessionV1, 'meta'>): boolean {
+  return (s.meta.firstPrompt ?? '').startsWith(RECAP_PROMPT_MARKER);
+}
+
 export function emptyModelUsage(): ModelUsage {
   return { calls: 0, input: 0, output: 0, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, reasoning: 0 };
 }

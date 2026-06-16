@@ -433,15 +433,49 @@ function renderCard(m){
     <div class="bc-foot"><span class="${good?'good':'bad'}">${pctText}</span><span class="bc-dim">median ${benchFmt(bp.p50,m.format)} · n=${m.n} · ${dir}</span></div>
   </div>`;
 }
+// Friendly off-state shown before the user has joined — value first, one button,
+// no jargon. Self-serve signup happens server-side via /api/benchmark/join.
+function benchJoin(){
+  return `<div class="bench-join">
+    <div class="bj-title">See where you stand</div>
+    <div class="bj-body">See how your <b>$/commit</b>, prompts-per-commit, and cache efficiency compare to other teams — computed from anonymous totals only. Your code and prompts never leave this machine.</div>
+    <button class="btn primary" id="benchJoinBtn">Join free — see your ranking</button>
+    <div class="bj-fine">No account, no card — just anonymous aggregates.</div>
+    <div class="bj-msg" id="benchJoinMsg"></div>
+  </div>`;
+}
 function renderBench(p){
   const el = $('#benchPanel');
-  if (!p.configured) return void (el.innerHTML = benchMsg(p.message || 'Benchmark not configured.'));
-  if (p.authError) return void (el.innerHTML = benchMsg('Benchmark token was rejected — check sync.token.'));
-  if (p.unreachable) return void (el.innerHTML = benchMsg('Couldn’t reach the benchmark service.'));
-  if (!p.metrics) return void (el.innerHTML = benchMsg(p.message || 'No data to compare yet.'));
+  if (!p.configured){
+    el.innerHTML = benchJoin();
+    const b = $('#benchJoinBtn'); if (b) b.addEventListener('click', joinBenchmark);
+    return;
+  }
+  if (p.unreachable) return void (el.innerHTML = benchMsg('Couldn’t reach the benchmark right now — try again shortly.'));
+  if (p.authError){
+    el.innerHTML = benchMsg('Your benchmark connection expired. ') + `<button class="btn" id="benchRejoinBtn">Reconnect</button>`;
+    const b = $('#benchRejoinBtn'); if (b) b.addEventListener('click', joinBenchmark);
+    return;
+  }
+  if (!p.metrics) return void (el.innerHTML = benchMsg(p.message || 'No sessions yet to compare.'));
   const c = p.cohort;
-  const head = `<div class="bench-cohort">your cohort · <b>${esc(VENDOR_TAG[c.vendor]||c.vendor)}</b> · ${badge(c.model)} · ${esc(c.source)} · <b>${c.sessions}</b> sessions, <b>${c.commits}</b> commits · last ${p.windowDays}d</div>`;
+  const head = `<div class="bench-cohort"><span class="bench-on">● connected</span> · your cohort · <b>${esc(VENDOR_TAG[c.vendor]||c.vendor)}</b> · ${badge(c.model)} · ${esc(c.source)} · <b>${c.sessions}</b> sessions, <b>${c.commits}</b> commits · last ${p.windowDays}d <button class="bench-dc" id="benchDcBtn" title="disconnect">disconnect</button></div>`;
   el.innerHTML = head + `<div class="bench-grid">${p.metrics.map(renderCard).join('')}</div>`;
+  const dc = $('#benchDcBtn');
+  if (dc) dc.addEventListener('click', async ()=>{ await cfetch('/api/benchmark/disconnect', { method:'POST' }); loadBenchmark(); });
+}
+async function joinBenchmark(){
+  const btn = $('#benchJoinBtn') || $('#benchRejoinBtn'); const msg = $('#benchJoinMsg');
+  if (btn){ btn.disabled = true; btn.textContent = 'Connecting…'; }
+  try {
+    const r = await cfetch('/api/benchmark/join', { method:'POST' });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || 'could not connect');
+    await loadBenchmark();
+  } catch(e){
+    if (msg) msg.textContent = 'Could not connect: ' + e.message;
+    if (btn){ btn.disabled = false; btn.textContent = 'Join free — see your ranking'; }
+  }
 }
 async function loadBenchmark(){
   try {

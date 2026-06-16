@@ -171,6 +171,47 @@ export function startServer(opts: ServerOptions = {}): http.Server {
         return;
       }
 
+      if (url.pathname === '/api/benchmark/join' && req.method === 'POST') {
+        // self-serve signup: the local server creates an account and stores the
+        // key on this machine. The browser never sees the token or the endpoint.
+        const endpoint = (config.sync.endpoint ?? '').replace(/\/+$/, '');
+        if (config.sync.token || process.env.CODENOMICS_SYNC_TOKEN) {
+          json(res, 200, { ok: true, already: true });
+          return;
+        }
+        if (!endpoint) {
+          json(res, 400, { ok: false, error: 'benchmark endpoint not set' });
+          return;
+        }
+        try {
+          const r = await fetch(`${endpoint}/v1/signup`, {
+            method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}',
+          });
+          if (!r.ok) {
+            json(res, 502, { ok: false, error: `signup failed (HTTP ${r.status})` });
+            return;
+          }
+          const body = (await r.json()) as { token?: string };
+          if (!body.token) {
+            json(res, 502, { ok: false, error: 'no key returned' });
+            return;
+          }
+          const { config: current } = loadConfig();
+          saveUserConfig(mergeConfig(current, { sync: { token: body.token } }));
+          json(res, 200, { ok: true });
+        } catch (e) {
+          json(res, 502, { ok: false, error: e instanceof Error ? e.message : String(e) });
+        }
+        return;
+      }
+
+      if (url.pathname === '/api/benchmark/disconnect' && req.method === 'POST') {
+        const { config: current } = loadConfig();
+        saveUserConfig(mergeConfig(current, { sync: { token: null } }));
+        json(res, 200, { ok: true });
+        return;
+      }
+
       if (url.pathname === '/api/config' && req.method === 'PUT') {
         const patch = JSON.parse(await readBody(req)) as Partial<CodenomicsConfig>;
         // only drivers/limits/pricing are editable from the UI

@@ -66,7 +66,9 @@ export const DEFAULT_CONFIG: CodenomicsConfig = {
   },
   report: { slackWebhookUrl: null },
   server: { port: 3737, host: '127.0.0.1' },
-  sync: { endpoint: null, token: null, salt: null },
+  // endpoint baked in so users never configure it (swap to api.codenomics.ai
+  // once the custom domain lands); a token is obtained via self-serve signup.
+  sync: { endpoint: 'https://codenomics-cloud.codenomics.workers.dev', token: null, salt: null },
 };
 
 export function configDir(): string {

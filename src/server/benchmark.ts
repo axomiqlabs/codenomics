@@ -118,7 +118,7 @@ export async function benchmarkPanel(sessions: SessionV1[], cfg: CodenomicsConfi
   const endpoint = (cfg.sync.endpoint ?? '').replace(/\/+$/, '');
   const token = cfg.sync.token ?? process.env.CODENOMICS_SYNC_TOKEN ?? '';
   if (!endpoint || !token) {
-    return { configured: false, message: 'Set sync.endpoint and a token (CODENOMICS_SYNC_TOKEN) to see how you compare to the field.' };
+    return { configured: false, message: 'Join the benchmark to see how you compare.' };
   }
 
   const windowStart = Date.now() - WINDOW_DAYS * 86_400_000;

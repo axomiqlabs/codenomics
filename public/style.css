@@ -193,3 +193,15 @@ footer{margin-top:34px;color:var(--faint);font-size:11px;border-top:1px solid va
 .bc-foot .bad{color:var(--orange);font-weight:600}
 .bc-dim{color:var(--faint)}
 .bc-withheld{font-size:11.5px;color:var(--dim);padding:6px 0 2px}
+
+/* ---- benchmark join / connection states ---- */
+.bench-join{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 24px;max-width:560px;box-shadow:var(--shadow)}
+.bj-title{font-size:17px;font-weight:700;color:var(--txt);letter-spacing:-.01em;margin-bottom:6px}
+.bj-body{color:var(--ink-2);font-size:13px;line-height:1.55;margin-bottom:16px}
+.bj-body b{color:var(--txt)}
+.bench-join .btn.primary{font-size:13px;padding:9px 18px}
+.bj-fine{color:var(--faint);font-size:11.5px;margin-top:10px}
+.bj-msg{color:var(--red);font-size:12px;margin-top:10px;min-height:0}
+.bench-on{color:var(--green);font-weight:600}
+.bench-dc{background:transparent;border:0;color:var(--faint);font-size:11px;cursor:pointer;text-decoration:underline;margin-left:6px;padding:0}
+.bench-dc:hover{color:var(--dim)}

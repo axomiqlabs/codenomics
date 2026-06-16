@@ -14,6 +14,7 @@ import { evaluateBudgets } from '../core/budgets.js';
 import { sessionKey } from '../core/schema.js';
 import { allCollectors } from '../collectors/registry.js';
 import { summarizeSessions } from '../summarize.js';
+import { benchmarkPanel } from './benchmark.js';
 
 const REINDEX_STALE_MS = 5 * 60 * 1000;
 const PUBLIC_DIR = new URL('../../public/', import.meta.url).pathname;
@@ -159,6 +160,14 @@ export function startServer(opts: ServerOptions = {}): http.Server {
           config: { drivers: config.drivers, limits: config.limits },
           capabilities: Object.fromEntries(allCollectors().map((c) => [c.vendor, c.capabilities])),
         });
+        return;
+      }
+
+      if (url.pathname === '/api/benchmark') {
+        // self-locate the user's cohort ratios against the cloud distribution;
+        // the sync token stays server-side (never sent to the browser)
+        const panel = await benchmarkPanel(readIndex().sessions, config);
+        json(res, 200, panel);
         return;
       }
 

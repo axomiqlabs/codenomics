@@ -7,7 +7,7 @@
   "homepage": "https://codenomics.ai",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codenomicsai/codenomics.git"
+    "url": "git+https://github.com/axomiqlabs/codenomics.git"
   },
   "keywords": [
     "ai",

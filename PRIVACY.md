@@ -48,8 +48,11 @@ feature that uses off-machine data, so it carries its own hard commitments:
 1. **Aggregates only, same payload.** The benchmark consumes nothing the sync
    contract doesn't already cover — no prompts, code, transcripts, tool output,
    file paths, or text excerpts. There is no second, richer upload path.
-2. **k-anonymity, k = 5.** No benchmark cell is computed or shown unless at
-   least **5 distinct contributing orgs** fall in it. Cohorts below the
+2. **k-anonymity, k ≥ 5.** No benchmark cell is computed or shown unless at
+   least **5 distinct contributing orgs** fall in it — a hard floor we never go
+   below. In practice the published gate is set higher (currently **8**), as
+   headroom against anyone manufacturing orgs to collapse a cohort; an org also
+   only counts once it has a minimum contribution history. Cohorts below the
    threshold are withheld, never estimated or back-filled.
 3. **Structural ratios, not your drivers.** Benchmarking runs on portable
    compute-and-outcome metrics (prompts-per-commit, cache-hit share,

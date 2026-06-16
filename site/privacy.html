@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Codenomics</title>
+<meta name="description" content="How Codenomics (Axomiq Labs) handles your data: the local tool transmits nothing, the benchmark uses anonymous aggregates unlinked from your identity, and emails are collected only with your consent for product updates.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
+    <div class="links">
+      <a href="index.html#how">How it works</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="spacer"></div>
+    <a class="ghost" href="https://github.com/codenomicsai/codenomics">GitHub</a>
+    <a class="btn primary" href="index.html#start">Get started</a>
+  </div>
+</nav>
+
+<header class="hero" style="padding-bottom:24px">
+  <div class="wrap narrow">
+    <span class="eyebrow">● Privacy</span>
+    <h1 style="font-size:46px">Privacy Policy</h1>
+    <p class="lede" style="font-size:19px">Codenomics is local-first by design. The tool transmits nothing on its own, the benchmark uses anonymous aggregates that are never linked to you, and we collect an email only when you choose to give us one.</p>
+    <p style="color:var(--muted);font-size:14.5px;margin-top:14px">Last updated 16 June 2026 · Axomiq Labs</p>
+  </div>
+</header>
+
+<section class="band" style="padding-top:20px">
+  <div class="wrap narrow prose">
+
+    <h2 id="who">Who we are</h2>
+    <p>Codenomics is a product of <b>Axomiq Labs</b> ("we", "us"). This policy explains what data the Codenomics tool and website handle, why, and the choices you have. Questions or requests: <a href="mailto:hello@codenomics.ai">hello@codenomics.ai</a>.</p>
+
+    <h2 id="local">The local tool transmits nothing</h2>
+    <p>The Codenomics CLI and dashboard run entirely on your machine. They read agent logs that already exist on disk and derive metrics locally; the dashboard binds to <code>127.0.0.1</code>. No command uploads your prompts, code, transcripts, tool output, or file paths — ever. For the technical detail, see the <a href="methodology.html#privacy">privacy model</a> and the open-source <a href="https://github.com/codenomicsai/codenomics/blob/main/PRIVACY.md">PRIVACY.md</a>.</p>
+
+    <h2 id="benchmark">The benchmark uses anonymous, unlinked aggregates</h2>
+    <p>If you opt in to the cross-org benchmark, the tool sends <b>aggregates only</b> — daily token, commit, and prompt counts per model and a (hashable) project label. There are no free-text fields. Benchmark accounts are opaque tokens; we never store a link between your email and your contributed aggregates, so a contribution can't be traced back to you. Cohorts are shown only at a k-anonymity floor of at least five distinct organizations. See the <a href="methodology.html#benchmark">benchmark methodology</a> for the full commitments.</p>
+
+    <h2 id="email">Information we collect: your email</h2>
+    <p>The only personal information we collect is an <b>email address</b>, and only when you actively give it to us:</p>
+    <ul>
+      <li><b>Waitlist</b> — when you join the Team waitlist on our pricing page.</li>
+      <li><b>Benchmark opt-in</b> — when you join the benchmark from the dashboard.</li>
+    </ul>
+    <p>We use it to send product updates, launch and early-access news, and benchmark notifications. <b>Legal basis:</b> your consent, given when you submit the form. We do not collect names, payment details, or any special-category data through these forms.</p>
+    <p>Your email is stored in a contacts list that is deliberately kept <b>separate from, and unlinked to,</b> any benchmark data — the same email you use to join the benchmark is never tied to your aggregates.</p>
+
+    <h2 id="use">How we use email — and what we never do</h2>
+    <p>We use your email solely to contact you about Codenomics. <b>We never sell, rent, or share your email</b> with third parties for their own marketing. Every email we send includes a one-click unsubscribe link, and you can opt out at any time. Once you unsubscribe, we stop sending and suppress the address.</p>
+
+    <h2 id="processors">Service providers</h2>
+    <p>We use a small number of processors strictly to operate the service:</p>
+    <ul>
+      <li><b>Cloudflare</b> — hosting for the website and the benchmark/contact backend (Workers + D1).</li>
+      <li><b>Resend</b> — delivery of the confirmation and update emails you opt in to.</li>
+    </ul>
+    <p>These providers process data on our behalf and may store it in the United States; we share only what's needed to deliver the service.</p>
+
+    <h2 id="retention">Data retention</h2>
+    <p>We keep your email until you unsubscribe or ask us to delete it. Unsubscribed addresses are retained only as a suppression record so we don't email you again. Benchmark aggregates are retained in anonymized form for the windows described in the methodology.</p>
+
+    <h2 id="rights">Your rights</h2>
+    <p>Depending on where you live (including under GDPR/UK GDPR and the CCPA), you may have the right to access, correct, delete, or export the personal data we hold about you, and to withdraw consent at any time. Because we only hold your email, these requests are simple — email <a href="mailto:hello@codenomics.ai">hello@codenomics.ai</a> and we'll action it. You also have the right to complain to your local data-protection authority.</p>
+
+    <h2 id="cookies">Cookies &amp; analytics</h2>
+    <p>The marketing site does not set tracking cookies or run third-party advertising analytics. The local dashboard stores only what's needed to function, on your machine.</p>
+
+    <h2 id="children">Children</h2>
+    <p>Codenomics is a developer tool intended for professionals and is not directed to children under 16. We don't knowingly collect data from children.</p>
+
+    <h2 id="changes">Changes to this policy</h2>
+    <p>We may update this policy as the product evolves; we'll revise the "last updated" date above and, for material changes affecting your email, notify you by email.</p>
+
+    <h2 id="contact">Contact</h2>
+    <p>Axomiq Labs — <a href="mailto:hello@codenomics.ai">hello@codenomics.ai</a>.</p>
+
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
+        <p class="tagline">The true economics of your AI coding agents. By Axomiq Labs.</p>
+      </div>
+      <div><h4>Product</h4><a href="index.html#how">How it works</a><a href="methodology.html">Methodology</a><a href="pricing.html">Pricing</a></div>
+      <div><h4>Company</h4><a href="about.html">About</a><a href="privacy.html">Privacy</a></div>
+      <div><h4>Developers</h4><a href="https://www.npmjs.com/package/codenomics">npm package</a><a href="https://github.com/codenomicsai/codenomics">GitHub</a></div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Axomiq Labs. Codenomics is licensed FSL-1.1-MIT.</span>
+      <span>Made for builders who count what ships.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

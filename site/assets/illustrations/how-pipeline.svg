@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="240" viewBox="0 0 1000 240" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="How it works: logs from Claude Code, Codex and Gemini feed a local Codenomics engine that outputs true cost per commit. Nothing leaves your machine.">
+  <defs>
+    <linearGradient id="cn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#c3c9d6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- source log chips -->
+  <g font-size="14" font-weight="600" fill="#0f172a">
+    <g filter="url(#sh)"><rect x="40" y="34" width="206" height="44" rx="11" fill="#ffffff" stroke="#e7e9ee"/></g>
+    <circle cx="64" cy="56" r="5" fill="#ea580c"/><text x="80" y="61">Claude Code logs</text>
+    <g filter="url(#sh)"><rect x="40" y="98" width="206" height="44" rx="11" fill="#ffffff" stroke="#e7e9ee"/></g>
+    <circle cx="64" cy="120" r="5" fill="#475569"/><text x="80" y="125">Codex CLI logs</text>
+    <g filter="url(#sh)"><rect x="40" y="162" width="206" height="44" rx="11" fill="#ffffff" stroke="#e7e9ee"/></g>
+    <circle cx="64" cy="184" r="5" fill="#7c3aed"/><text x="80" y="189">Gemini CLI logs</text>
+  </g>
+
+  <!-- connectors: sources -> engine -->
+  <g stroke="#c3c9d6" stroke-width="2" fill="none" marker-end="url(#arrow)">
+    <path d="M250 56 C 330 56, 360 120, 432 120"/>
+    <path d="M250 120 L 432 120"/>
+    <path d="M250 184 C 330 184, 360 120, 432 120"/>
+  </g>
+
+  <!-- engine node -->
+  <g filter="url(#sh)"><rect x="444" y="72" width="96" height="96" rx="22" fill="url(#cn)"/></g>
+  <g transform="translate(458 86) scale(1.06)">
+    <path d="M17 42 L28 34 L36 39 L48 23" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M48 23 L41 23 M48 23 L48 30" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="492" y="196" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">Codenomics</text>
+  <text x="492" y="214" text-anchor="middle" font-size="11.5" font-weight="500" fill="#94a3b8"
+        font-family="ui-monospace, 'SF Mono', Menlo, monospace">local engine</text>
+
+  <!-- connector: engine -> result -->
+  <path d="M540 120 L 740 120" stroke="#c3c9d6" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- result card -->
+  <g filter="url(#sh)"><rect x="752" y="64" width="208" height="112" rx="14" fill="#ffffff" stroke="#e7e9ee"/></g>
+  <text x="776" y="98" font-size="11" font-weight="700" letter-spacing="1.2" fill="#94a3b8">TRUE COST</text>
+  <text x="776" y="134" font-size="30" font-weight="800" letter-spacing="-1" fill="#0f172a">$16.60</text>
+  <text x="776" y="156" font-size="12" font-weight="500" fill="#64748b">per commit shipped</text>
+  <path d="M894 150 L908 142 L920 146 L936 128" fill="none" stroke="url(#cn)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M936 128 L929 129 M936 128 L937 135" fill="none" stroke="url(#cn)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- local note -->
+  <g transform="translate(40 224)">
+    <path d="M2 4 h7 v6 h-7 z M3.4 4 v-2 a1.6 1.6 0 0 1 3.2 0 v2" fill="none" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="18" y="10" font-size="12.5" font-weight="500" fill="#64748b">Runs entirely on your machine — logs in, economics out. Nothing is uploaded.</text>
+  </g>
+</svg>

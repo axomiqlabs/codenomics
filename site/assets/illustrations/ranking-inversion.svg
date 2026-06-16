@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="240" viewBox="0 0 720 240" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="The same two models ranked two ways. By token price the budget model looks cheapest; by true cost per commit the premium model wins at $14.20 versus $21.40. The ranking inverts.">
+  <defs>
+    <linearGradient id="grn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#16a34a"/><stop offset="1" stop-color="#22c55e"/>
+    </linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="as" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text x="360" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#0f172a">Same two models. Opposite winners.</text>
+
+  <!-- LEFT: ranked by token price -->
+  <g filter="url(#sh)"><rect x="8" y="58" width="284" height="164" rx="14" fill="#ffffff" stroke="#e7e9ee"/></g>
+  <text x="28" y="88" font-size="11" font-weight="700" letter-spacing="1.1" fill="#94a3b8">RANKED BY TOKEN PRICE</text>
+  <text x="28" y="105" font-size="10.5" font-weight="500" fill="#b4bccb">what a token meter rewards</text>
+  <circle cx="42" cy="140" r="13" fill="#eef0f4"/><text x="42" y="144" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">1</text>
+  <text x="66" y="145" font-size="14" font-weight="600" fill="#0f172a">Budget model</text>
+  <text x="276" y="145" text-anchor="end" font-size="12.5" font-weight="600" fill="#64748b" font-family="ui-monospace, 'SF Mono', Menlo, monospace">$0.42/Mtok</text>
+  <circle cx="42" cy="190" r="13" fill="#f1f3f7"/><text x="42" y="194" text-anchor="middle" font-size="12" font-weight="700" fill="#94a3b8">2</text>
+  <text x="66" y="195" font-size="14" font-weight="600" fill="#334155">Premium model</text>
+  <text x="276" y="195" text-anchor="end" font-size="12.5" font-weight="600" fill="#64748b" font-family="ui-monospace, 'SF Mono', Menlo, monospace">$0.80/Mtok</text>
+
+  <!-- RIGHT: ranked by true $/commit -->
+  <g filter="url(#sh)"><rect x="428" y="58" width="284" height="164" rx="14" fill="#ffffff" stroke="#e7e9ee"/></g>
+  <text x="448" y="88" font-size="11" font-weight="700" letter-spacing="1.1" fill="#4f46e5">RANKED BY TRUE $/COMMIT</text>
+  <text x="448" y="105" font-size="10.5" font-weight="500" fill="#94a3b8">what actually ships cheapest</text>
+  <rect x="436" y="121" width="268" height="38" rx="9" fill="#ecfdf3"/>
+  <circle cx="460" cy="140" r="13" fill="url(#grn)"/><text x="460" y="144" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">1</text>
+  <text x="484" y="145" font-size="14" font-weight="700" fill="#15803d">Premium model</text>
+  <text x="696" y="145" text-anchor="end" font-size="13" font-weight="700" fill="#16a34a" font-family="ui-monospace, 'SF Mono', Menlo, monospace">$14.20</text>
+  <circle cx="460" cy="190" r="13" fill="#f1f3f7"/><text x="460" y="194" text-anchor="middle" font-size="12" font-weight="700" fill="#94a3b8">2</text>
+  <text x="484" y="195" font-size="14" font-weight="600" fill="#334155">Budget model</text>
+  <text x="696" y="195" text-anchor="end" font-size="13" font-weight="600" fill="#64748b" font-family="ui-monospace, 'SF Mono', Menlo, monospace">$21.40</text>
+
+  <!-- crossing connectors: positions swap -->
+  <path d="M292 190 C 352 190, 368 140, 428 140" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ag)"/>
+  <path d="M292 140 C 352 140, 368 190, 428 190" fill="none" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" marker-end="url(#as)"/>
+</svg>

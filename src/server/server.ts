@@ -183,9 +183,23 @@ export function startServer(opts: ServerOptions = {}): http.Server {
           json(res, 400, { ok: false, error: 'benchmark endpoint not set' });
           return;
         }
+        // An email is required to join — the cloud records it (for product
+        // updates) unlinked from the anonymous aggregates, and rejects signup
+        // without a valid one. Validate here too for a clear local error.
+        let email = '';
+        try {
+          const body = JSON.parse((await readBody(req)) || '{}') as { email?: unknown };
+          email = (typeof body.email === 'string' ? body.email : '').trim().toLowerCase();
+        } catch {
+          /* fall through to the validity check */
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          json(res, 400, { ok: false, error: 'a valid email is required to join' });
+          return;
+        }
         try {
           const r = await fetch(`${endpoint}/v1/signup`, {
-            method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}',
+            method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email }),
           });
           if (!r.ok) {
             json(res, 502, { ok: false, error: `signup failed (HTTP ${r.status})` });

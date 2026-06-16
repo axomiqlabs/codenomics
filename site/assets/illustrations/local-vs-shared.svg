@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="300" viewBox="0 0 720 300" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="Free where one machine is enough, paid where it isn't. Local ($0, open source) gives every agent, true cost per commit, dashboard, budgets and reports on your machine. Team ($19 per developer, planned) adds the one thing a single machine can't compute: your cost per commit benchmarked against the field, cross-org model-mix recommendations, and org rollups with SSO.">
+  <defs>
+    <linearGradient id="grn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16a34a"/><stop offset="1" stop-color="#22c55e"/></linearGradient>
+    <linearGradient id="cn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.10"/></filter>
+    <g id="ckg"><circle r="8.5" fill="url(#grn)"/><path d="M-3.4 0 L-1 2.5 L3.8 -3.2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="ckb"><circle r="8.5" fill="url(#cn)"/><path d="M-3.4 0 L-1 2.5 L3.8 -3.2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </defs>
+
+  <text x="360" y="24" text-anchor="middle" font-size="15" font-weight="700" fill="#0f172a">Free where one machine is enough. Paid where it isn't.</text>
+
+  <!-- left: local / free -->
+  <rect x="16" y="44" width="324" height="240" rx="16" fill="#f7f8fa" stroke="#e7e9ee"/>
+  <rect x="36" y="64" width="92" height="26" rx="13" fill="#ecfdf3"/>
+  <text x="82" y="81" text-anchor="middle" font-size="12" font-weight="800" fill="#15803d">$0 · LOCAL</text>
+  <text x="138" y="81" font-size="12" font-weight="500" fill="#64748b">open source, your machine</text>
+  <use href="#ckg" x="44" y="124"/><text x="60" y="128" font-size="13.5" font-weight="600" fill="#334155">Every agent · true $/commit</text>
+  <use href="#ckg" x="44" y="156"/><text x="60" y="160" font-size="13.5" font-weight="600" fill="#334155">Dashboard · budgets · reports</text>
+  <use href="#ckg" x="44" y="188"/><text x="60" y="192" font-size="13.5" font-weight="600" fill="#334155">Unlimited history &amp; projects</text>
+  <line x1="36" y1="220" x2="320" y2="220" stroke="#e7e9ee" stroke-width="1"/>
+  <text x="36" y="244" font-size="11.5" font-weight="500" fill="#64748b">Self-hostable and inspectable —</text>
+  <text x="36" y="261" font-size="11.5" font-weight="500" fill="#64748b">trust is the product, so it's free.</text>
+
+  <!-- right: team / paid -->
+  <g filter="url(#sh)"><rect x="380" y="44" width="324" height="240" rx="16" fill="#ffffff" stroke="#4f46e5" stroke-width="1.5"/></g>
+  <rect x="400" y="64" width="150" height="26" rx="13" fill="#eef2ff"/>
+  <text x="475" y="81" text-anchor="middle" font-size="12" font-weight="800" fill="#4f46e5">$19 / DEV · TEAM</text>
+  <text x="560" y="81" font-size="12" font-weight="500" fill="#94a3b8">planned</text>
+  <use href="#ckb" x="408" y="124"/><text x="424" y="128" font-size="13.5" font-weight="600" fill="#334155">Your $/commit vs the field</text>
+  <use href="#ckb" x="408" y="156"/><text x="424" y="160" font-size="13.5" font-weight="600" fill="#334155">Model-mix recs from cross-org data</text>
+  <use href="#ckb" x="408" y="188"/><text x="424" y="192" font-size="13.5" font-weight="600" fill="#334155">Org rollups · cost allocation · SSO</text>
+  <line x1="400" y1="220" x2="684" y2="220" stroke="#eef0f4" stroke-width="1"/>
+  <text x="400" y="244" font-size="11.5" font-weight="500" fill="#64748b">The one view a single machine</text>
+  <text x="400" y="261" font-size="11.5" font-weight="500" fill="#64748b">structurally can't compute.</text>
+</svg>

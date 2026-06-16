@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="300" viewBox="0 0 720 300" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="Each token class is priced separately: cache reads at about 0.1x input, fresh input and output at list price (1x), 5-minute cache writes at 1.25x, and 1-hour cache writes at 2x. Counting every token at 1x overstates cost.">
+  <text x="22" y="26" font-size="15" font-weight="700" fill="#0f172a">Each token class, priced separately</text>
+  <text x="22" y="46" font-size="11.5" font-weight="500" fill="#94a3b8">relative to list input price (Anthropic shown; modeled per vendor)</text>
+
+  <!-- row: cache read -->
+  <text x="22" y="84" font-size="13.5" font-weight="600" fill="#334155">Cache read</text>
+  <text x="22" y="100" font-size="10.5" font-weight="500" fill="#94a3b8">discounted reuse</text>
+  <rect x="210" y="74" width="18" height="22" rx="6" fill="#16a34a"/>
+  <text x="236" y="90" font-size="12.5" font-weight="700" fill="#16a34a" font-family="ui-monospace, 'SF Mono', Menlo, monospace">0.1×</text>
+
+  <!-- row: fresh -->
+  <text x="22" y="130" font-size="13.5" font-weight="600" fill="#334155">Fresh input / output</text>
+  <text x="22" y="146" font-size="10.5" font-weight="500" fill="#94a3b8">list price</text>
+  <rect x="210" y="120" width="180" height="22" rx="6" fill="#4f46e5"/>
+  <text x="398" y="136" font-size="12.5" font-weight="700" fill="#4f46e5" font-family="ui-monospace, 'SF Mono', Menlo, monospace">1×</text>
+
+  <!-- row: cache write 5m -->
+  <text x="22" y="176" font-size="13.5" font-weight="600" fill="#334155">Cache write · 5-min</text>
+  <text x="22" y="192" font-size="10.5" font-weight="500" fill="#94a3b8">short-TTL premium</text>
+  <rect x="210" y="166" width="225" height="22" rx="6" fill="#8b5cf6"/>
+  <text x="443" y="182" font-size="12.5" font-weight="700" fill="#7c3aed" font-family="ui-monospace, 'SF Mono', Menlo, monospace">1.25×</text>
+
+  <!-- row: cache write 1h -->
+  <text x="22" y="222" font-size="13.5" font-weight="600" fill="#334155">Cache write · 1-hour</text>
+  <text x="22" y="238" font-size="10.5" font-weight="500" fill="#94a3b8">long-TTL premium</text>
+  <rect x="210" y="212" width="360" height="22" rx="6" fill="#d97706"/>
+  <text x="578" y="228" font-size="12.5" font-weight="700" fill="#b45309" font-family="ui-monospace, 'SF Mono', Menlo, monospace">2×</text>
+
+  <line x1="22" y1="262" x2="698" y2="262" stroke="#eef0f4" stroke-width="1"/>
+  <text x="22" y="285" font-size="12" font-weight="500" fill="#64748b">Caching dominates real agent workloads — counting every token at 1× overstates cost. Reasoning tokens are tracked separately.</text>
+</svg>

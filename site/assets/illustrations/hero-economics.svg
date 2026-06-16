@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="480" viewBox="0 0 560 480" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="Codenomics preview: two models compared by true cost per commit. The premium model, at 2x the token price, ships commits at $14.20 — about a third cheaper than the budget model at $21.40.">
+  <defs>
+    <linearGradient id="cn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="grn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#16a34a"/><stop offset="1" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="slate" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#aeb8c7"/><stop offset="1" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="22" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <filter id="sh2" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <clipPath id="card"><rect x="20" y="40" width="520" height="392" rx="18"/></clipPath>
+  </defs>
+
+  <!-- main card -->
+  <g filter="url(#sh)"><rect x="20" y="40" width="520" height="392" rx="18" fill="#ffffff" stroke="#eef0f4"/></g>
+  <g clip-path="url(#card)"><circle cx="548" cy="64" r="150" fill="url(#cn)" opacity="0.06"/></g>
+
+  <!-- header -->
+  <rect x="52" y="64" width="30" height="30" rx="8" fill="url(#cn)"/>
+  <g transform="translate(52 64) scale(0.469)">
+    <path d="M17 42 L28 34 L36 39 L48 23" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M48 23 L41 23 M48 23 L48 30" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="92" y="84" font-size="12" font-weight="700" letter-spacing="1.6" fill="#64748b">MODEL ECONOMICS</text>
+  <circle cx="478" cy="79" r="3.5" fill="#d8dce6"/><circle cx="492" cy="79" r="3.5" fill="#d8dce6"/><circle cx="506" cy="79" r="3.5" fill="#d8dce6"/>
+
+  <!-- headline metric -->
+  <text x="52" y="158" font-size="46" font-weight="800" letter-spacing="-1.6" fill="#0f172a">$16.60</text>
+  <text x="52" y="182" font-size="13" font-weight="500" fill="#64748b">blended true $ / commit</text>
+
+  <line x1="52" y1="206" x2="508" y2="206" stroke="#eef0f4" stroke-width="1"/>
+  <text x="52" y="234" font-size="11" font-weight="700" letter-spacing="1.3" fill="#94a3b8">TRUE COST PER COMMIT, BY MODEL</text>
+
+  <!-- row 1 — premium model (winner) -->
+  <text x="52" y="270" font-size="15" font-weight="600" fill="#0f172a">Premium model</text>
+  <text x="52" y="288" font-size="11.5" font-weight="500" fill="#94a3b8"
+        font-family="ui-monospace, 'SF Mono', Menlo, monospace">2× token price</text>
+  <rect x="196" y="259" width="216" height="14" rx="7" fill="#eef0f4"/>
+  <rect x="196" y="259" width="143" height="14" rx="7" fill="url(#grn)"/>
+  <text x="508" y="273" font-size="15" font-weight="700" fill="#16a34a" text-anchor="end"
+        font-family="ui-monospace, 'SF Mono', Menlo, monospace">$14.20</text>
+
+  <!-- row 2 — budget model -->
+  <text x="52" y="332" font-size="15" font-weight="600" fill="#0f172a">Budget model</text>
+  <text x="52" y="350" font-size="11.5" font-weight="500" fill="#94a3b8"
+        font-family="ui-monospace, 'SF Mono', Menlo, monospace">½ token price</text>
+  <rect x="196" y="321" width="216" height="14" rx="7" fill="#eef0f4"/>
+  <rect x="196" y="321" width="216" height="14" rx="7" fill="url(#slate)"/>
+  <text x="508" y="335" font-size="15" font-weight="700" fill="#334155" text-anchor="end"
+        font-family="ui-monospace, 'SF Mono', Menlo, monospace">$21.40</text>
+
+  <line x1="52" y1="372" x2="508" y2="372" stroke="#eef0f4" stroke-width="1"/>
+
+  <!-- footer: rising motif + caption -->
+  <path d="M52 406 L80 397 L104 401 L130 384 L154 366" fill="none" stroke="url(#cn)"
+        stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M154 366 L146 367 M154 366 L155 374" fill="none" stroke="url(#cn)"
+        stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="300" y="404" text-anchor="end" font-size="13.5" font-weight="500" fill="#334155">Pricier per token —</text>
+  <text x="308" y="404" text-anchor="start" font-size="13.5" font-weight="700" fill="#16a34a">cheaper per commit.</text>
+
+  <!-- floating savings chip -->
+  <g filter="url(#sh2)"><rect x="372" y="20" width="168" height="52" rx="13" fill="#ffffff" stroke="#c5f0d4"/></g>
+  <rect x="372" y="20" width="168" height="52" rx="13" fill="#ecfdf3" fill-opacity="0.55"/>
+  <text x="390" y="45" font-size="15" font-weight="800" fill="#15803d">↓ 33% lower</text>
+  <text x="390" y="62" font-size="10.5" font-weight="600" fill="#16a34a">true cost vs cheaper tokens</text>
+</svg>

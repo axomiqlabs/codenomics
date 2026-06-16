@@ -43,6 +43,11 @@
     <div class="formula-block">
 <b>true $/commit</b> = ( compute $ + prompts × attention $ + active-time × hourly $ ) / commits
     </div>
+    <figure class="figure">
+      <img src="assets/illustrations/formula-breakdown.svg" width="720" height="400"
+           alt="true $/commit equals compute $ plus prompts times attention $ plus active time times hourly $, all over commits shipped — here $16.60.">
+      <figcaption>Every input traces to your own logs and drivers — change a driver and every metric re-derives.</figcaption>
+    </figure>
     <p>Three inputs, three sources of truth:</p>
     <ul>
       <li><b>Compute $</b> — the API-equivalent dollar cost of every token, cache-aware (below).</li>
@@ -59,6 +64,11 @@
       <li>Cache <b>writes</b> at their premium (1.25× for 5-minute, 2× for 1-hour TTL on Anthropic; modeled per vendor elsewhere).</li>
       <li>Reasoning tokens tracked explicitly where vendors report them (e.g. Codex).</li>
     </ul>
+    <figure class="figure">
+      <img src="assets/illustrations/cache-aware.svg" width="720" height="300"
+           alt="Each token class priced separately: cache read about 0.1x, fresh input/output 1x, 5-minute cache write 1.25x, 1-hour cache write 2x.">
+      <figcaption>Built-in rates are per vendor and overridable — set exact $/MTok the day a price changes.</figcaption>
+    </figure>
     <div class="note"><b>"API-equivalent" is deliberate.</b> On a subscription plan your marginal dollar is zero. Read these figures as a normalized compute meter that makes models and agents comparable on the same scale — not as your invoice. Built-in prices drift as vendors change them; every model is overridable in config.</div>
 
     <h2 id="drivers">Drivers: your assumptions, made explicit</h2>
@@ -93,6 +103,11 @@
       <li><b>The future team sync sends aggregates only.</b> Its payload type has no free-text fields — daily token/commit/prompt counts per model and project. The one identifying value is the <b>project label</b>, derived from a working-directory path (and hashable); prompts, code, transcripts, and full file paths never leave the machine. It's opt-in, inspectable (<code>codenomics sync --json</code>), and versioned.</li>
       <li><b>It's open source.</b> Read exactly what the collectors do and verify these claims line by line.</li>
     </ul>
+    <figure class="figure">
+      <img src="assets/illustrations/privacy-boundary.svg" width="720" height="340"
+           alt="Prompts, code, transcripts and file paths never leave your machine; only opt-in aggregates (token, commit and prompt counts per model plus a project label) reach the cross-org benchmark, shown only at k of at least 5 orgs.">
+      <figcaption>The only bytes that can leave are opt-in aggregates — inspect them with <code>codenomics sync --json</code>.</figcaption>
+    </figure>
 
     <h2 id="benchmark">The benchmark: how "is that good?" gets answered (Team, planned)</h2>
     <p>Locally, Codenomics tells you your true $/commit and which of <em>your</em> models wins. The question one machine structurally can't answer is whether that number is <em>good</em> — that needs a view across many teams. The Team benchmark answers it, built from the same opt-in, aggregates-only sync described above. Because it's the one feature that sends anything off-machine, here are the rules a technical buyer should hold us to:</p>
@@ -120,7 +135,7 @@
         <p class="tagline">The true economics of your AI coding agents. By Axomiq Labs.</p>
       </div>
       <div><h4>Product</h4><a href="index.html#how">How it works</a><a href="methodology.html">Methodology</a><a href="pricing.html">Pricing</a></div>
-      <div><h4>Company</h4><a href="about.html">About</a><a href="methodology.html#privacy">Privacy</a></div>
+      <div><h4>Company</h4><a href="about.html">About</a><a href="privacy.html">Privacy</a></div>
       <div><h4>Developers</h4><a href="https://www.npmjs.com/package/codenomics">npm package</a><a href="https://github.com/codenomicsai/codenomics">GitHub</a></div>
     </div>
     <div class="legal">

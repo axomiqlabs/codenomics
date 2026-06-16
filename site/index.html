@@ -32,7 +32,8 @@
 </nav>
 
 <header class="hero">
-  <div class="wrap">
+  <div class="wrap hero-split">
+    <div class="hero-copy">
     <span class="eyebrow">● Agent economics for engineering teams</span>
     <h1>Know what each shipped change actually costs.</h1>
     <p class="lede">Every token dashboard tells you what you burned. Codenomics tells you what you <em>got</em> — the true cost per commit, compute plus the human attention behind it, across Claude Code, Codex, and Gemini. All computed on your machine.</p>
@@ -45,6 +46,11 @@
         <span><span class="prompt">$</span> npx codenomics init</span>
         <button onclick="navigator.clipboard.writeText('npx codenomics init');this.textContent='copied'">copy</button>
       </div>
+    </div>
+    </div><!-- /hero-copy -->
+    <div class="hero-art">
+      <img src="assets/illustrations/hero-economics.svg" width="560" height="480"
+           alt="Codenomics preview: the premium model, at 2× the token price, ships commits at $14.20 — about a third cheaper than the budget model at $21.40.">
     </div>
   </div>
 </header>
@@ -93,6 +99,10 @@
       <h2>Three commands. No account. No upload.</h2>
       <p class="sectionlede" style="margin:16px auto 0">Codenomics reads the logs your agents already write to disk and turns them into economics — entirely locally.</p>
     </div>
+    <figure class="figure pipeline">
+      <img src="assets/illustrations/how-pipeline.svg" width="1000" height="240"
+           alt="Logs from Claude Code, Codex CLI and Gemini CLI feed a local Codenomics engine that outputs true cost per commit — $16.60 per commit shipped. Nothing is uploaded.">
+    </figure>
     <div class="steps mt-l">
       <div class="step">
         <div class="n">1</div>
@@ -177,6 +187,10 @@
     <span class="kicker">Coming with Team</span>
     <h2>Your own data tells you what you spent. The benchmark tells you whether it's <em>good</em>.</h2>
     <p class="sectionlede" style="margin:16px auto 0">Run it locally and you learn your true $/commit and which of <em>your</em> models wins. The one question a single machine can't answer is <em>"compared to what?"</em> — that needs a view across many teams. It's the one number you can't compute alone, and the reason Team exists.</p>
+    <figure class="figure benchmark">
+      <img src="assets/illustrations/benchmark-curve.svg" width="760" height="320"
+           alt="A distribution of true cost per commit across teams. Your position, $16.60, sits left of the peer median at the 38th percentile — lower cost. Cohorts appear only when at least five organizations share them.">
+    </figure>
     <div class="insight mt-l" style="text-align:left">
       <span class="tag">How it stays private</span>
       <p>The benchmark is built only from <b>opt-in, aggregates-only</b> sync — token and outcome counts per day, model, and project label. Prompts, code, and transcripts never leave any machine; inspect the exact payload with <code>codenomics sync --json</code>. Contribute anonymized aggregates, see where you stand.</p>
@@ -197,6 +211,15 @@
         <button onclick="navigator.clipboard.writeText('npx codenomics init');this.textContent='copied'">copy</button>
       </div>
     </div>
+    <details class="quickstart">
+      <summary>New here? Show the quick start</summary>
+      <ol class="qs-steps">
+        <li><b>Run <code>npx codenomics init</code></b> — it detects the AI coding tools already on your machine (Claude Code, Codex, Gemini) and writes a local config. No account, no sign-up.</li>
+        <li><b>Open your dashboard:</b> <code>npx codenomics serve</code> — your private dashboard opens at <code>http://localhost:3737</code>. Your code, prompts, and transcripts never leave your machine.</li>
+        <li><b>See where you stand (optional):</b> from the dashboard, join the anonymous benchmark to compare your true <b>$/commit</b> against other teams.</li>
+      </ol>
+      <p class="qs-tip">Already have logs from Claude Code, Codex, or Gemini? <code>init</code> reads what's already on disk — your first dashboard is populated instantly, nothing to instrument.</p>
+    </details>
     <p class="mt-s" style="color:var(--muted);font-size:14.5px"><a href="pricing.html">See plans</a> · <a href="https://www.npmjs.com/package/codenomics">npm</a> · <a href="https://github.com/codenomicsai/codenomics">GitHub</a></p>
   </div>
 </section>
@@ -217,7 +240,7 @@
       <div>
         <h4>Company</h4>
         <a href="about.html">About</a>
-        <a href="methodology.html#privacy">Privacy</a>
+        <a href="privacy.html">Privacy</a>
       </div>
       <div>
         <h4>Developers</h4>

@@ -90,8 +90,21 @@
 
     </div>
 
+    <figure class="figure benchmark">
+      <img src="assets/illustrations/benchmark-curve.svg" width="760" height="320"
+           alt="A distribution of true cost per commit across teams with your position left of the peer median — the benchmark Team unlocks.">
+      <figcaption>What Team unlocks: your true $/commit placed against anonymized peer baselines.</figcaption>
+    </figure>
+
     <div class="center mt-l" id="waitlist">
-      <p style="color:var(--muted);font-size:15px">Team and Enterprise are in development. Want early access or to be a design partner?<br>Email <a href="mailto:hello@codenomics.ai">hello@codenomics.ai</a> — design partners get the first 3 months free in exchange for feedback.</p>
+      <h3 class="waitlist-h">Join the Team waitlist</h3>
+      <p class="waitlist-sub">Team and Enterprise are in development. Leave your email for early access and product updates — design partners get the first 3 months free in exchange for feedback.</p>
+      <form class="waitlist-form" id="waitlistForm" novalidate>
+        <input type="email" id="waitlistEmail" name="email" placeholder="you@company.com" autocomplete="email" aria-label="Work email" required>
+        <button type="submit" class="btn primary lg">Join the waitlist</button>
+      </form>
+      <p class="waitlist-msg" id="waitlistMsg" role="status" aria-live="polite"></p>
+      <p class="waitlist-fine">By joining, you consent to receive occasional product and launch updates by email. No spam; unsubscribe anytime. See our <a href="privacy.html">Privacy Policy</a>. Prefer email? <a href="mailto:hello@codenomics.ai">hello@codenomics.ai</a></p>
     </div>
   </div>
 </section>
@@ -101,6 +114,10 @@
     <span class="kicker">Why it's structured this way</span>
     <h2>The local tool stays free because trust is the product.</h2>
     <p class="sectionlede" style="margin:16px auto 0">A tool that reads every transcript on your machine has to be inspectable and free to run locally — that's how you trust it. We charge for the thing that genuinely needs a shared backend: seeing across a whole team. The economics of one developer should never cost a developer anything.</p>
+    <figure class="figure">
+      <img src="assets/illustrations/local-vs-shared.svg" width="720" height="300"
+           alt="Local ($0, open source) runs the full tool on your machine; Team ($19/dev, planned) adds the cross-org benchmark, model-mix recommendations, and org rollups with SSO that one machine can't compute.">
+    </figure>
   </div>
 </section>
 
@@ -112,7 +129,7 @@
         <p class="tagline">The true economics of your AI coding agents. By Axomiq Labs.</p>
       </div>
       <div><h4>Product</h4><a href="index.html#how">How it works</a><a href="methodology.html">Methodology</a><a href="pricing.html">Pricing</a></div>
-      <div><h4>Company</h4><a href="about.html">About</a><a href="methodology.html#privacy">Privacy</a></div>
+      <div><h4>Company</h4><a href="about.html">About</a><a href="privacy.html">Privacy</a></div>
       <div><h4>Developers</h4><a href="https://www.npmjs.com/package/codenomics">npm package</a><a href="https://github.com/codenomicsai/codenomics">GitHub</a></div>
     </div>
     <div class="legal">
@@ -121,6 +138,53 @@
     </div>
   </div>
 </footer>
+
+<script>
+(function () {
+  var form = document.getElementById('waitlistForm');
+  if (!form) return;
+  var input = document.getElementById('waitlistEmail');
+  var msg = document.getElementById('waitlistMsg');
+  var btn = form.querySelector('button[type=submit]');
+  var ENDPOINT = 'https://codenomics-cloud.codenomics.workers.dev/v1/waitlist';
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = (input.value || '').trim();
+    if (!EMAIL_RE.test(email)) {
+      msg.className = 'waitlist-msg err';
+      msg.textContent = 'Please enter a valid email address.';
+      input.focus();
+      return;
+    }
+    var label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Joining…';
+    msg.className = 'waitlist-msg';
+    msg.textContent = '';
+
+    fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.j.ok) throw new Error(res.j.detail || res.j.error || 'something went wrong');
+        form.hidden = true;
+        msg.className = 'waitlist-msg ok';
+        msg.textContent = "You're on the list — we'll be in touch.";
+      })
+      .catch(function (err) {
+        msg.className = 'waitlist-msg err';
+        msg.textContent = 'Could not join right now (' + err.message + '). Email hello@codenomics.ai and we will add you.';
+        btn.disabled = false;
+        btn.textContent = label;
+      });
+  });
+})();
+</script>
 
 </body>
 </html>

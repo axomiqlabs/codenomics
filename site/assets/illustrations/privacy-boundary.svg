@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="340" viewBox="0 0 720 340" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="Privacy boundary: prompts, code, transcripts and file paths never leave your machine. Only opt-in aggregates — daily token, commit and prompt counts per model plus a project label — cross to the cross-org benchmark, which shows a cell only when at least five organizations share it.">
+  <defs>
+    <linearGradient id="grn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16a34a"/><stop offset="1" stop-color="#22c55e"/></linearGradient>
+    <linearGradient id="cn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient>
+    <g id="lock"><rect x="-5" y="-2" width="10" height="8" rx="1.6" fill="#94a3b8"/><path d="M-3 -2 v-2.4 a3 3 0 0 1 6 0 v2.4" fill="none" stroke="#94a3b8" stroke-width="1.5"/></g>
+    <g id="ck"><circle r="9" fill="url(#grn)"/><path d="M-3.6 0 L-1 2.6 L4 -3.4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9" fill="none" stroke="#8b5cf6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  </defs>
+
+  <!-- left: your machine -->
+  <rect x="16" y="44" width="300" height="256" rx="16" fill="#f7f8fa" stroke="#e7e9ee"/>
+  <rect x="36" y="64" width="26" height="26" rx="7" fill="#0f172a"/>
+  <use href="#lock" x="49" y="77"/>
+  <text x="72" y="76" font-size="13" font-weight="700" fill="#0f172a">YOUR MACHINE</text>
+  <text x="72" y="92" font-size="11" font-weight="500" fill="#94a3b8">local-first · open source</text>
+  <text x="36" y="124" font-size="10.5" font-weight="700" letter-spacing="1" fill="#94a3b8">NEVER LEAVES</text>
+  <use href="#lock" x="44" y="148"/><text x="62" y="152" font-size="13.5" font-weight="600" fill="#334155">Prompts &amp; code</text>
+  <use href="#lock" x="44" y="180"/><text x="62" y="184" font-size="13.5" font-weight="600" fill="#334155">Full transcripts</text>
+  <use href="#lock" x="44" y="212"/><text x="62" y="216" font-size="13.5" font-weight="600" fill="#334155">Working-dir file paths</text>
+  <line x1="36" y1="244" x2="296" y2="244" stroke="#e7e9ee" stroke-width="1"/>
+  <text x="36" y="268" font-size="11.5" font-weight="500" fill="#64748b">Index · dashboard · reports —</text>
+  <text x="36" y="285" font-size="11.5" font-weight="500" fill="#64748b">all computed here, nothing uploaded.</text>
+
+  <!-- crossing arrow -->
+  <path d="M324 172 L412 172" stroke="#8b5cf6" stroke-width="2.5" fill="none" marker-end="url(#arr)"/>
+  <text x="368" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#7c3aed">opt-in sync</text>
+  <text x="368" y="196" text-anchor="middle" font-size="10.5" font-weight="500" fill="#94a3b8">aggregates only</text>
+
+  <!-- right: benchmark -->
+  <rect x="420" y="44" width="284" height="256" rx="16" fill="#ffffff" stroke="#e7e9ee"/>
+  <rect x="440" y="64" width="26" height="26" rx="7" fill="url(#cn)"/>
+  <g transform="translate(440 64) scale(0.406)"><path d="M17 42 L28 34 L36 39 L48 23" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M48 23 L41 23 M48 23 L48 30" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <text x="476" y="76" font-size="13" font-weight="700" fill="#0f172a">CROSS-ORG BENCHMARK</text>
+  <text x="476" y="92" font-size="11" font-weight="500" fill="#94a3b8">Team · planned</text>
+  <text x="440" y="124" font-size="10.5" font-weight="700" letter-spacing="1" fill="#94a3b8">RECEIVES ONLY</text>
+  <use href="#ck" x="449" y="148"/><text x="466" y="152" font-size="13.5" font-weight="600" fill="#334155">Token / commit / prompt counts</text>
+  <use href="#ck" x="449" y="180"/><text x="466" y="184" font-size="13.5" font-weight="600" fill="#334155">Per model + project label</text>
+  <use href="#ck" x="449" y="212"/><text x="466" y="216" font-size="13.5" font-weight="600" fill="#334155">k ≥ 5 orgs per cell</text>
+  <line x1="440" y1="244" x2="684" y2="244" stroke="#eef0f4" stroke-width="1"/>
+  <text x="440" y="268" font-size="11.5" font-weight="500" fill="#64748b">Percentiles over a population —</text>
+  <text x="440" y="285" font-size="11.5" font-weight="500" fill="#64748b">never another org's row.</text>
+</svg>

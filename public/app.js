@@ -438,28 +438,40 @@ function renderCard(m){
     <div class="bc-foot"><span class="${good?'good':'bad'}">${pctText}</span><span class="bc-dim">median ${benchFmt(bp.p50,m.format)} · n=${m.n} · ${dir}</span></div>
   </div>`;
 }
-// Friendly off-state shown before the user has joined — value first, one button,
-// no jargon. Self-serve signup happens server-side via /api/benchmark/join.
-function benchJoin(){
+// Friendly off-state shown before the user has joined — value first, one email +
+// one button, no jargon. Self-serve signup happens server-side via
+// /api/benchmark/join, which forwards the email to mint the contributor account.
+// The email is used only for product updates and is never linked to the
+// anonymous aggregates (see PRIVACY.md / the cloud contacts table).
+function benchJoin(title, body, btnLabel){
   return `<div class="bench-join">
-    <div class="bj-title">See where you stand</div>
-    <div class="bj-body">See how your <b>$/commit</b>, prompts-per-commit, and cache efficiency compare to other teams — computed from anonymous totals only. Your code and prompts never leave this machine.</div>
-    <button class="btn primary" id="benchJoinBtn">Join free — see your ranking</button>
-    <div class="bj-fine">No account, no card — just anonymous aggregates.</div>
+    <div class="bj-title">${title}</div>
+    <div class="bj-body">${body}</div>
+    <form class="bj-form" id="benchJoinForm">
+      <input type="email" id="benchJoinEmail" placeholder="you@company.com" autocomplete="email" required>
+      <button class="btn primary" id="benchJoinBtn" type="submit">${btnLabel}</button>
+    </form>
+    <div class="bj-fine">By joining, you agree to receive product updates by email — unsubscribe anytime. Your benchmark aggregates stay anonymous and are never linked to your email. <a href="https://codenomics.ai/privacy.html" target="_blank" rel="noopener">Privacy</a>.</div>
     <div class="bj-msg" id="benchJoinMsg"></div>
   </div>`;
 }
 function renderBench(p){
   const el = $('#benchPanel');
   if (!p.configured){
-    el.innerHTML = benchJoin();
-    const b = $('#benchJoinBtn'); if (b) b.addEventListener('click', joinBenchmark);
+    el.innerHTML = benchJoin(
+      'See where you stand',
+      'See how your <b>$/commit</b>, prompts-per-commit, and cache efficiency compare to other teams — computed from anonymous totals only. Your code and prompts never leave this machine.',
+      'Join free — see your ranking');
+    wireJoinForm();
     return;
   }
   if (p.unreachable) return void (el.innerHTML = benchMsg('Couldn’t reach the benchmark right now — try again shortly.'));
   if (p.authError){
-    el.innerHTML = benchMsg('Your benchmark connection expired. ') + `<button class="btn" id="benchRejoinBtn">Reconnect</button>`;
-    const b = $('#benchRejoinBtn'); if (b) b.addEventListener('click', joinBenchmark);
+    el.innerHTML = benchJoin(
+      'Reconnect the benchmark',
+      'Your benchmark connection expired. Re-enter your email to reconnect.',
+      'Reconnect');
+    wireJoinForm();
     return;
   }
   if (!p.metrics) return void (el.innerHTML = benchMsg(p.message || 'No sessions yet to compare.'));
@@ -469,17 +481,28 @@ function renderBench(p){
   const dc = $('#benchDcBtn');
   if (dc) dc.addEventListener('click', async ()=>{ await cfetch('/api/benchmark/disconnect', { method:'POST' }); loadBenchmark(); });
 }
-async function joinBenchmark(){
-  const btn = $('#benchJoinBtn') || $('#benchRejoinBtn'); const msg = $('#benchJoinMsg');
+function wireJoinForm(){
+  const f = $('#benchJoinForm'); if (f) f.addEventListener('submit', joinBenchmark);
+}
+async function joinBenchmark(ev){
+  if (ev && ev.preventDefault) ev.preventDefault();
+  const btn = $('#benchJoinBtn'); const msg = $('#benchJoinMsg'); const emailEl = $('#benchJoinEmail');
+  const email = ((emailEl && emailEl.value) || '').trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    if (msg) msg.textContent = 'Enter a valid email to join.';
+    if (emailEl) emailEl.focus();
+    return;
+  }
+  const label = btn ? btn.textContent : '';
   if (btn){ btn.disabled = true; btn.textContent = 'Connecting…'; }
   try {
-    const r = await cfetch('/api/benchmark/join', { method:'POST' });
+    const r = await cfetch('/api/benchmark/join', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ email }) });
     const j = await r.json();
     if (!j.ok) throw new Error(j.error || 'could not connect');
     await loadBenchmark();
   } catch(e){
     if (msg) msg.textContent = 'Could not connect: ' + e.message;
-    if (btn){ btn.disabled = false; btn.textContent = 'Join free — see your ranking'; }
+    if (btn){ btn.disabled = false; btn.textContent = label || 'Join free — see your ranking'; }
   }
 }
 async function loadBenchmark(){

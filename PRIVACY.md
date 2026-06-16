@@ -67,6 +67,12 @@ feature that uses off-machine data, so it carries its own hard commitments:
    where you stand; you can use Team without contributing.
 7. **Honest sample size.** Every comparison shows the *n* behind it; no figure
    is presented as a market norm before the cohort can support the claim.
+8. **Your email is the one identifier — and it is never linked to your data.**
+   Joining the benchmark asks for an email, used only for product updates. It is
+   stored in a separate contacts list with no foreign key, join column, or any
+   other link to your org or your aggregates: the contributing account stays an
+   opaque token, and the association between an email and its benchmark rows is
+   never recorded. The same applies to the marketing-site waitlist email.
 
 ## Fixtures in this repository
 

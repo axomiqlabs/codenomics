@@ -28,10 +28,16 @@
 </nav>
 
 <header class="hero" style="padding-bottom:24px">
-  <div class="wrap narrow">
+  <div class="wrap hero-split">
+    <div class="hero-copy">
     <span class="eyebrow">● About</span>
-    <h1 style="font-size:48px">Measure what ships, not what burns.</h1>
+    <h1 style="font-size:48px;max-width:none">Measure what ships, not what burns.</h1>
     <p class="lede" style="font-size:19px">Codenomics is built by Axomiq Labs on a single conviction: in the agent era, the team that understands its true cost of shipping wins — and almost nobody can see it yet.</p>
+    </div>
+    <div class="hero-art keep-mobile">
+      <img src="assets/illustrations/about-hero.svg" width="460" height="440"
+           alt="What to measure: not tokens burned, but commits shipped — so the value per commit, measured right, can rise.">
+    </div>
   </div>
 </header>
 
@@ -41,11 +47,24 @@
     <p>AI coding agents went from novelty to the largest line item in many engineering budgets in under two years. The reflex was to measure them like an API bill: tokens, dollars, burn rate. Useful, but it answers the wrong question. "How many tokens did I spend?" doesn't tell you whether you spent them well.</p>
     <p>The question engineering leaders actually have is economic: <b>what does it cost us to ship a change, and which model, agent, and workflow does it cheapest?</b> Answering that means counting the things a token meter ignores — the prompts, the corrections, the human attention, the work that actually landed. When you do, the rankings invert: the "expensive" model is often the cheaper one, because it needs less of the most expensive resource you have, which is people.</p>
 
+    <figure class="figure">
+      <img src="assets/illustrations/ranking-inversion.svg" width="720" height="240"
+           alt="The same two models ranked two ways: by token price the budget model looks cheapest, but by true cost per commit the premium model wins at $14.20 versus $21.40. The ranking inverts.">
+      <figcaption>Cheapest per token isn't cheapest per commit — counting the human half can reverse the order.</figcaption>
+    </figure>
+
     <h2>Why now</h2>
     <p>Three things made this the moment. Agents became expensive enough that the spend demands an answer. The tooling consolidated into a handful of CLIs — Claude Code, Codex, Gemini — that each write rich logs to disk. And the difference between models stopped being about capability and started being about <em>efficiency</em>: same task, wildly different cost to get it shipped. Efficiency is now the competitive edge, and an edge you can't measure is one you can't press.</p>
 
     <h2>How we're different</h2>
     <p>Vendors won't rank themselves against competitors on cost-per-outcome. General observability tools see API traffic but not what shipped, and an API proxy structurally can't see the human half of the equation. Codenomics sits where the truth is — on the developer's machine, next to both the logs and the human — which is where the full cost of a commit can be computed.</p>
+
+    <figure class="figure">
+      <img src="assets/illustrations/coverage-matrix.svg" width="720" height="300"
+           alt="Coverage matrix: vendor analytics sees tokens only; observability and API proxies see tokens and multiple vendors but not what shipped or the human cost; Codenomics is the only row that sees all four — tokens, multi-vendor, what shipped, and human cost.">
+      <figcaption>Codenomics sits on the developer's machine — the one vantage point that sees both the logs and the human.</figcaption>
+    </figure>
+
     <div class="note">That's also why the local tool is open-source and free. A product that reads your transcripts earns trust by being inspectable, not by asking for it.</div>
 
     <h2>Axomiq Labs</h2>
@@ -74,7 +93,7 @@
         <p class="tagline">The true economics of your AI coding agents. By Axomiq Labs.</p>
       </div>
       <div><h4>Product</h4><a href="index.html#how">How it works</a><a href="methodology.html">Methodology</a><a href="pricing.html">Pricing</a></div>
-      <div><h4>Company</h4><a href="about.html">About</a><a href="methodology.html#privacy">Privacy</a></div>
+      <div><h4>Company</h4><a href="about.html">About</a><a href="privacy.html">Privacy</a></div>
       <div><h4>Developers</h4><a href="https://www.npmjs.com/package/codenomics">npm package</a><a href="https://github.com/codenomicsai/codenomics">GitHub</a></div>
     </div>
     <div class="legal">

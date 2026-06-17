@@ -28,14 +28,14 @@ export async function run(argv: string[]): Promise<number> {
     },
   });
   if (values.help) {
-    console.log('usage: codenomics sync [--push] [--endpoint URL] [--token TOK] [--json]');
+    console.log('usage: npx codenomics sync [--push] [--endpoint URL] [--token TOK] [--json]');
     console.log('  (no flags) preview the exact aggregate payload that --push would send');
     return 0;
   }
 
   const index = readIndex();
   if (!index.sessions.length) {
-    console.error('index is empty — run `codenomics index` first');
+    console.error('index is empty — run `npx codenomics index` first');
     return 1;
   }
   const rollups = buildRollups(index.sessions);
@@ -96,7 +96,7 @@ function preview(rollups: RollupV1[], asJson: boolean): number {
   }
   const days = new Set(rollups.map((r) => r.day));
   const vendors = new Set(rollups.map((r) => r.vendor));
-  console.log('codenomics sync — PREVIEW (re-run with --push to upload)');
+  console.log('npx codenomics sync — PREVIEW (re-run with --push to upload)');
   console.log('');
   console.log(`would send ${rollups.length} aggregate rows covering ${days.size} days, ${vendors.size} vendors.`);
   console.log('');
@@ -108,6 +108,6 @@ function preview(rollups: RollupV1[], asJson: boolean): number {
   console.log('sample row:');
   console.log(JSON.stringify(rollups[rollups.length - 1], null, 2));
   console.log('');
-  console.log('inspect the full payload with: codenomics sync --json');
+  console.log('inspect the full payload with: npx codenomics sync --json');
   return 0;
 }

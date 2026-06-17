@@ -15,7 +15,7 @@ export async function run(argv: string[]): Promise<number> {
     },
   });
   if (values.help) {
-    console.log('usage: codenomics init [--from <old claude-stats data dir>] [--force]');
+    console.log('usage: npx codenomics init [--from <old claude-stats data dir>] [--force]');
     return 0;
   }
 
@@ -59,8 +59,8 @@ export async function run(argv: string[]): Promise<number> {
   }
 
   console.log('\nnext steps:');
-  console.log('  codenomics index        # scan agent logs');
-  console.log('  codenomics serve --open # local dashboard');
-  console.log('  codenomics report weekly');
+  console.log('  npx codenomics index        # scan agent logs');
+  console.log('  npx codenomics serve --open # local dashboard');
+  console.log('  npx codenomics report weekly');
   return 0;
 }

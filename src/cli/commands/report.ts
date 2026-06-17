@@ -10,8 +10,8 @@ import { renderHtml } from '../../report/render-html.js';
 import { postToSlack } from '../../report/slack.js';
 
 const USAGE = [
-  'usage: codenomics report <weekly|monthly> [--at YYYY-MM-DD] [--format md|html|both] [--out dir] [--slack] [--stdout]',
-  '       codenomics report schedule [--period weekly|monthly] [--slack] [--install-cron]',
+  'usage: npx codenomics report <weekly|monthly> [--at YYYY-MM-DD] [--format md|html|both] [--out dir] [--slack] [--stdout]',
+  '       npx codenomics report schedule [--period weekly|monthly] [--slack] [--install-cron]',
   '',
   'weekly covers the last complete ISO week (Mon–Sun); monthly the last complete',
   'calendar month. --at selects the period containing that date instead.',
@@ -48,7 +48,7 @@ export async function run(argv: string[]): Promise<number> {
   const { config } = loadConfig();
   const index = readIndex();
   if (!index.sessions.length) {
-    console.error('index is empty — run `codenomics index` first');
+    console.error('index is empty — run `npx codenomics index` first');
     return 1;
   }
 
@@ -85,7 +85,7 @@ export async function run(argv: string[]): Promise<number> {
   if (values.slack) {
     const url = config.report.slackWebhookUrl;
     if (!url) {
-      console.error('no Slack webhook configured: codenomics config set report.slackWebhookUrl <url>');
+      console.error('no Slack webhook configured: npx codenomics config set report.slackWebhookUrl <url>');
       return 1;
     }
     await postToSlack(url, model);
@@ -101,7 +101,7 @@ function schedule(period: Period, slack: boolean, install: boolean): number {
   if (!install) {
     console.log('add to crontab (crontab -e):');
     console.log(`  ${cron}`);
-    console.log('\nor install it now with: codenomics report schedule --period ' + period + (slack ? ' --slack' : '') + ' --install-cron');
+    console.log('\nor install it now with: npx codenomics report schedule --period ' + period + (slack ? ' --slack' : '') + ' --install-cron');
     return 0;
   }
   const current = spawnSync('crontab', ['-l'], { encoding: 'utf8' });

@@ -44,7 +44,7 @@ export async function run(argv: string[]): Promise<number> {
   if (values.help || !sub) {
     console.log(
       [
-        'usage: codenomics config <get|set|unset|list|path> [key] [value] [--project]',
+        'usage: npx codenomics config <get|set|unset|list|path> [key] [value] [--project]',
         '',
         '  get drivers.attentionUsdPerPrompt     read merged value',
         '  set drivers.attentionUsdPerPrompt 8   write to user config (--project: .codenomics.json in cwd)',
@@ -65,12 +65,12 @@ export async function run(argv: string[]): Promise<number> {
       console.log(JSON.stringify(loaded.config, null, 2));
       return 0;
     case 'path':
-      console.log(`user:    ${loaded.userPath}${fs.existsSync(loaded.userPath) ? '' : ' (missing — run codenomics init)'}`);
+      console.log(`user:    ${loaded.userPath}${fs.existsSync(loaded.userPath) ? '' : ' (missing — run npx codenomics init)'}`);
       console.log(`project: ${loaded.projectPath ?? '(none found walking up from cwd)'}`);
       return 0;
     case 'get': {
       if (!key) {
-        console.error('usage: codenomics config get <dotted.key>');
+        console.error('usage: npx codenomics config get <dotted.key>');
         return 1;
       }
       const v = getPath(loaded.config, key);
@@ -80,7 +80,7 @@ export async function run(argv: string[]): Promise<number> {
     case 'set': {
       const rawValue = rest.join(' ');
       if (!key || rawValue === '') {
-        console.error('usage: codenomics config set <dotted.key> <value> [--project]');
+        console.error('usage: npx codenomics config set <dotted.key> <value> [--project]');
         return 1;
       }
       const obj = readRaw(targetFile);
@@ -97,7 +97,7 @@ export async function run(argv: string[]): Promise<number> {
     }
     case 'unset': {
       if (!key) {
-        console.error('usage: codenomics config unset <dotted.key> [--project]');
+        console.error('usage: npx codenomics config unset <dotted.key> [--project]');
         return 1;
       }
       const obj = readRaw(targetFile);

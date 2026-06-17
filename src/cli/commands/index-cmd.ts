@@ -14,7 +14,7 @@ export async function run(argv: string[]): Promise<number> {
     },
   });
   if (values.help) {
-    console.log('usage: codenomics index [--vendor <claude-code|codex|gemini>] [--check-budgets]');
+    console.log('usage: npx codenomics index [--vendor <claude-code|codex|gemini>] [--check-budgets]');
     return 0;
   }
 
@@ -27,7 +27,7 @@ export async function run(argv: string[]): Promise<number> {
   for (const [vendor, st] of Object.entries(result.perVendor)) {
     const drift = Object.keys(st.drift).length;
     console.log(
-      `${vendor.padEnd(12)} ${String(st.sessions).padStart(5)} sessions  (${st.files} files: ${st.parsed} parsed, ${st.fromCache} cached${st.errors ? `, ${st.errors} quarantined` : ''}${drift ? `, drift: ${drift} kinds — run \`codenomics doctor\`` : ''})`,
+      `${vendor.padEnd(12)} ${String(st.sessions).padStart(5)} sessions  (${st.files} files: ${st.parsed} parsed, ${st.fromCache} cached${st.errors ? `, ${st.errors} quarantined` : ''}${drift ? `, drift: ${drift} kinds — run \`npx codenomics doctor\`` : ''})`,
     );
   }
   console.log(`indexed ${result.index.sessions.length} sessions in ${((Date.now() - started) / 1000).toFixed(1)}s`);

@@ -1,30 +1,27 @@
 #!/usr/bin/env bash
-# Promote the working branch (dev) to main — the SANCTIONED path.
+# Promote dev -> public main. The ONLY path that puts code in the public repo.
 #
-# Why this exists: GitHub's "Squash and merge" button re-authors the resulting
-# commit to whoever clicks it (the merging account), which would re-introduce
-# personal identity onto a PUBLIC repo's history. Instead we advance main by
-# moving the ref directly via the GitHub ref API to a commit that is ALREADY on
-# origin and was authored locally under the approved org identity. The pointer
-# move re-authors nothing.
+# Model: dev lives on a PRIVATE remote (the `private` remote; URL in .git/config);
+# all WIP pushes go there and stay private. The PUBLIC repo (axomiqlabs/codenomics)
+# only ever
+# receives one clean, squashed commit per release on main — the messy WIP history
+# never becomes public. This script:
 #
-# Two modes:
-#   (default)            fast-forward: origin/main -> origin/dev. Use when dev's
-#                        commits are already clean and atomic (the normal case).
-#                        Lossless; preserves the conventional commit history.
-#   --squash "message"   collapse all of origin/main..origin/dev into ONE commit
-#                        authored by the org identity, then point main at it.
-#                        Use when dev accumulated messy WIP commits.
-#
-# Either way: the working tree must be clean, dev must be pushed, and EVERY
-# commit being promoted is audited against .claude/factory/identity-policy.json
-# (approved author/committer, no denylisted PII) before main moves. Aborts loud.
+#   1. audits dev's commits for the approved org identity (no personal PII),
+#   2. squashes dev's CURRENT TREE into one commit (parent = public main,
+#      authored by the org identity),
+#   3. advances public main to it via the GitHub ref API (a pointer move, so
+#      nothing is re-authored — GitHub's merge/squash buttons would re-stamp the
+#      merging account, which is why we never use them),
+#   4. resets dev onto the released baseline and force-pushes it PRIVATE, so the
+#      next release's diff is just the net new changes.
 #
 # Usage:
-#   scripts/promote-dev-to-main.sh                 # fast-forward
-#   scripts/promote-dev-to-main.sh --squash "chore(release): 0.3.0"
+#   scripts/promote-dev-to-main.sh "chore(release): 0.3.0"
 set -euo pipefail
 
+PUBLIC_REMOTE="origin"                 # axomiqlabs/codenomics (public)
+PRIVATE_REMOTE="private"               # private dev mirror (URL in .git/config)
 REPO_SLUG="axomiqlabs/codenomics"
 WORK_BRANCH="dev"
 PROTECTED="main"
@@ -35,14 +32,8 @@ cd "$ROOT"
 die() { echo "ABORT: $*" >&2; exit 1; }
 note() { echo "==> $*"; }
 
-# --- parse args -------------------------------------------------------------
-MODE=ff
-SQUASH_MSG=""
-if [ "${1:-}" = "--squash" ]; then
-  MODE=squash
-  SQUASH_MSG="${2:-}"
-  [ -n "$SQUASH_MSG" ] || die "--squash requires a commit message"
-fi
+MSG="${1:-}"
+[ -n "$MSG" ] || die "a release commit message is required, e.g.: $0 \"chore(release): 0.3.0\""
 
 # --- preflight --------------------------------------------------------------
 command -v gh >/dev/null || die "gh CLI not found"
@@ -54,35 +45,34 @@ APPROVED_NAME="$(jq -r '.approvedName' "$POLICY")"
 mapfile -t DENY < <(jq -r '.deny[]' "$POLICY")
 
 [ -z "$(git status --porcelain)" ] || die "working tree not clean — commit or stash first"
-
 CUR="$(git rev-parse --abbrev-ref HEAD)"
 [ "$CUR" = "$WORK_BRANCH" ] || die "not on '$WORK_BRANCH' (on '$CUR')"
 
-note "fetching origin"
-git fetch origin --quiet
+note "fetching $PRIVATE_REMOTE + $PUBLIC_REMOTE"
+git fetch "$PRIVATE_REMOTE" --quiet
+git fetch "$PUBLIC_REMOTE" --quiet
 
+# dev must be pushed to the private remote (that's the backed-up source of truth).
 LOCAL_DEV="$(git rev-parse "$WORK_BRANCH")"
-REMOTE_DEV="$(git rev-parse "origin/$WORK_BRANCH")"
-[ "$LOCAL_DEV" = "$REMOTE_DEV" ] || die "local $WORK_BRANCH != origin/$WORK_BRANCH — push dev first"
+PRIV_DEV="$(git rev-parse "$PRIVATE_REMOTE/$WORK_BRANCH")"
+[ "$LOCAL_DEV" = "$PRIV_DEV" ] || die "local $WORK_BRANCH != $PRIVATE_REMOTE/$WORK_BRANCH — push dev to private first (git push $PRIVATE_REMOTE $WORK_BRANCH)"
 
-REMOTE_MAIN="$(git rev-parse "origin/$PROTECTED")"
-if [ "$REMOTE_MAIN" = "$REMOTE_DEV" ]; then
-  note "origin/$PROTECTED already at origin/$WORK_BRANCH ($(git rev-parse --short "$REMOTE_DEV")) — nothing to promote"
+PUB_MAIN="$(git rev-parse "$PUBLIC_REMOTE/$PROTECTED")"
+DEV_TREE="$(git rev-parse "$WORK_BRANCH^{tree}")"
+MAIN_TREE="$(git rev-parse "$PUBLIC_REMOTE/$PROTECTED^{tree}")"
+if [ "$DEV_TREE" = "$MAIN_TREE" ]; then
+  note "dev tree already matches public main — nothing to release"
   exit 0
 fi
 
-# main must be a strict ancestor of dev (no divergence) for either mode to be safe.
-git merge-base --is-ancestor "origin/$PROTECTED" "origin/$WORK_BRANCH" \
-  || die "origin/$PROTECTED is not an ancestor of origin/$WORK_BRANCH — histories diverged; reconcile manually"
+# --- show what will become public + audit identity --------------------------
+note "net changes this release (public main -> dev):"
+git --no-pager diff --stat "$PUBLIC_REMOTE/$PROTECTED" "$WORK_BRANCH" | tail -40
 
-RANGE="origin/$PROTECTED..origin/$WORK_BRANCH"
-note "commits to promote:"
-git --no-pager log --oneline "$RANGE"
-
-# --- identity audit: every promoted commit, author AND committer -------------
-note "auditing author/committer identity on all promoted commits"
+note "auditing author/committer identity on dev's commits since public main"
 AUDIT_FAIL=0
 while IFS=$'\t' read -r sha ae ce an cn; do
+  [ -z "$sha" ] && continue
   for who in "$ae|author-email" "$ce|committer-email"; do
     val="${who%%|*}"; label="${who##*|}"
     if [ "$(printf '%s' "$val" | tr '[:upper:]' '[:lower:]')" != "$(printf '%s' "$APPROVED_EMAIL" | tr '[:upper:]' '[:lower:]')" ]; then
@@ -97,45 +87,33 @@ while IFS=$'\t' read -r sha ae ce an cn; do
       fi
     done
   done
-done < <(git --no-pager log --format='%H%x09%ae%x09%ce%x09%an%x09%cn' "$RANGE")
+done < <(git --no-pager log --format='%H%x09%ae%x09%ce%x09%an%x09%cn' "$PUBLIC_REMOTE/$PROTECTED..$WORK_BRANCH")
 [ "$AUDIT_FAIL" = 0 ] || die "identity audit failed — refusing to promote PII to public main"
 note "identity audit clean ✓"
 
-# --- compute the target sha main will point at ------------------------------
-if [ "$MODE" = ff ]; then
-  TARGET="$REMOTE_DEV"
-  note "fast-forward: $PROTECTED -> $(git rev-parse --short "$TARGET")"
-else
-  # Build a single squashed commit on top of origin/main, authored by the org
-  # identity, with the dev tree. Push to a temp ref so the ref-API can target it.
-  note "squash: collapsing $RANGE into one commit"
-  TREE="$(git rev-parse "origin/$WORK_BRANCH^{tree}")"
-  TARGET="$(GIT_AUTHOR_NAME="$APPROVED_NAME" GIT_AUTHOR_EMAIL="$APPROVED_EMAIL" \
-            GIT_COMMITTER_NAME="$APPROVED_NAME" GIT_COMMITTER_EMAIL="$APPROVED_EMAIL" \
-            git commit-tree "$TREE" -p "$REMOTE_MAIN" -m "$SQUASH_MSG")"
-  note "created squash commit $(git rev-parse --short "$TARGET"); pushing to temp ref"
-  git push origin "$TARGET:refs/heads/_promote-tmp" --quiet
-fi
+# --- build the squashed release commit (org-authored) -----------------------
+note "creating squashed release commit (tree=dev, parent=public main)"
+TARGET="$(GIT_AUTHOR_NAME="$APPROVED_NAME" GIT_AUTHOR_EMAIL="$APPROVED_EMAIL" \
+          GIT_COMMITTER_NAME="$APPROVED_NAME" GIT_COMMITTER_EMAIL="$APPROVED_EMAIL" \
+          git commit-tree "$DEV_TREE" -p "$PUB_MAIN" -m "$MSG")"
+note "release commit $(git rev-parse --short "$TARGET"); pushing to public temp ref"
+git push "$PUBLIC_REMOTE" "$TARGET:refs/heads/_promote-tmp" --quiet
 
-# --- advance main via the ref API (no re-authoring) --------------------------
-note "advancing origin/$PROTECTED via ref API"
+# --- advance public main via the ref API (no re-authoring) -------------------
+note "advancing $PUBLIC_REMOTE/$PROTECTED via ref API"
 gh api -X PATCH "repos/$REPO_SLUG/git/refs/heads/$PROTECTED" \
   -f sha="$TARGET" -F force=false >/dev/null \
-  || die "ref-API update failed (is it a fast-forward? use --squash if histories differ)"
+  || die "ref-API update failed (not a fast-forward — public main has commits dev lacks; reconcile manually)"
+git push "$PUBLIC_REMOTE" ":refs/heads/_promote-tmp" --quiet || true
 
-# clean up temp ref if we made one
-if [ "$MODE" = squash ]; then
-  git push origin ":refs/heads/_promote-tmp" --quiet || true
-fi
-
-# --- sync local refs --------------------------------------------------------
-git fetch origin --quiet
-git branch -f "$PROTECTED" "origin/$PROTECTED"
-if [ "$MODE" = squash ]; then
-  note "squash promoted. Reset $WORK_BRANCH onto the new main so they don't diverge:"
-  note "  git checkout $WORK_BRANCH && git reset --hard origin/$PROTECTED && git push -f origin $WORK_BRANCH"
-fi
+# --- reset dev onto the released baseline, keep it PRIVATE -------------------
+git fetch "$PUBLIC_REMOTE" --quiet
+git branch -f "$PROTECTED" "$PUBLIC_REMOTE/$PROTECTED"
+note "resetting $WORK_BRANCH onto the released baseline (tree unchanged) and force-pushing PRIVATE"
+git reset --hard "$PUBLIC_REMOTE/$PROTECTED" --quiet
+git push -f "$PRIVATE_REMOTE" "$WORK_BRANCH" --quiet
 
 NEW_MAIN="$(gh api "repos/$REPO_SLUG/git/refs/heads/$PROTECTED" --jq '.object.sha')"
-note "done. origin/$PROTECTED is now $(git rev-parse --short "$NEW_MAIN")"
+note "done. public $PROTECTED -> $(git rev-parse --short "$NEW_MAIN")  ($MSG)"
 note "verify authorship: gh api repos/$REPO_SLUG/commits/$PROTECTED --jq '.commit.author'"
+note "note: dev:4848 tree is unchanged; no rebuild needed."

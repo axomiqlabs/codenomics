@@ -10,7 +10,7 @@ export async function run(_argv: string[]): Promise<number> {
   let problems = 0;
 
   console.log('# config');
-  console.log(`user config:    ${loaded.userPath}${fs.existsSync(loaded.userPath) ? '' : '  (missing — run codenomics init)'}`);
+  console.log(`user config:    ${loaded.userPath}${fs.existsSync(loaded.userPath) ? '' : '  (missing — run npx codenomics init)'}`);
   console.log(`project config: ${loaded.projectPath ?? '(none)'}`);
   console.log(`data dir:       ${dataDir()}`);
   for (const p of loaded.problems) {
@@ -39,7 +39,7 @@ export async function run(_argv: string[]): Promise<number> {
   console.log('\n# last index run');
   const diag = readDiagnostics();
   if (!diag) {
-    console.log(`none yet (no ${indexPath()}) — run codenomics index`);
+    console.log(`none yet (no ${indexPath()}) — run npx codenomics index`);
   } else {
     console.log(`at ${new Date(diag.at).toISOString()}`);
     for (const [vendor, st] of Object.entries(diag.perVendor)) {

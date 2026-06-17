@@ -14,7 +14,7 @@ export async function run(argv: string[]): Promise<number> {
     },
   });
   if (values.help) {
-    console.log('usage: codenomics serve [--port N] [--host 127.0.0.1] [--open]');
+    console.log('usage: npx codenomics serve [--port N] [--host 127.0.0.1] [--open]');
     return 0;
   }
 

@@ -37,13 +37,13 @@ your machine ([PRIVACY.md](PRIVACY.md)).
   What's your loaded hourly rate? Set them in config or the dashboard; every
   metric updates instantly. Per-model pricing overrides included.
 - **Budgets** — $ or token limits per day/week/month, globally or per
-  project/agent. `codenomics index --check-budgets` exits nonzero on breach,
+  project/agent. `npx codenomics index --check-budgets` exits nonzero on breach,
   so cron alerting is one line.
-- **Canned reports** — `codenomics report weekly|monthly` renders Markdown +
+- **Canned reports** — `npx codenomics report weekly|monthly` renders Markdown +
   self-contained HTML with prior-period deltas, top sessions, budget status,
   and rule-based observations (e.g. "your headless jobs ran on a premium
   model; same tokens at haiku pricing = $X saved"). Optional Slack digest via
-  webhook. `codenomics report schedule --install-cron` automates it.
+  webhook. `npx codenomics report schedule --install-cron` automates it.
 - **AI recaps** (optional) — one-line session summaries via your own `claude`
   CLI, cached forever.
 

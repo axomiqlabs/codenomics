@@ -60,11 +60,23 @@ nothing), then resets `dev` onto the released baseline and force-pushes it
 **privately**. So the public repo gets exactly one clean commit per release and
 the WIP history never appears there.
 
+**The release ritual — main drives everything (Model B).** All three products ship
+through `main`. The promote squashes dev's *entire current tree* into **one** commit
+on `main` (N dev commits → 1 main commit — that's your batching, built in: just
+promote less often), then:
+
 ```sh
+# 1. dev tree -> one squashed commit on public main
 scripts/promote-dev-to-main.sh "chore(release): 0.3.0"
+# 2. refresh the stable worktree (updates BOTH :3838 app and site/ source)
+git -C /srv/codenomics-stable pull && (cd /srv/codenomics-stable && npm run build)
+# 3. publish the live surfaces from released main:
+bash ~/codenomics-pages-deploy.sh          # marketing -> codenomics.ai
+npm publish                                # app -> npm   (only when the package changed)
+# cloud backend is its own repo/pipeline:  ~/codenomics-deploy.sh (api.codenomics.ai)
 ```
 
-After a release, refresh the stable dashboard: `git -C /srv/codenomics-stable pull && npm run build`.
+Run steps 1–2 every release; step 3 only for the surfaces that actually changed.
 
 ## Hooks (`.claude/hooks/`, wired in `.claude/settings.json`)
 
@@ -95,8 +107,21 @@ App serving (systemd `--user` services):
 
 Marketing serving (Cloudflare Pages, project `codenomics`):
 
-- Production → `codenomics.ai` (and `codenomics.pages.dev`). Deploy with `~/codenomics-pages-deploy.sh` (Direct Upload of `site/`).
-- Dev preview → a gated Pages **preview** deployment (`wrangler pages deploy site --branch dev`), behind Cloudflare Access.
+- **Model B — main drives everything.** Production `codenomics.ai` deploys from the
+  **`main` branch via the stable worktree** (`/srv/codenomics-stable/site/`), never
+  from raw `dev`. So the live site always reflects a *released* commit, exactly like
+  the npm package and the `:3838` dashboard. `~/codenomics-pages-deploy.sh` enforces
+  this: it `cd`s to `/srv/codenomics-stable`, **aborts if that tree isn't at
+  `origin/main`** (so a stale deploy can't revert a not-yet-promoted fix), then
+  uploads `site/`. To ship a marketing change: promote dev→main, refresh stable,
+  then deploy (see Releasing).
+- `*.pages.dev` exposure is contained: every page's `<head>` redirects any `*.pages.dev`
+  host (the bare alias + all per-deploy hash URLs) to `codenomics.ai`, and `rel=canonical`
+  points search at `codenomics.ai`. Prune old Pages deployments after each redeploy.
+- Dev preview → `site/` is served LOCALLY at `http://127.0.0.1:4747` by the
+  `codenomics-site-dev.service` user unit (a `python3 -m http.server` on loopback).
+  Do NOT use a `pages.dev` preview deployment — the redirect above would bounce it
+  to production. Localhost is unaffected (the redirect only fires on `pages.dev` hosts).
 
 ## Build / check
 

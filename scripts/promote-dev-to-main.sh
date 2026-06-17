@@ -117,3 +117,8 @@ NEW_MAIN="$(gh api "repos/$REPO_SLUG/git/refs/heads/$PROTECTED" --jq '.object.sh
 note "done. public $PROTECTED -> $(git rev-parse --short "$NEW_MAIN")  ($MSG)"
 note "verify authorship: gh api repos/$REPO_SLUG/commits/$PROTECTED --jq '.commit.author'"
 note "note: dev:4848 tree is unchanged; no rebuild needed."
+echo
+note "MODEL B next steps — main now drives the live surfaces:"
+note "  1. refresh stable:  git -C /srv/codenomics-stable pull && (cd /srv/codenomics-stable && npm run build)"
+note "  2. marketing:       bash ~/codenomics-pages-deploy.sh        # -> codenomics.ai"
+note "  3. app package:     npm publish                              # only if the package changed"

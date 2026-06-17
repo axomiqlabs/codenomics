@@ -342,6 +342,12 @@ async function load(){
   DATA = await r.json();
   for (const s of DATA.sessions) annotate(s);
   $('#meta').textContent = `${DATA.sessions.length} sessions indexed · refreshed ${new Date(DATA.generatedAt).toTimeString().slice(0,8)}${DATA.summarizing?' · recaps generating…':''}`;
+  // env-gated DEV badge: shows only when the server runs with CODENOMICS_ENV=dev
+  // (set solely by the :4848 dev systemd unit). Inert on stable :3838 and in the
+  // published package, so it auto-vanishes on promote — nothing to strip manually.
+  if (DATA.env === 'dev' && !document.querySelector('.dev-badge')) {
+    document.querySelector('.wordmark')?.insertAdjacentHTML('beforeend', '<span class="dev-badge">DEV</span>');
+  }
   // experimental-vendor warning: token math for these isn't validated on real logs
   const caps = DATA.capabilities || {};
   const expVendors = [...new Set(DATA.sessions.map(s=>s.vendor))].filter(v=>caps[v] && caps[v].experimental);

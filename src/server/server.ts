@@ -159,6 +159,7 @@ export function startServer(opts: ServerOptions = {}): http.Server {
           budgets: evaluateBudgets(index.sessions, config),
           config: { drivers: config.drivers, limits: config.limits },
           capabilities: Object.fromEntries(allCollectors().map((c) => [c.vendor, c.capabilities])),
+          env: process.env.CODENOMICS_ENV ?? null,
         });
         return;
       }

@@ -68,8 +68,13 @@ promote less often), then:
 ```sh
 # 1. dev tree -> one squashed commit on public main
 scripts/promote-dev-to-main.sh "chore(release): 0.3.0"
-# 2. refresh the stable worktree (updates BOTH :3838 app and site/ source)
-git -C /srv/codenomics-stable pull && (cd /srv/codenomics-stable && npm run build)
+# 2. refresh the stable worktree (updates BOTH :3838 app and site/ source).
+#    Use reset --hard, NOT pull: the promote force-moves the `main` ref under this
+#    worktree, so `git pull` is a no-op while the working FILES stay stale. Restart
+#    the dashboard service so :3838 picks up the rebuilt dist/ (public/ is live, but
+#    the node server is not — it keeps running old code until restarted).
+git -C /srv/codenomics-stable fetch origin && git -C /srv/codenomics-stable reset --hard origin/main \
+  && (cd /srv/codenomics-stable && npm run build) && systemctl --user restart codenomics-dashboard
 # 3. publish the live surfaces from released main:
 bash ~/codenomics-pages-deploy.sh          # marketing -> codenomics.ai
 npm publish                                # app -> npm   (only when the package changed)
@@ -97,7 +102,9 @@ Two worktrees keep the personal dashboard isolated from dev churn:
 - `/srv/codenomics` — **dev** branch. The working checkout: Claude's hooks, settings,
   and memory are anchored here, so do all development here.
 - `/srv/codenomics-stable` — **main** branch worktree. Feeds the personal dashboard.
-  Refresh it after a promote: `git -C /srv/codenomics-stable pull && npm run build`.
+  Refresh it after a promote with **`reset --hard`, not `pull`** (the promote moves the
+  `main` ref under this worktree, so pull no-ops while files stay stale):
+  `git -C /srv/codenomics-stable fetch origin && git -C /srv/codenomics-stable reset --hard origin/main && (cd /srv/codenomics-stable && npm run build)`.
 
 App serving (systemd `--user` services):
 

@@ -1,20 +1,9 @@
 import { parseArgs } from 'node:util';
-import { createHash } from 'node:crypto';
 import { readIndex } from '../../core/store.js';
 import { buildRollups } from '../../core/rollup.js';
 import { loadConfig } from '../../core/config.js';
-import { SCHEMA_VERSION, type RollupV1 } from '../../core/schema.js';
-
-// Rows per request. The backend caps a single body well above this; chunking
-// keeps payloads small and lets a partial failure retry cheaply.
-const CHUNK = 5000;
-
-/** Hash a project key so the one potentially identifying string never leaves the
- *  machine in the clear (privacy commitment #5). The backend requires project to
- *  be a hex hash, so this also makes the payload acceptable to /v1/sync. */
-function hashProject(project: string, salt: string): string {
-  return createHash('sha256').update(salt).update('\0').update(project).digest('hex');
-}
+import { pushRollups } from '../../core/sync-client.js';
+import type { RollupV1 } from '../../core/schema.js';
 
 export async function run(argv: string[]): Promise<number> {
   const { values } = parseArgs({
@@ -38,13 +27,12 @@ export async function run(argv: string[]): Promise<number> {
     console.error('index is empty — run `npx codenomics index` first');
     return 1;
   }
-  const rollups = buildRollups(index.sessions);
 
   if (!values.push) {
-    return preview(rollups, values.json);
+    return preview(buildRollups(index.sessions), values.json);
   }
 
-  // --- push path ---
+  // --- push path (delegates to the shared sync client) ---
   const { config } = loadConfig({ flags: {} });
   const endpoint = (values.endpoint ?? config.sync.endpoint ?? '').replace(/\/+$/, '');
   const token = values.token ?? config.sync.token ?? process.env.CODENOMICS_SYNC_TOKEN ?? '';
@@ -57,35 +45,12 @@ export async function run(argv: string[]): Promise<number> {
     return 1;
   }
 
-  // Hash project keys in place before anything leaves the machine.
-  const salt = config.sync.salt ?? '';
-  const payloadRows: RollupV1[] = rollups.map((r) => ({ ...r, project: hashProject(r.project, salt) }));
-
-  const url = `${endpoint}/v1/sync`;
-  let accepted = 0;
-  for (let i = 0; i < payloadRows.length; i += CHUNK) {
-    const chunk = payloadRows.slice(i, i + CHUNK);
-    let res: Response;
-    try {
-      res = await fetch(url, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
-        body: JSON.stringify({ schemaVersion: SCHEMA_VERSION, rollups: chunk }),
-      });
-    } catch (e) {
-      console.error(`sync failed: ${(e as Error).message}`);
-      return 1;
-    }
-    if (!res.ok) {
-      const detail = await res.text().catch(() => '');
-      console.error(`sync rejected (HTTP ${res.status}): ${detail.slice(0, 300)}`);
-      return 1;
-    }
-    const body = (await res.json().catch(() => ({}))) as { accepted?: number };
-    accepted += body.accepted ?? chunk.length;
+  const result = await pushRollups({ endpoint, token, salt: config.sync.salt ?? '', sessions: index.sessions });
+  if (!result.ok) {
+    console.error(result.error ?? 'sync failed');
+    return 1;
   }
-
-  console.log(`synced ${accepted} aggregate rows to ${endpoint} (aggregates only; see PRIVACY.md).`);
+  console.log(`synced ${result.accepted} aggregate rows to ${endpoint} (aggregates only; see PRIVACY.md).`);
   return 0;
 }
 

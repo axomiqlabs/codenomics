@@ -119,6 +119,7 @@ note "verify authorship: gh api repos/$REPO_SLUG/commits/$PROTECTED --jq '.commi
 note "note: dev:4848 tree is unchanged; no rebuild needed."
 echo
 note "MODEL B next steps — main now drives the live surfaces:"
-note "  1. refresh stable:  git -C /srv/codenomics-stable pull && (cd /srv/codenomics-stable && npm run build)"
+note "  1. refresh stable (reset --hard, NOT pull — this promote moved the ref, files are stale; restart so :3838 reloads dist/):"
+note "       git -C /srv/codenomics-stable fetch origin && git -C /srv/codenomics-stable reset --hard origin/main && (cd /srv/codenomics-stable && npm run build) && systemctl --user restart codenomics-dashboard"
 note "  2. marketing:       bash ~/codenomics-pages-deploy.sh        # -> codenomics.ai"
 note "  3. app package:     npm publish                              # only if the package changed"

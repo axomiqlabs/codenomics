@@ -10,7 +10,8 @@ const COMMANDS: Record<string, { summary: string; load: () => Promise<{ run: (ar
   config: { summary: 'Get/set config values (drivers, limits, pricing...)', load: () => import('./commands/config-cmd.js') },
   summarize: { summary: 'AI recaps for recent sessions (requires `claude` CLI)', load: () => import('./commands/summarize-cmd.js') },
   doctor: { summary: 'Diagnose collectors, parse errors, format drift, config', load: () => import('./commands/doctor.js') },
-  sync: { summary: 'Preview the (future) cloud sync payload — aggregates only', load: () => import('./commands/sync.js') },
+  sync: { summary: 'Preview/push the cloud sync payload — aggregates only', load: () => import('./commands/sync.js') },
+  benchmark: { summary: 'Join/leave the cross-org benchmark (email + 12h auto-sync)', load: () => import('./commands/benchmark.js') },
 };
 
 async function readVersion(): Promise<string> {

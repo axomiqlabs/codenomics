@@ -22,24 +22,32 @@ Nothing is transmitted anywhere by any current command.
 prints a warning, because the dashboard exposes the data above to whoever can
 reach the port.
 
-## The future cloud sync (not yet available)
+## Cloud sync
 
-`codenomics sync` today is a **preview stub** — it prints what a sync would
-send and exits. The payload contract is `RollupV1` (see `src/core/schema.ts`):
-daily aggregates of token counts, session/prompt/commit counts, and active
-time per (day, vendor, model, project, human/machine).
+`codenomics sync` prints the exact payload and exits; `codenomics sync --push`
+uploads it. The payload contract is `RollupV1` (see `src/core/schema.ts`): daily
+aggregates of token counts, session/prompt/commit counts, and active time per
+(day, vendor, model, project, human/machine). Nothing uploads unless you opt in.
 
-Hard commitments for when sync ships:
+**Auto-sync.** Joining the benchmark (`codenomics benchmark join` or the dashboard)
+schedules an OS-level job (launchd / systemd / Task Scheduler) that runs
+`index && sync --push` **every 12 hours**, plus an opportunistic push while the
+dashboard is open. It uploads the same aggregates-only payload below, nothing more.
+Opt out anytime with `codenomics benchmark leave` (removes the schedule and
+disconnects), or inspect exactly what would go with `codenomics sync` (no flags).
+
+Hard commitments:
 
 1. **Aggregates only.** Prompts, code, transcripts, tool output, file paths,
    and text excerpts never leave the machine. The sync payload type has no
    text-bearing fields, enforced by schema and tests.
-2. **Project keys are the only potentially identifying strings.** Sync will
-   offer aliasing/hashing of project keys before anything is sent.
+2. **Project keys are hashed before they leave.** The one potentially identifying
+   string is salted-SHA-256 hashed on the machine before upload (`hashProject`,
+   `src/core/sync-client.ts`); the backend only ever receives the hash.
 3. **Opt-in, inspectable, versioned.** `sync --json` always shows the exact
-   payload; schema changes bump `schemaVersion`.
+   payload; schema changes bump `schemaVersion`; the consent text is versioned.
 
-## The cross-org benchmark (Team, not yet available)
+## The cross-org benchmark
 
 The Team plane's benchmark — "is your true $/commit good, vs the field?" — is
 built entirely from the opt-in `RollupV1` aggregates above. It is the only

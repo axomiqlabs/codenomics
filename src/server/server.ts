@@ -15,6 +15,9 @@ import { sessionKey } from '../core/schema.js';
 import { allCollectors } from '../collectors/registry.js';
 import { summarizeSessions } from '../summarize.js';
 import { benchmarkPanel } from './benchmark.js';
+import { installAutoSync, uninstallAutoSync, autoSyncStatus, checkPersistentInstall } from '../core/scheduler.js';
+import { pushRollups, readSyncState } from '../core/sync-client.js';
+import { recordBenchmarkConsent } from '../core/consent.js';
 
 const REINDEX_STALE_MS = 5 * 60 * 1000;
 const PUBLIC_DIR = new URL('../../public/', import.meta.url).pathname;
@@ -160,6 +163,7 @@ export function startServer(opts: ServerOptions = {}): http.Server {
           config: { drivers: config.drivers, limits: config.limits },
           capabilities: Object.fromEntries(allCollectors().map((c) => [c.vendor, c.capabilities])),
           env: process.env.CODENOMICS_ENV ?? null,
+          sync: { ...readSyncState(), autoSync: autoSyncStatus(), joined: Boolean(config.sync.token) },
         });
         return;
       }
@@ -213,7 +217,19 @@ export function startServer(opts: ServerOptions = {}): http.Server {
           }
           const { config: current } = loadConfig();
           saveUserConfig(mergeConfig(current, { sync: { token: body.token } }));
-          json(res, 200, { ok: true });
+          recordBenchmarkConsent(email);
+          // Schedule auto-sync — the server runs on the user's machine, so it can
+          // install. An ephemeral npx install can't be scheduled; tell the UI so it
+          // can prompt for a global install.
+          const persist = checkPersistentInstall();
+          let autoSync: Record<string, unknown>;
+          if (!persist.ok) {
+            autoSync = { ok: false, needsGlobalInstall: true, reason: persist.reason };
+          } else {
+            const r = installAutoSync();
+            autoSync = r.ok ? { ok: true, mechanism: r.mechanism } : { ok: false, error: r.error };
+          }
+          json(res, 200, { ok: true, autoSync });
         } catch (e) {
           json(res, 502, { ok: false, error: e instanceof Error ? e.message : String(e) });
         }
@@ -223,6 +239,7 @@ export function startServer(opts: ServerOptions = {}): http.Server {
       if (url.pathname === '/api/benchmark/disconnect' && req.method === 'POST') {
         const { config: current } = loadConfig();
         saveUserConfig(mergeConfig(current, { sync: { token: null } }));
+        uninstallAutoSync();
         json(res, 200, { ok: true });
         return;
       }
@@ -328,5 +345,26 @@ export function startServer(opts: ServerOptions = {}): http.Server {
       console.log(`codenomics dashboard: ${base}`);
     }
   });
+
+  // sync-on-serve: opportunistic background contribution while the dashboard runs
+  // (a bonus path beside the 12h OS-scheduled job; covers users who keep it open).
+  // No-ops unless they've joined (token present). Never crashes the server.
+  const SYNC_EVERY_MS = 12 * 60 * 60 * 1000;
+  const backgroundSync = async (): Promise<void> => {
+    try {
+      const { config: c } = loadConfig();
+      const endpoint = (c.sync.endpoint ?? '').replace(/\/+$/, '');
+      const tok = c.sync.token ?? process.env.CODENOMICS_SYNC_TOKEN ?? '';
+      if (!endpoint || !tok) return;
+      const idx = readIndex();
+      if (!idx.sessions.length) return;
+      await pushRollups({ endpoint, token: tok, salt: c.sync.salt ?? '', sessions: idx.sessions });
+    } catch {
+      /* a sync hiccup must never take down the dashboard */
+    }
+  };
+  setTimeout(() => void backgroundSync(), 30_000).unref?.();
+  setInterval(() => void backgroundSync(), SYNC_EVERY_MS).unref?.();
+
   return server;
 }

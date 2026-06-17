@@ -457,9 +457,27 @@ function benchJoin(title, body, btnLabel){
       <input type="email" id="benchJoinEmail" placeholder="you@company.com" autocomplete="email" required>
       <button class="btn primary" id="benchJoinBtn" type="submit">${btnLabel}</button>
     </form>
-    <div class="bj-fine">By joining, you agree to receive product updates by email — unsubscribe anytime. Your benchmark aggregates stay anonymous and are never linked to your email. <a href="https://codenomics.ai/privacy.html" target="_blank" rel="noopener">Privacy</a>.</div>
+    <div class="bj-fine">By joining, you agree to receive product updates by email — unsubscribe anytime. Your benchmark aggregates stay anonymous and are never linked to your email. On joining, codenomics auto-syncs <b>aggregates only</b> every 12h (day · vendor · model · <b>hashed</b> project · counts — never code, prompts, or paths); preview anytime with <code>codenomics sync</code>. <a href="https://codenomics.ai/privacy.html" target="_blank" rel="noopener">Privacy</a>.</div>
     <div class="bj-msg" id="benchJoinMsg"></div>
   </div>`;
+}
+function ago(iso){
+  if(!iso) return 'never';
+  const ms = Date.now() - new Date(iso).getTime();
+  const m = Math.round(ms/60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m+'m ago';
+  const h = Math.round(m/60); if (h < 24) return h+'h ago';
+  return Math.round(h/24)+'d ago';
+}
+// Auto-sync state line under the connected cohort header (reads /api/data DATA.sync).
+function syncLine(){
+  const s = (DATA && DATA.sync) || {}; const as = s.autoSync || {};
+  const auto = as.installed
+    ? `auto-sync on · ${esc(as.mechanism||'')} · ${esc(as.schedule||'every 12h')}`
+    : `auto-sync off — run <code>npm i -g codenomics</code> then <code>codenomics benchmark join</code> for 12h auto-sync`;
+  const err = s.lastError ? ` · <span class="bs-err">last error: ${esc(String(s.lastError).slice(0,80))}</span>` : '';
+  return `<div class="bench-sync">${auto} · last synced <b>${ago(s.lastSyncedAt)}</b>${err}</div>`;
 }
 function renderBench(p){
   const el = $('#benchPanel');
@@ -483,7 +501,7 @@ function renderBench(p){
   if (!p.metrics) return void (el.innerHTML = benchMsg(p.message || 'No sessions yet to compare.'));
   const c = p.cohort;
   const head = `<div class="bench-cohort"><span class="bench-on">● connected</span> · your cohort · <b>${esc(VENDOR_TAG[c.vendor]||c.vendor)}</b> · ${badge(c.model)} · ${esc(c.source)} · <b>${c.sessions}</b> sessions, <b>${c.commits}</b> commits · last ${p.windowDays}d <button class="bench-dc" id="benchDcBtn" title="disconnect">disconnect</button></div>`;
-  el.innerHTML = head + `<div class="bench-grid">${p.metrics.map(renderCard).join('')}</div>`;
+  el.innerHTML = head + syncLine() + `<div class="bench-grid">${p.metrics.map(renderCard).join('')}</div>`;
   const dc = $('#benchDcBtn');
   if (dc) dc.addEventListener('click', async ()=>{ await cfetch('/api/benchmark/disconnect', { method:'POST' }); loadBenchmark(); });
 }
@@ -505,6 +523,11 @@ async function joinBenchmark(ev){
     const r = await cfetch('/api/benchmark/join', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ email }) });
     const j = await r.json();
     if (!j.ok) throw new Error(j.error || 'could not connect');
+    // refresh /api/data so the sync-status line reflects the new auto-sync state
+    try { await load(); } catch {}
+    if (j.autoSync && j.autoSync.needsGlobalInstall && msg) {
+      msg.innerHTML = 'Joined ✓ — for automatic 12h sync, install globally: <code>npm i -g codenomics</code> then re-run join. (You can sync manually anytime: <code>codenomics sync --push</code>.)';
+    }
     await loadBenchmark();
   } catch(e){
     if (msg) msg.textContent = 'Could not connect: ' + e.message;

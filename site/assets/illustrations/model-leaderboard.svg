@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="372" viewBox="0 0 940 372" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="Model economics leaderboard ranked by true cost per commit, lowest wins. Opus wins at $14.20 per commit with 6.4 prompts per commit despite premium token price; Sonnet $16.90; Haiku $21.40 with 14.8 prompts per commit despite the cheapest tokens; gpt-5 $23.10; Gemini shows a dash because commits are not detectable from its telemetry. Illustrative.">
+  <defs>
+    <filter id="lb-sh" x="-10%" y="-30%" width="120%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#0f172a" flood-opacity="0.10"/></filter>
+  </defs>
+  <g filter="url(#lb-sh)"><rect x="0" y="0" width="940" height="372" rx="16" fill="#ffffff" stroke="#eef0f4"/></g>
+
+  <!-- title -->
+  <text x="28" y="40" font-size="17" font-weight="800" letter-spacing="-0.3" fill="#0f172a">Model economics</text>
+  <text x="178" y="40" font-size="13" font-weight="600" fill="#64748b">— true $/commit, lowest wins</text>
+  <g><rect x="848" y="22" width="64" height="22" rx="11" fill="#f7f8fa" stroke="#e7e9ee"/><text x="880" y="37" font-size="10" font-weight="700" letter-spacing="0.5" fill="#94a3b8" text-anchor="middle">illustrative</text></g>
+
+  <!-- column headers -->
+  <g font-size="11" font-weight="700" letter-spacing="0.6" fill="#94a3b8" font-family="ui-monospace,'SF Mono',Menlo,monospace">
+    <text x="44" y="84">MODEL</text>
+    <text x="430" y="84" text-anchor="end">TRUE $/COMMIT</text>
+    <text x="556" y="84" text-anchor="end">SESSIONS</text>
+    <text x="668" y="84" text-anchor="end">COMMITS</text>
+    <text x="806" y="84" text-anchor="end">PROMPTS/CMT</text>
+    <text x="912" y="84" text-anchor="end">$ TOTAL</text>
+  </g>
+  <line x1="28" y1="94" x2="912" y2="94" stroke="#eef0f4" stroke-width="1"/>
+
+  <!-- winner row highlight -->
+  <rect x="14" y="100" width="912" height="44" rx="9" fill="#ecfdf3"/>
+  <rect x="14" y="100" width="3.5" height="44" rx="2" fill="#16a34a"/>
+
+  <!-- rows -->
+  <g font-family="ui-monospace,'SF Mono',Menlo,monospace">
+    <!-- opus (winner) -->
+    <g><rect x="40" y="113" width="58" height="20" rx="6" fill="#eef2ff"/><text x="69" y="127" font-size="11.5" font-weight="700" fill="#4f46e5" text-anchor="middle">opus</text></g>
+    <text x="430" y="129" font-size="15.5" font-weight="800" fill="#16a34a" text-anchor="end">$14.20</text>
+    <text x="556" y="129" font-size="13" fill="#334155" text-anchor="end">312</text>
+    <text x="668" y="129" font-size="13" fill="#334155" text-anchor="end">188</text>
+    <text x="806" y="129" font-size="13" fill="#334155" text-anchor="end">6.4</text>
+    <text x="912" y="129" font-size="13" fill="#64748b" text-anchor="end">$2,140</text>
+
+    <!-- sonnet -->
+    <g><rect x="40" y="159" width="64" height="20" rx="6" fill="#eff6ff"/><text x="72" y="173" font-size="11.5" font-weight="700" fill="#2563eb" text-anchor="middle">sonnet</text></g>
+    <text x="430" y="175" font-size="15.5" font-weight="800" fill="#0f172a" text-anchor="end">$16.90</text>
+    <text x="556" y="175" font-size="13" fill="#334155" text-anchor="end">204</text>
+    <text x="668" y="175" font-size="13" fill="#334155" text-anchor="end">121</text>
+    <text x="806" y="175" font-size="13" fill="#334155" text-anchor="end">8.1</text>
+    <text x="912" y="175" font-size="13" fill="#64748b" text-anchor="end">$980</text>
+
+    <!-- haiku -->
+    <g><rect x="40" y="205" width="58" height="20" rx="6" fill="#ecfdf5"/><text x="69" y="219" font-size="11.5" font-weight="700" fill="#0d9488" text-anchor="middle">haiku</text></g>
+    <text x="430" y="221" font-size="15.5" font-weight="800" fill="#0f172a" text-anchor="end">$21.40</text>
+    <text x="556" y="221" font-size="13" fill="#334155" text-anchor="end">156</text>
+    <text x="668" y="221" font-size="13" fill="#334155" text-anchor="end">73</text>
+    <text x="806" y="221" font-size="13" font-weight="700" fill="#d97706" text-anchor="end">14.8</text>
+    <text x="912" y="221" font-size="13" fill="#64748b" text-anchor="end">$410</text>
+
+    <!-- gpt-5 -->
+    <g><rect x="40" y="251" width="58" height="20" rx="6" fill="#f1f5f9"/><text x="69" y="265" font-size="11.5" font-weight="700" fill="#475569" text-anchor="middle">gpt-5</text></g>
+    <text x="430" y="267" font-size="15.5" font-weight="800" fill="#0f172a" text-anchor="end">$23.10</text>
+    <text x="556" y="267" font-size="13" fill="#334155" text-anchor="end">88</text>
+    <text x="668" y="267" font-size="13" fill="#334155" text-anchor="end">41</text>
+    <text x="806" y="267" font-size="13" font-weight="700" fill="#d97706" text-anchor="end">12.2</text>
+    <text x="912" y="267" font-size="13" fill="#64748b" text-anchor="end">$370</text>
+
+    <!-- gemini (no commits detectable) -->
+    <g><rect x="40" y="297" width="62" height="20" rx="6" fill="#fffbeb"/><text x="71" y="311" font-size="11.5" font-weight="700" fill="#b45309" text-anchor="middle">gemini</text></g>
+    <text x="430" y="313" font-size="15.5" font-weight="800" fill="#cbd5e1" text-anchor="end">—</text>
+    <text x="556" y="313" font-size="13" fill="#334155" text-anchor="end">47</text>
+    <text x="668" y="313" font-size="13" fill="#cbd5e1" text-anchor="end">—</text>
+    <text x="806" y="313" font-size="13" fill="#cbd5e1" text-anchor="end">—</text>
+    <text x="912" y="313" font-size="13" fill="#64748b" text-anchor="end">$120</text>
+  </g>
+
+  <line x1="28" y1="334" x2="912" y2="334" stroke="#eef0f4" stroke-width="1"/>
+  <text x="28" y="356" font-size="12" font-weight="500" fill="#64748b">Cheapest tokens, priciest commits: <tspan fill="#d97706" font-weight="700">haiku</tspan> needs <tspan font-weight="700" fill="#0f172a">14.8</tspan> prompts/commit — the human time is the cost. Gemini commits aren't detectable, so it reads <tspan font-weight="700" fill="#0f172a">—</tspan>, never a fake 0.</text>
+</svg>

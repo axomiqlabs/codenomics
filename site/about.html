@@ -19,6 +19,7 @@
   <div class="wrap">
     <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
     <div class="links">
+      <a href="product.html">Product</a>
       <a href="index.html#how">How it works</a>
       <a href="methodology.html">Methodology</a>
       <a href="pricing.html">Pricing</a>
@@ -55,6 +56,10 @@
            alt="The same two models ranked two ways: by token price the budget model looks cheapest, but by true cost per commit the premium model wins at $14.20 versus $21.40. The ranking inverts.">
       <figcaption>Cheapest per token isn't cheapest per commit — counting the human half can reverse the order.</figcaption>
     </figure>
+
+    <h2>Where it came from</h2>
+    <p>Codenomics didn't start as a product. It started as an argument with an invoice. During the <b>Fable&nbsp;5 launch window</b>, the new model looked more expensive — it burned more usage credits, so the meter said "pricier." But the practical question wouldn't go away: <em>if it ships the same work with fewer prompts, fewer corrections, and less hand-holding, is it actually the cheaper model?</em> Nominal price couldn't answer that. Nothing on a token dashboard could.</p>
+    <p>So the first version was a throwaway local script — <b>ClaudeStats</b> — that read the agent's own logs against git activity to settle the question with numbers instead of vibes. It worked well enough that it kept growing: more agents, real driver assumptions, a dashboard, reports. That script is now Codenomics. The conviction underneath it never changed — that the only honest unit of AI coding cost is <b>useful output over everything it really took to get there</b>, model spend and human attention included.</p>
 
     <h2>Why now</h2>
     <p>Three things made this the moment. Agents became expensive enough that the spend demands an answer. The tooling consolidated into a handful of CLIs — Claude Code, Codex, Gemini — that each write rich logs to disk. And the difference between models stopped being about capability and started being about <em>efficiency</em>: same task, wildly different cost to get it shipped. Efficiency is now the competitive edge, and an edge you can't measure is one you can't press.</p>

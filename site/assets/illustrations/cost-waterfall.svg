@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" fill="none" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif" role="img" aria-label="Cost waterfall building true cost per commit. Fresh tokens $5.20, minus $1.30 cache adjustment gives compute $3.90, plus attention $10.40, plus supervision time $2.30, equals true cost per commit $16.60. Illustrative.">
+<defs><filter id="wf-sh" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#0f172a" flood-opacity="0.10"/></filter></defs>
+<g filter="url(#wf-sh)"><rect x="0" y="0" width="720" height="420" rx="16" fill="#ffffff" stroke="#eef0f4"/></g>
+<text x="28" y="42" font-size="17" font-weight="800" letter-spacing="-0.3" fill="#0f172a">How true $/commit is built</text>
+<g><rect x="628" y="24" width="64" height="22" rx="11" fill="#f7f8fa" stroke="#e7e9ee"/><text x="660" y="39" font-size="10" font-weight="700" letter-spacing="0.5" fill="#94a3b8" text-anchor="middle">illustrative</text></g>
+<line x1="56" y1="330" x2="680" y2="330" stroke="#e7e9ee" stroke-width="1"/>
+<rect x="76" y="254.9" width="64" height="75.1" rx="6" fill="#94a3b8"/>
+<text x="108" y="245.9" font-size="13" font-weight="800" fill="#334155" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">$5.20</text>
+<text x="108" y="352" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">Fresh</text>
+<text x="108" y="367" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">tokens</text>
+<rect x="180" y="254.9" width="64" height="18.8" rx="6" fill="#16a34a"/>
+<text x="212" y="245.9" font-size="13" font-weight="800" fill="#16a34a" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">−$1.30</text>
+<text x="212" y="352" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">Cache adj.</text>
+<line x1="140" y1="254.9" x2="180" y2="254.9" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+<rect x="284" y="273.7" width="64" height="56.3" rx="6" fill="#475569"/>
+<text x="316" y="264.7" font-size="13" font-weight="800" fill="#475569" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">$3.90</text>
+<text x="316" y="352" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">Compute $</text>
+<line x1="244" y1="273.7" x2="284" y2="273.7" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+<rect x="398" y="123.4" width="64" height="150.2" rx="6" fill="#8b5cf6"/>
+<text x="430" y="114.4" font-size="13" font-weight="800" fill="#8b5cf6" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">+$10.40</text>
+<text x="430" y="352" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">Attention $</text>
+<line x1="348" y1="273.7" x2="398" y2="273.7" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+<rect x="504" y="90.2" width="64" height="33.2" rx="6" fill="#d97706"/>
+<text x="536" y="81.2" font-size="13" font-weight="800" fill="#d97706" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">+$2.30</text>
+<text x="536" y="352" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">Supervision</text>
+<text x="536" y="367" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">time</text>
+<line x1="462" y1="123.4" x2="504" y2="123.4" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+<rect x="600" y="90.2" width="64" height="239.8" rx="6" fill="#16a34a"/>
+<text x="632" y="81.2" font-size="13" font-weight="800" fill="#16a34a" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">$16.60</text>
+<text x="632" y="352" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">True $/</text>
+<text x="632" y="367" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">commit</text>
+<line x1="568" y1="90.2" x2="600" y2="90.2" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+</svg>

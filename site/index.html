@@ -23,6 +23,7 @@
   <div class="wrap">
     <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
     <div class="links">
+      <a href="product.html">Product</a>
       <a href="#how">How it works</a>
       <a href="methodology.html">Methodology</a>
       <a href="pricing.html">Pricing</a>
@@ -58,8 +59,37 @@
   </div>
 </header>
 
+<!-- dashboard peek — the product, fast -->
+<section class="band" style="padding-top:4px">
+  <div class="wrap center">
+    <span class="kicker">The dashboard your logs become</span>
+    <h2 style="font-size:30px;margin-top:10px">One command. The whole picture.</h2>
+    <figure class="figure wide" style="margin-top:26px;margin-bottom:0">
+      <img src="assets/illustrations/trading-desk.svg" width="940" height="600"
+           alt="Codenomics command center: blended true cost per commit $16.60 down 12%, model mix, attention load 58%, daily burn, best session $9.40 vs worst $48.10 per commit, a breached weekly budget, and a recommendation to route automated jobs to a cheaper model. Illustrative preview.">
+    </figure>
+    <p class="mt-m" style="font-size:15px"><a href="product.html">Take the full product tour →</a></p>
+  </div>
+</section>
+
+<!-- local-first trust strip -->
+<section class="band soft trust-band">
+  <div class="wrap">
+    <div class="trust-strip">
+      <span class="lead">Local-first by design</span>
+      <span class="trust-chip lock">Runs on your machine</span>
+      <span class="trust-chip">No code uploaded</span>
+      <span class="trust-chip">No prompts uploaded</span>
+      <span class="trust-chip">No transcripts uploaded</span>
+      <span class="trust-chip">No proxy</span>
+      <span class="trust-chip">No account to start</span>
+      <span class="trust-chip">Open source</span>
+    </div>
+  </div>
+</section>
+
 <!-- the problem -->
-<section class="band soft">
+<section class="band">
   <div class="wrap">
     <div class="grid c2" style="align-items:center;gap:56px">
       <div>
@@ -80,6 +110,42 @@
   </div>
 </section>
 
+<!-- origin story -->
+<section class="band soft" id="origin">
+  <div class="wrap">
+    <div class="grid c2" style="align-items:center;gap:56px">
+      <div>
+        <span class="kicker">Why we built it</span>
+        <h2 style="margin-bottom:18px">It started as one stubborn question.</h2>
+        <p class="origin-quote">When a model costs more on paper, how do you know if it's actually <em>more expensive</em> to ship with?</p>
+        <p class="sectionlede" style="margin-top:18px">That question landed during the <b>Fable&nbsp;5 launch window</b>. The new model burned more usage credits, so on the invoice it looked pricier. But the real question was practical: if it ships the same work with fewer prompts, fewer corrections, and less supervision, isn't it the cheaper one? The token meter couldn't say. So we built something on a laptop to find out — first as a throwaway script called <b>ClaudeStats</b>, then as the tool this became.</p>
+      </div>
+      <div class="timeline">
+        <div class="t done">
+          <div class="when">THE TRIGGER</div>
+          <h4>Fable 5 launch</h4>
+          <p>A "more expensive" model that might ship cheaper. No way to check.</p>
+        </div>
+        <div class="t done">
+          <div class="when">THE EXPERIMENT</div>
+          <h4>ClaudeStats</h4>
+          <p>A local script reading agent logs against git activity to answer it.</p>
+        </div>
+        <div class="t done">
+          <div class="when">THE TOOL</div>
+          <h4>Codenomics, local-first</h4>
+          <p>True cost per commit across Claude Code, Codex, and Gemini — on your machine.</p>
+        </div>
+        <div class="t">
+          <div class="when">NEXT</div>
+          <h4>Team &amp; the benchmark</h4>
+          <p>Aggregates-only peer comparison, for design partners shaping the baseline.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- the insight -->
 <section class="band">
   <div class="wrap narrow center">
@@ -91,6 +157,11 @@
       <p>In one developer's 7-week dataset — 884 sessions, 811 commits across Claude Code and Codex — the model priced <b>2× higher per token</b> shipped commits at <b>~⅓ lower true cost</b> than a model half its token price, because it needed fewer prompts and less hands-on time. The compute bill alone wouldn't show it. <a href="methodology.html">How this is measured →</a></p>
       <p class="fineprint">Single-developer sample; drivers set to $4/prompt and $300/hr; "commit" is a proxy for shipped work (see methodology). Your numbers depend on your drivers and task mix — run <code>npx codenomics report</code> on your own logs.</p>
     </div>
+    <figure class="figure" style="max-width:720px;margin-top:40px">
+      <img src="assets/illustrations/attention-iceberg.svg" width="720" height="460"
+           alt="An iceberg of AI coding cost. Above the waterline, the small visible part billed to you: tokens, usage credits, plan price. Below the waterline, the large hidden part: babysitting and supervision, prompt retries, context resets, reviewing bad diffs, debugging failed runs, rework and reverts.">
+      <figcaption>The biggest AI coding cost is often the human wrapped around the model — and it's the half a token meter never shows.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -125,6 +196,40 @@
         <p>Local dashboard, or generate weekly/monthly reports for the team and Slack.</p>
         <div class="cmd"><span><span class="prompt">$</span> npx codenomics serve</span></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- leaderboard payoff -->
+<section class="band">
+  <div class="wrap">
+    <div class="center">
+      <span class="kicker">What you get</span>
+      <h2>Which model actually ships cheapest?</h2>
+      <p class="sectionlede" style="margin:16px auto 0;max-width:62ch">Every model ranked by <b>true $/commit</b> — lowest wins. The cheapest tokens often land at the bottom: they burn more prompts and more of your time to ship the same work.</p>
+    </div>
+    <figure class="figure wide" style="margin-top:32px">
+      <img src="assets/illustrations/model-leaderboard.svg" width="940" height="372"
+           alt="Model economics leaderboard ranked by true cost per commit: Opus wins at $14.20 despite premium tokens; Haiku reads $21.40 because it needs 14.8 prompts per commit; Gemini shows a dash because its commits are not detectable. Illustrative.">
+    </figure>
+    <p class="center mt-m" style="font-size:15px"><a href="product.html">See the full dashboard — leaderboard, session box scores, daily burn →</a></p>
+  </div>
+</section>
+
+<!-- agent P&L -->
+<section class="band soft">
+  <div class="wrap">
+    <div class="grid c2" style="align-items:center;gap:56px">
+      <div>
+        <span class="kicker">The framing</span>
+        <h2>Read your agents like a P&amp;L.</h2>
+        <p class="sectionlede" style="margin:16px 0 0">Output on one side, what it took on the other, and a bottom line you can act on. The output is the work that <em>shipped</em>; the cost is compute plus the human attention and time around it. Divide one by the other and you get the only number that compares models honestly — <b>true $/commit</b>.</p>
+        <p class="sectionlede" style="margin:14px 0 0;font-size:16px;color:var(--muted)">Commits are the deliverable today. PR-, bug- and revert-aware ground truth is on the roadmap — and labeled as such, never faked.</p>
+      </div>
+      <figure class="figure" style="margin:0;max-width:560px">
+        <img src="assets/illustrations/agent-pnl.svg" width="720" height="468"
+             alt="An AI coding agent P&L: output is 188 commits shipped (PRs, bugs and features marked roadmap); cost is $1,240 compute plus $1,880 attention equals $3,120 true cost; bottom line true cost per commit $16.60. Illustrative.">
+      </figure>
     </div>
   </div>
 </section>
@@ -202,8 +307,39 @@
   </div>
 </section>
 
+<!-- who it's for -->
+<section class="band soft" id="fit">
+  <div class="wrap">
+    <div class="center">
+      <span class="kicker">Who it's for</span>
+      <h2>Built for workflow economics — not surveillance.</h2>
+      <p class="sectionlede" style="margin:16px auto 0">Codenomics measures whether your AI coding tools are saving time or quietly creating supervision debt. It is not a way to watch developers, and not another token dashboard.</p>
+    </div>
+    <div class="fit-grid mt-l">
+      <div class="fit-col yes">
+        <h3>✓ For</h3>
+        <ul>
+          <li>Solo builders leaning hard on AI coding agents</li>
+          <li>Engineering leads comparing models and agents on real cost</li>
+          <li>Founders managing agent spend against what actually ships</li>
+          <li>Teams asking whether AI tooling saves time or adds supervision debt</li>
+        </ul>
+      </div>
+      <div class="fit-col no">
+        <h3>Not for</h3>
+        <ul>
+          <li>Production LLM API tracing or request-level observability</li>
+          <li>Employee surveillance or keystroke monitoring</li>
+          <li>Generic chatbot or product analytics</li>
+          <li>Teams who only want a raw token meter</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- pricing teaser -->
-<section class="band soft" id="start">
+<section class="band" id="start">
   <div class="wrap center">
     <span class="kicker">Get started</span>
     <h2>Free for individuals. Forever.</h2>

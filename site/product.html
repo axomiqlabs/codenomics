@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>if(location.hostname.endsWith(".pages.dev"))location.replace("https://codenomics.ai"+location.pathname+location.search+location.hash);</script>
+<script>if(location.hostname==="127.0.0.1"||location.hostname==="localhost")addEventListener("DOMContentLoaded",function(){var b=document.createElement("div");b.textContent="DEV";b.style.cssText="position:fixed;bottom:12px;right:12px;z-index:9999;background:#d97706;color:#fff;font:700 11px/1 ui-monospace,monospace;letter-spacing:.08em;padding:5px 9px;border-radius:999px;box-shadow:0 2px 8px rgba(15,23,42,.2)";document.body.appendChild(b)});</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://codenomics.ai/product.html">
+<title>Product — See your AI coding agent economics | Codenomics</title>
+<meta name="description" content="A look at the Codenomics dashboard: the model leaderboard by true cost per commit, per-session box scores, daily-burn heatmap, budgets and routing recommendations — all computed locally from your agents' own logs.">
+<meta property="og:title" content="Codenomics — see your AI coding agent economics">
+<meta property="og:description" content="The dashboard your agents' logs become: which model ships cheapest, what each session really cost, where the money and attention went.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://codenomics.ai/assets/brand/icon-512.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
+    <div class="links">
+      <a href="product.html">Product</a>
+      <a href="index.html#how">How it works</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="spacer"></div>
+    <a class="ghost" href="https://github.com/axomiqlabs/codenomics">GitHub</a>
+    <a class="btn primary" href="index.html#start">Get started</a>
+  </div>
+</nav>
+
+<header class="hero" style="padding-bottom:32px">
+  <div class="wrap center">
+    <span class="eyebrow">● Product</span>
+    <h1 style="margin:0 auto;font-size:50px;max-width:18ch">Open the dashboard. The whole picture in one screen.</h1>
+    <p class="lede" style="margin:22px auto 0;max-width:60ch">One command turns the logs your agents already wrote into a command center for engineering economics — which model ships cheapest, what each session actually cost, and where the money and attention went. All on your machine.</p>
+  </div>
+  <div class="wrap" style="margin-top:36px">
+    <figure class="figure wide">
+      <img src="assets/illustrations/trading-desk.svg" width="940" height="600"
+           alt="Codenomics command center: blended true cost per commit, model mix, attention load, daily burn, best and worst sessions, a breached budget, and a recommendation to route automated jobs to a cheaper model. Illustrative preview.">
+      <figcaption>The command center — blended true $/commit, model mix, daily burn, budgets and live recommendations. Illustrative; your numbers come from your own logs.</figcaption>
+    </figure>
+  </div>
+  <div class="cta-row" style="justify-content:center;margin-top:8px">
+    <div class="cmd" style="font-size:16px;padding:14px 18px">
+      <span><span class="prompt">$</span> npx codenomics serve</span>
+      <button onclick="navigator.clipboard.writeText('npx codenomics serve');this.textContent='copied'">copy</button>
+    </div>
+  </div>
+</header>
+
+<!-- leaderboard -->
+<section class="band soft">
+  <div class="wrap">
+    <div class="center">
+      <span class="kicker">Model leaderboard</span>
+      <h2>Which model actually ships cheapest?</h2>
+      <p class="sectionlede" style="margin:16px auto 0;max-width:62ch">Every model and agent ranked by <b>true $/commit</b> — the lowest wins. The cheapest tokens often land at the bottom: they need more prompts and more of your time to ship the same work.</p>
+    </div>
+    <figure class="figure wide" style="margin-top:32px">
+      <img src="assets/illustrations/model-leaderboard.svg" width="940" height="372"
+           alt="Model economics leaderboard ranked by true cost per commit: Opus wins at $14.20 despite premium tokens; Haiku is $21.40 because it needs 14.8 prompts per commit; Gemini shows a dash because its commits are not detectable. Illustrative.">
+    </figure>
+  </div>
+</section>
+
+<!-- box score -->
+<section class="band">
+  <div class="wrap">
+    <div class="grid c2" style="align-items:center;gap:48px">
+      <div>
+        <span class="kicker">Session box score</span>
+        <h2>Drill into any session.</h2>
+        <p class="sectionlede" style="margin:16px 0 0">Open a single run and see exactly what it took: prompts, turns, tool calls, commits, output tokens, and the context re-read per call that flags a bloated session. The <b>true $ split</b> shows the part a token meter can't — how much of the cost was your attention.</p>
+        <p class="sectionlede" style="margin:14px 0 0;font-size:16px;color:var(--muted)">Recommendations are generated from your own patterns — high prompts-per-commit, low cache hit rate, premium models on automated jobs.</p>
+      </div>
+      <figure class="figure" style="margin:0;max-width:560px">
+        <img src="assets/illustrations/agent-boxscore.svg" width="600" height="470"
+             alt="A single session box score: Opus on Claude Code, 38 minutes active, 9 prompts, 2 commits, 168k context per call flagged, $20.10 true cost per commit, with attention 90% of the cost split. A letter grade is marked roadmap. Illustrative.">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- heatmap -->
+<section class="band soft">
+  <div class="wrap">
+    <div class="center">
+      <span class="kicker">Daily burn</span>
+      <h2>See where the money and attention went.</h2>
+      <p class="sectionlede" style="margin:16px auto 0;max-width:60ch">Every day, shaded by true-$ intensity. Budget breaches and high-context "session-bloat" days surface at a glance — closer to a risk dashboard than a usage chart.</p>
+    </div>
+    <figure class="figure" style="margin-top:32px;max-width:760px">
+      <img src="assets/illustrations/workflow-heatmap.svg" width="720" height="300"
+           alt="Daily-burn heatmap: each day shaded by true-dollar intensity over several months, with amber budget-breach markers and red rings on high context-per-call days. Illustrative.">
+    </figure>
+  </div>
+</section>
+
+<!-- the honest part -->
+<section class="band">
+  <div class="wrap narrow center">
+    <span class="kicker">What's real today</span>
+    <h2>Every number traces to your own logs.</h2>
+    <p class="sectionlede" style="margin:16px auto 0">The leaderboard, session box scores, daily burn, budgets, and recommendations ship today and compute entirely locally. PR- and revert-aware "deliverable" ground truth, and cross-team benchmarks, are on the roadmap and labeled as such wherever they appear. <a href="methodology.html">See exactly how it's measured →</a></p>
+    <div class="cta-row" style="justify-content:center;margin-top:28px">
+      <a class="btn primary lg" href="index.html#start">Run it on your own logs</a>
+      <a class="btn outline lg" href="https://github.com/axomiqlabs/codenomics">Read the source →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
+        <p class="tagline">The true economics of your AI coding agents. By Axomiq Labs.</p>
+      </div>
+      <div><h4>Product</h4><a href="product.html">Product tour</a><a href="index.html#how">How it works</a><a href="methodology.html">Methodology</a><a href="pricing.html">Pricing</a></div>
+      <div><h4>Company</h4><a href="about.html">About</a><a href="privacy.html">Privacy</a></div>
+      <div><h4>Developers</h4><a href="https://www.npmjs.com/package/codenomics">npm package</a><a href="https://github.com/axomiqlabs/codenomics">GitHub</a></div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Axomiq Labs. Codenomics is licensed FSL-1.1-MIT.</span>
+      <span>Made for builders who count what ships.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

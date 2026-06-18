@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="600" viewBox="0 0 940 600" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="Codenomics command center: blended true cost per commit $16.60, down 12% versus the prior 30 days; model mix dominated by Opus and Sonnet; attention is 58% of true cost; daily burn by model; best session $9.40 per commit on Opus versus worst $48.10; weekly budget breached at $1,240 of $1,000; recommendation to route automated jobs to a cheaper model to save about $173 a month. Illustrative preview.">
+  <defs>
+    <linearGradient id="td-grn" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#34d399"/></linearGradient>
+    <linearGradient id="td-red" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ef4444"/><stop offset="1" stop-color="#f87171"/></linearGradient>
+    <filter id="td-sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000" flood-opacity="0.35"/></filter>
+  </defs>
+
+  <g filter="url(#td-sh)"><rect x="0" y="0" width="940" height="600" rx="18" fill="#0b1220" stroke="#1e293b"/></g>
+
+  <!-- header -->
+  <circle cx="44" cy="38" r="7" fill="#6366f1"/>
+  <text x="60" y="43" font-size="14" font-weight="800" letter-spacing="0.4" fill="#f1f5f9">Codenomics</text>
+  <text x="158" y="43" font-size="12.5" font-weight="600" letter-spacing="1.4" fill="#64748b">· COMMAND CENTER</text>
+  <g><rect x="820" y="26" width="92" height="24" rx="12" fill="#1e293b" stroke="#334155"/>
+     <text x="866" y="42" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#94a3b8" text-anchor="middle">illustrative</text></g>
+
+  <!-- ROW A panel 1: blended true $/commit -->
+  <rect x="28" y="70" width="300" height="166" rx="12" fill="#0f1828" stroke="#26334a"/>
+  <text x="44" y="98" font-size="11" font-weight="700" letter-spacing="1.2" fill="#7c8aa3">BLENDED TRUE $ / COMMIT</text>
+  <text x="44" y="152" font-size="46" font-weight="800" letter-spacing="-1.5" fill="#f8fafc" font-family="ui-monospace,'SF Mono',Menlo,monospace">$16.60</text>
+  <g><rect x="44" y="166" width="118" height="24" rx="12" fill="#0c2a1f" stroke="#14532d"/>
+     <text x="56" y="183" font-size="12.5" font-weight="800" fill="#34d399">↓ 12%</text>
+     <text x="100" y="183" font-size="11.5" font-weight="600" fill="#10b981">vs prior 30d</text></g>
+  <text x="44" y="214" font-size="11.5" font-weight="500" fill="#64748b">compute + attention + supervision time</text>
+
+  <!-- ROW A panel 2: model mix -->
+  <rect x="346" y="70" width="286" height="166" rx="12" fill="#0f1828" stroke="#26334a"/>
+  <text x="362" y="98" font-size="11" font-weight="700" letter-spacing="1.2" fill="#7c8aa3">MODEL MIX · SPEND SHARE</text>
+  <g font-size="12" font-weight="600" font-family="ui-monospace,'SF Mono',Menlo,monospace">
+    <text x="362" y="124" fill="#c7d2fe">opus</text>   <rect x="430" y="115" width="168" height="11" rx="5.5" fill="#1e293b"/><rect x="430" y="115" width="78" height="11" rx="5.5" fill="#818cf8"/><text x="612" y="124" fill="#cbd5e1" text-anchor="end">46%</text>
+    <text x="362" y="150" fill="#bfdbfe">sonnet</text> <rect x="430" y="141" width="168" height="11" rx="5.5" fill="#1e293b"/><rect x="430" y="141" width="47" height="11" rx="5.5" fill="#60a5fa"/><text x="612" y="150" fill="#cbd5e1" text-anchor="end">28%</text>
+    <text x="362" y="176" fill="#a7f3d0">haiku</text>  <rect x="430" y="167" width="168" height="11" rx="5.5" fill="#1e293b"/><rect x="430" y="167" width="30" height="11" rx="5.5" fill="#34d399"/><text x="612" y="176" fill="#cbd5e1" text-anchor="end">18%</text>
+    <text x="362" y="202" fill="#cbd5e1">gpt-5</text>  <rect x="430" y="193" width="168" height="11" rx="5.5" fill="#1e293b"/><rect x="430" y="193" width="13" height="11" rx="5.5" fill="#94a3b8"/><text x="612" y="202" fill="#cbd5e1" text-anchor="end">8%</text>
+  </g>
+
+  <!-- ROW A panel 3: attention load -->
+  <rect x="650" y="70" width="262" height="166" rx="12" fill="#0f1828" stroke="#26334a"/>
+  <text x="666" y="98" font-size="11" font-weight="700" letter-spacing="1.2" fill="#7c8aa3">ATTENTION LOAD</text>
+  <text x="666" y="148" font-size="40" font-weight="800" letter-spacing="-1.5" fill="#a78bfa" font-family="ui-monospace,'SF Mono',Menlo,monospace">58%</text>
+  <text x="666" y="172" font-size="11.5" font-weight="500" fill="#94a3b8">of true $ is human attention</text>
+  <rect x="666" y="190" width="230" height="12" rx="6" fill="#1e293b"/>
+  <rect x="666" y="190" width="97" height="12" rx="6" fill="#475569"/>
+  <rect x="763" y="190" width="133" height="12" rx="6" fill="#a78bfa"/>
+  <text x="666" y="222" font-size="10.5" font-weight="600" fill="#64748b">compute 42%</text>
+  <text x="896" y="222" font-size="10.5" font-weight="600" fill="#a78bfa" text-anchor="end">attention 58%</text>
+
+  <!-- ROW B panel 4: daily burn -->
+  <rect x="28" y="254" width="548" height="154" rx="12" fill="#0f1828" stroke="#26334a"/>
+  <text x="44" y="282" font-size="11" font-weight="700" letter-spacing="1.2" fill="#7c8aa3">DAILY BURN · TRUE $ / DAY</text>
+  <g><!-- 14 stacked bars, baseline y=388 -->
+    <!-- each bar: opus(indigo) + sonnet(blue) + haiku(teal) stacked -->
+    <g>
+      <rect x="46"  y="360" width="30" height="28" fill="#818cf8"/><rect x="46"  y="350" width="30" height="10" fill="#60a5fa"/>
+      <rect x="82"  y="346" width="30" height="42" fill="#818cf8"/><rect x="82"  y="334" width="30" height="12" fill="#60a5fa"/><rect x="82" y="328" width="30" height="6" fill="#34d399"/>
+      <rect x="118" y="368" width="30" height="20" fill="#818cf8"/><rect x="118" y="360" width="30" height="8" fill="#60a5fa"/>
+      <rect x="154" y="332" width="30" height="56" fill="#818cf8"/><rect x="154" y="322" width="30" height="10" fill="#60a5fa"/>
+      <rect x="190" y="352" width="30" height="36" fill="#818cf8"/><rect x="190" y="344" width="30" height="8" fill="#34d399"/>
+      <rect x="226" y="318" width="30" height="70" fill="#818cf8"/><rect x="226" y="306" width="30" height="12" fill="#60a5fa"/>
+      <rect x="262" y="372" width="30" height="16" fill="#94a3b8"/>
+      <rect x="298" y="356" width="30" height="32" fill="#818cf8"/><rect x="298" y="346" width="30" height="10" fill="#60a5fa"/>
+      <rect x="334" y="340" width="30" height="48" fill="#818cf8"/><rect x="334" y="330" width="30" height="10" fill="#34d399"/>
+      <rect x="370" y="364" width="30" height="24" fill="#60a5fa"/>
+      <rect x="406" y="326" width="30" height="62" fill="#818cf8"/><rect x="406" y="314" width="30" height="12" fill="#60a5fa"/><rect x="406" y="308" width="30" height="6" fill="#34d399"/>
+      <rect x="442" y="350" width="30" height="38" fill="#818cf8"/><rect x="442" y="342" width="30" height="8" fill="#60a5fa"/>
+      <rect x="478" y="372" width="30" height="16" fill="#94a3b8"/>
+      <rect x="514" y="344" width="30" height="44" fill="#818cf8"/><rect x="514" y="334" width="30" height="10" fill="#60a5fa"/>
+    </g>
+    <line x1="46" y1="388" x2="544" y2="388" stroke="#26334a" stroke-width="1"/>
+    <text x="46"  y="402" font-size="9.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">06-02</text>
+    <text x="544" y="402" font-size="9.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace" text-anchor="end">06-16</text>
+  </g>
+
+  <!-- ROW B panel 5: best/worst session -->
+  <rect x="594" y="254" width="318" height="154" rx="12" fill="#0f1828" stroke="#26334a"/>
+  <text x="610" y="282" font-size="11" font-weight="700" letter-spacing="1.2" fill="#7c8aa3">BEST / WORST SESSION · $ / COMMIT</text>
+  <circle cx="616" cy="318" r="4" fill="#34d399"/>
+  <text x="630" y="322" font-size="12.5" font-weight="700" fill="#e2e8f0">BEST</text>
+  <rect x="686" y="308" width="58" height="20" rx="6" fill="#1e293b"/><text x="715" y="322" font-size="11" font-weight="700" fill="#c7d2fe" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">opus·3cmt</text>
+  <text x="896" y="322" font-size="15" font-weight="800" fill="#34d399" text-anchor="end" font-family="ui-monospace,Menlo,monospace">$9.40</text>
+  <circle cx="616" cy="362" r="4" fill="#f87171"/>
+  <text x="630" y="366" font-size="12.5" font-weight="700" fill="#e2e8f0">WORST</text>
+  <rect x="686" y="352" width="64" height="20" rx="6" fill="#1e293b"/><text x="718" y="366" font-size="11" font-weight="700" fill="#bfdbfe" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">sonnet·1cmt</text>
+  <text x="896" y="366" font-size="15" font-weight="800" fill="#f87171" text-anchor="end" font-family="ui-monospace,Menlo,monospace">$48.10</text>
+  <text x="610" y="396" font-size="10.5" font-weight="500" fill="#64748b">same week — task mix, not model, drove the gap</text>
+
+  <!-- ROW C: budget breach -->
+  <rect x="28" y="426" width="884" height="70" rx="12" fill="#0f1828" stroke="#26334a"/>
+  <text x="44" y="454" font-size="11" font-weight="700" letter-spacing="1.2" fill="#7c8aa3">BUDGET · weekly spend (true $) · global</text>
+  <rect x="44" y="464" width="700" height="14" rx="7" fill="#1e293b"/>
+  <rect x="44" y="464" width="700" height="14" rx="7" fill="url(#td-red)"/>
+  <line x1="612" y1="459" x2="612" y2="483" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="2 3"/>
+  <text x="612" y="494" font-size="9.5" fill="#64748b" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">max $1,000</text>
+  <text x="760" y="468" font-size="12.5" font-weight="700" fill="#e2e8f0" font-family="ui-monospace,Menlo,monospace">$1,240</text>
+  <text x="760" y="484" font-size="10.5" font-weight="600" fill="#64748b" font-family="ui-monospace,Menlo,monospace">/ $1,000</text>
+  <g><rect x="836" y="452" width="76" height="24" rx="12" fill="#2a0f12" stroke="#7f1d1d"/><text x="874" y="468" font-size="10.5" font-weight="800" letter-spacing="0.6" fill="#f87171" text-anchor="middle">BREACHED</text></g>
+
+  <!-- ROW D: recommendation ticker -->
+  <rect x="28" y="514" width="884" height="52" rx="12" fill="#15110a" stroke="#3f2d12"/>
+  <g><rect x="44" y="528" width="62" height="24" rx="12" fill="#3f2d12"/><text x="75" y="544" font-size="10.5" font-weight="800" letter-spacing="0.6" fill="#fbbf24" text-anchor="middle">▸ REC</text></g>
+  <text x="120" y="544" font-size="12.5" font-weight="500" fill="#cbd5e1">Machine jobs burned <tspan font-weight="800" fill="#f8fafc">$214</tspan> on premium models — at haiku pricing ≈ <tspan font-weight="800" fill="#34d399">$41</tspan>. Route automated jobs cheaper → save ~<tspan font-weight="800" fill="#34d399">$173/mo</tspan>.</text>
+</svg>

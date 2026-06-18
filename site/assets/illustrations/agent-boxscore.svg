@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="470" viewBox="0 0 600 470" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="Single session box score: Opus on Claude Code, 38 minutes active, 9 prompts, 31 turns, 88 tool calls, 2 commits, 84k output tokens, 168k context per call (elevated), $4.20 compute. True cost $40.20, or $20.10 per commit. The cost split is 10% compute and 90% human attention. Recommendation: attention is 90% of cost, so fewer better-specified asks beat many small prompts. A letter grade is marked as roadmap. Illustrative.">
+  <defs>
+    <filter id="bs-sh" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#0f172a" flood-opacity="0.12"/></filter>
+  </defs>
+  <g filter="url(#bs-sh)"><rect x="20" y="16" width="560" height="438" rx="16" fill="#ffffff" stroke="#eef0f4"/></g>
+
+  <!-- header -->
+  <text x="44" y="52" font-size="11" font-weight="700" letter-spacing="1.4" fill="#94a3b8">SESSION · BOX SCORE</text>
+  <g><rect x="44" y="62" width="58" height="22" rx="6" fill="#eef2ff"/><text x="73" y="77" font-size="12" font-weight="700" fill="#4f46e5" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">opus</text></g>
+  <text x="112" y="77" font-size="12.5" font-weight="600" fill="#64748b">claude-code · 06-16 14:02</text>
+  <g><rect x="492" y="30" width="64" height="22" rx="11" fill="#f7f8fa" stroke="#e7e9ee"/><text x="524" y="45" font-size="10" font-weight="700" letter-spacing="0.5" fill="#94a3b8" text-anchor="middle">illustrative</text></g>
+
+  <!-- hero metric -->
+  <line x1="44" y1="100" x2="556" y2="100" stroke="#eef0f4"/>
+  <text x="44" y="150" font-size="44" font-weight="800" letter-spacing="-1.5" fill="#0f172a" font-family="ui-monospace,'SF Mono',Menlo,monospace">$20.10</text>
+  <text x="44" y="174" font-size="13" font-weight="500" fill="#64748b">true $/commit · <tspan font-family="ui-monospace,Menlo,monospace" fill="#334155">$40.20 true $ / 2 cmt</tspan></text>
+
+  <!-- stat grid: 4 cols x 2 rows -->
+  <g font-family="ui-monospace,'SF Mono',Menlo,monospace">
+    <!-- row 1 -->
+    <text x="44"  y="222" font-size="20" font-weight="800" fill="#0f172a">38m</text>
+    <text x="172" y="222" font-size="20" font-weight="800" fill="#0f172a">9</text>
+    <text x="300" y="222" font-size="20" font-weight="800" fill="#0f172a">31</text>
+    <text x="428" y="222" font-size="20" font-weight="800" fill="#0f172a">88</text>
+    <!-- row 2 -->
+    <text x="44"  y="290" font-size="20" font-weight="800" fill="#0f172a">2</text>
+    <text x="172" y="290" font-size="20" font-weight="800" fill="#0f172a">84k</text>
+    <text x="300" y="290" font-size="20" font-weight="800" fill="#d97706">168k</text>
+    <text x="428" y="290" font-size="20" font-weight="800" fill="#0f172a">$4.20</text>
+  </g>
+  <g font-size="11" font-weight="600" letter-spacing="0.4" fill="#94a3b8">
+    <text x="44"  y="240">ACTIVE</text>
+    <text x="172" y="240">PROMPTS</text>
+    <text x="300" y="240">TURNS</text>
+    <text x="428" y="240">TOOL CALLS</text>
+    <text x="44"  y="308">COMMITS</text>
+    <text x="172" y="308">OUT TOK</text>
+    <text x="300" y="308">CTX/CALL</text>
+    <text x="428" y="308">$ COMPUTE</text>
+  </g>
+
+  <!-- cost split bar -->
+  <text x="44" y="346" font-size="11" font-weight="700" letter-spacing="0.6" fill="#94a3b8">TRUE $ SPLIT</text>
+  <rect x="44" y="354" width="512" height="18" rx="9" fill="#eef0f4"/>
+  <rect x="44" y="354" width="51"  height="18" rx="9" fill="#475569"/>
+  <rect x="99" y="354" width="457" height="18" rx="9" fill="#8b5cf6"/>
+  <text x="50" y="367" font-size="10.5" font-weight="700" fill="#ffffff">10%</text>
+  <text x="548" y="390" font-size="11" font-weight="600" fill="#8b5cf6" text-anchor="end">attention $36.00 (90%)</text>
+  <text x="44" y="390" font-size="11" font-weight="600" fill="#64748b">compute $4.20</text>
+
+  <!-- recommendation + roadmap chip -->
+  <rect x="44" y="404" width="512" height="34" rx="9" fill="#fffbeb" stroke="#fde68a"/>
+  <text x="58" y="425" font-size="11.5" font-weight="700" fill="#b45309">▸ </text>
+  <text x="72" y="425" font-size="11.5" font-weight="600" fill="#92400e">Attention is 90% of cost — fewer, better-specified asks beat many small prompts.</text>
+  <g><rect x="470" y="62" width="86" height="22" rx="11" fill="#f7f8fa" stroke="#e7e9ee"/><text x="513" y="77" font-size="9.5" font-weight="700" letter-spacing="0.3" fill="#94a3b8" text-anchor="middle">grade · roadmap</text></g>
+</svg>

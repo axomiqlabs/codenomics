@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="468" viewBox="0 0 720 468" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="AI coding agent P and L for a period. Output that shipped: 188 commits; PRs merged, bugs fixed and features are marked roadmap. Cost it took: compute $1,240, attention $1,880 across 470 prompts, supervision time off at $0, total true cost $3,120; revert and failed-run waste are marked roadmap. Bottom line: true cost per commit $16.60, equal to $3,120 over 188 commits. Illustrative.">
+  <defs>
+    <filter id="pl-sh" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#0f172a" flood-opacity="0.10"/></filter>
+  </defs>
+  <g filter="url(#pl-sh)"><rect x="0" y="0" width="720" height="468" rx="16" fill="#ffffff" stroke="#eef0f4"/></g>
+
+  <!-- header -->
+  <text x="28" y="42" font-size="17" font-weight="800" letter-spacing="-0.3" fill="#0f172a">AI coding agent P&amp;L</text>
+  <text x="218" y="42" font-size="13" font-weight="600" fill="#64748b">— per period</text>
+  <g><rect x="628" y="24" width="64" height="22" rx="11" fill="#f7f8fa" stroke="#e7e9ee"/><text x="660" y="39" font-size="10" font-weight="700" letter-spacing="0.5" fill="#94a3b8" text-anchor="middle">illustrative</text></g>
+  <line x1="28" y1="60" x2="692" y2="60" stroke="#eef0f4"/>
+
+  <!-- divider -->
+  <line x1="360" y1="72" x2="360" y2="356" stroke="#eef0f4"/>
+
+  <!-- LEFT: OUTPUT -->
+  <text x="28" y="92" font-size="12" font-weight="700" letter-spacing="0.8" fill="#16a34a">OUTPUT · WHAT SHIPPED</text>
+  <g font-size="14" font-family="-apple-system,Inter,sans-serif">
+    <text x="28" y="130" fill="#16a34a" font-weight="700">✓</text>
+    <text x="46" y="130" fill="#334155" font-weight="600">Commits shipped</text>
+    <text x="332" y="130" fill="#0f172a" font-weight="800" text-anchor="end" font-family="ui-monospace,Menlo,monospace">188</text>
+  </g>
+  <g font-size="13.5" fill="#94a3b8">
+    <text x="46" y="168">PRs merged</text>      <g><rect x="250" y="156" width="62" height="18" rx="9" fill="#f1f5f9"/><text x="281" y="169" font-size="9.5" font-weight="700" fill="#94a3b8" text-anchor="middle">roadmap</text></g><text x="332" y="168" text-anchor="end" fill="#cbd5e1" font-family="ui-monospace,Menlo,monospace">—</text>
+    <text x="46" y="202">Bugs fixed</text>      <g><rect x="250" y="190" width="62" height="18" rx="9" fill="#f1f5f9"/><text x="281" y="203" font-size="9.5" font-weight="700" fill="#94a3b8" text-anchor="middle">roadmap</text></g><text x="332" y="202" text-anchor="end" fill="#cbd5e1" font-family="ui-monospace,Menlo,monospace">—</text>
+    <text x="46" y="236">Features completed</text><g><rect x="250" y="224" width="62" height="18" rx="9" fill="#f1f5f9"/><text x="281" y="237" font-size="9.5" font-weight="700" fill="#94a3b8" text-anchor="middle">roadmap</text></g><text x="332" y="236" text-anchor="end" fill="#cbd5e1" font-family="ui-monospace,Menlo,monospace">—</text>
+  </g>
+  <text x="28" y="300" font-size="12" font-weight="500" fill="#94a3b8">Commits ship today; PR / revert-aware</text>
+  <text x="28" y="318" font-size="12" font-weight="500" fill="#94a3b8">ground truth is on the roadmap.</text>
+
+  <!-- RIGHT: COST -->
+  <text x="392" y="92" font-size="12" font-weight="700" letter-spacing="0.8" fill="#4f46e5">COST · WHAT IT TOOK</text>
+  <g font-size="14" font-family="-apple-system,Inter,sans-serif">
+    <text x="392" y="130" fill="#334155" font-weight="600">Compute $ <tspan fill="#94a3b8" font-weight="500" font-size="12">(cache-aware)</tspan></text>
+    <text x="692" y="130" fill="#0f172a" font-weight="700" text-anchor="end" font-family="ui-monospace,Menlo,monospace">$1,240</text>
+    <text x="392" y="164" fill="#334155" font-weight="600">Attention $ <tspan fill="#94a3b8" font-weight="500" font-size="12">(470 prompts)</tspan></text>
+    <text x="692" y="164" fill="#0f172a" font-weight="700" text-anchor="end" font-family="ui-monospace,Menlo,monospace">$1,880</text>
+    <text x="392" y="198" fill="#334155" font-weight="600">Supervision time <tspan fill="#94a3b8" font-weight="500" font-size="12">(off)</tspan></text>
+    <text x="692" y="198" fill="#94a3b8" font-weight="700" text-anchor="end" font-family="ui-monospace,Menlo,monospace">$0</text>
+  </g>
+  <line x1="392" y1="214" x2="692" y2="214" stroke="#eef0f4"/>
+  <g font-size="14">
+    <text x="392" y="240" fill="#0f172a" font-weight="800">Total true $</text>
+    <text x="692" y="240" fill="#0f172a" font-weight="800" text-anchor="end" font-family="ui-monospace,Menlo,monospace">$3,120</text>
+  </g>
+  <g font-size="13.5" fill="#94a3b8">
+    <text x="392" y="278">Revert waste</text>     <g><rect x="596" y="266" width="62" height="18" rx="9" fill="#f1f5f9"/><text x="627" y="279" font-size="9.5" font-weight="700" fill="#94a3b8" text-anchor="middle">roadmap</text></g><text x="692" y="278" text-anchor="end" fill="#cbd5e1" font-family="ui-monospace,Menlo,monospace">—</text>
+    <text x="392" y="312">Failed-run waste</text> <g><rect x="596" y="300" width="62" height="18" rx="9" fill="#f1f5f9"/><text x="627" y="313" font-size="9.5" font-weight="700" fill="#94a3b8" text-anchor="middle">roadmap</text></g><text x="692" y="312" text-anchor="end" fill="#cbd5e1" font-family="ui-monospace,Menlo,monospace">—</text>
+  </g>
+
+  <!-- BOTTOM LINE -->
+  <rect x="28" y="372" width="664" height="72" rx="12" fill="#0f172a"/>
+  <text x="48" y="404" font-size="12" font-weight="700" letter-spacing="1.2" fill="#a5b4fc">BOTTOM LINE · TRUE $ / COMMIT</text>
+  <text x="48" y="430" font-size="13" font-weight="500" fill="#94a3b8">= total true $ $3,120 ÷ 188 commits</text>
+  <text x="672" y="424" font-size="40" font-weight="800" letter-spacing="-1.5" fill="#ffffff" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,monospace">$16.60</text>
+</svg>

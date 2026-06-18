@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460" fill="none"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"
+     role="img" aria-label="An iceberg of AI coding cost. Above the waterline, the small visible part: tokens, usage credits, subscription plan. Below, the large hidden part: babysitting, prompt retries, context resets, reviewing bad diffs, debugging failed runs, rework and reverts. The biggest cost is the human wrapped around the model.">
+  <defs>
+    <linearGradient id="cn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="tip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e7ecf5"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cdd9ec"/><stop offset="1" stop-color="#9fb2d4"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef2f9"/><stop offset="1" stop-color="#e3e9f4"/>
+    </linearGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <clipPath id="frame"><rect x="0" y="0" width="720" height="460" rx="18"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#frame)">
+    <!-- sky / water -->
+    <rect x="0" y="0" width="720" height="166" fill="#fbfcfe"/>
+    <rect x="0" y="166" width="720" height="294" fill="url(#sea)"/>
+    <!-- waterline -->
+    <line x1="0" y1="166" x2="720" y2="166" stroke="#b9c6dd" stroke-width="1.5" stroke-dasharray="2 6"/>
+    <text x="28" y="160" font-size="11" font-weight="700" letter-spacing="1.4" fill="#94a3b8">WATERLINE — WHAT YOU'RE BILLED FOR</text>
+
+    <!-- iceberg tip (above water) -->
+    <path d="M360 44 L300 166 L420 166 Z" fill="url(#tip)" stroke="#dbe2ee" stroke-width="1"/>
+    <!-- iceberg body (below water) -->
+    <path d="M300 166 L420 166 L470 250 L452 330 L388 430 L320 430 L256 322 L246 244 Z"
+          fill="url(#body)" stroke="#8ea3c6" stroke-width="1" opacity="0.92"/>
+    <line x1="300" y1="166" x2="420" y2="166" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+
+    <!-- visible cost label (right of tip) -->
+    <g filter="url(#sh)"><rect x="470" y="52" width="224" height="104" rx="13" fill="#ffffff" stroke="#eef0f4"/></g>
+    <text x="488" y="78" font-size="12" font-weight="800" letter-spacing="0.6" fill="#0f172a">THE PART YOU SEE</text>
+    <g font-size="13.5" font-weight="500" fill="#475569" font-family="ui-monospace, 'SF Mono', Menlo, monospace">
+      <text x="488" y="102">tokens</text>
+      <text x="488" y="122">usage credits</text>
+      <text x="488" y="142">plan price</text>
+    </g>
+    <line x1="453" y1="104" x2="470" y2="104" stroke="#cbd5e1" stroke-width="1.5"/>
+
+    <!-- hidden cost label (left, the big mass) -->
+    <g filter="url(#sh)"><rect x="28" y="206" width="214" height="196" rx="13" fill="#ffffff" stroke="#eef0f4"/></g>
+    <text x="46" y="232" font-size="12" font-weight="800" letter-spacing="0.6" fill="#0f172a">THE PART YOU DON'T</text>
+    <g font-size="13" font-weight="500" fill="#334155">
+      <circle cx="50" cy="254" r="2.4" fill="#8b5cf6"/><text x="62" y="258">Babysitting &amp; supervision</text>
+      <circle cx="50" cy="278" r="2.4" fill="#8b5cf6"/><text x="62" y="282">Prompt retries</text>
+      <circle cx="50" cy="302" r="2.4" fill="#8b5cf6"/><text x="62" y="306">Context resets</text>
+      <circle cx="50" cy="326" r="2.4" fill="#8b5cf6"/><text x="62" y="330">Reviewing bad diffs</text>
+      <circle cx="50" cy="350" r="2.4" fill="#8b5cf6"/><text x="62" y="354">Debugging failed runs</text>
+      <circle cx="50" cy="374" r="2.4" fill="#8b5cf6"/><text x="62" y="378">Rework &amp; reverts</text>
+    </g>
+    <line x1="242" y1="300" x2="256" y2="300" stroke="#cbd5e1" stroke-width="1.5"/>
+
+    <!-- caption chip -->
+    <g filter="url(#sh)"><rect x="404" y="356" width="290" height="62" rx="13" fill="#ffffff" stroke="#e0e3ff"/></g>
+    <rect x="404" y="356" width="290" height="62" rx="13" fill="#eef2ff" fill-opacity="0.5"/>
+    <text x="424" y="382" font-size="13.5" font-weight="700" fill="#4338ca">The model is the tip.</text>
+    <text x="424" y="402" font-size="12.5" font-weight="500" fill="#4f46e5">The human is the iceberg.</text>
+  </g>
+</svg>

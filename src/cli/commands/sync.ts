@@ -45,7 +45,11 @@ export async function run(argv: string[]): Promise<number> {
     return 1;
   }
 
-  const result = await pushRollups({ endpoint, token, salt: config.sync.salt ?? '', sessions: index.sessions });
+  const salt = config.sync.salt ?? '';
+  if (!salt) {
+    console.error('warning: no project-key salt configured — hashes are deterministic and dictionary-recoverable. run `npx codenomics init` to add one (see PRIVACY.md).');
+  }
+  const result = await pushRollups({ endpoint, token, salt, sessions: index.sessions });
   if (!result.ok) {
     console.error(result.error ?? 'sync failed');
     return 1;

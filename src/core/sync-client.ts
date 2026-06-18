@@ -8,7 +8,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { dataDir } from './config.js';
 import { buildRollups } from './rollup.js';
-import { SCHEMA_VERSION, type RollupV1, type SessionV1 } from './schema.js';
+import { SCHEMA_VERSION, type ProjectHash, type RollupV1Wire, type SessionV1 } from './schema.js';
+import { clientHeaders } from './version.js';
+import { recordLatest } from './update-check.js';
 
 // Rows per request. The backend caps a single body well above this; chunking
 // keeps payloads small and lets a partial failure retry cheaply.
@@ -57,12 +59,13 @@ function writeSyncState(s: SyncState): void {
 /** Hash a project key so the one potentially identifying string never leaves the
  *  machine in the clear (privacy commitment). The backend also requires project
  *  to be a hex hash, which this satisfies. */
-export function hashProject(project: string, salt: string): string {
-  return createHash('sha256').update(salt).update('\0').update(project).digest('hex');
+export function hashProject(project: string, salt: string): ProjectHash {
+  return createHash('sha256').update(salt).update('\0').update(project).digest('hex') as ProjectHash;
 }
 
-/** The exact rows that get uploaded (project hashed). Pure — no I/O. */
-export function buildPayload(sessions: SessionV1[], salt: string): RollupV1[] {
+/** The exact rows that get uploaded (project hashed). Pure — no I/O. The branded
+ *  ProjectHash return type makes this the only place a raw project becomes wire-safe. */
+export function buildPayload(sessions: SessionV1[], salt: string): RollupV1Wire[] {
   return buildRollups(sessions).map((r) => ({ ...r, project: hashProject(r.project, salt) }));
 }
 
@@ -93,7 +96,7 @@ export async function pushRollups(opts: {
     try {
       res = await fetch(url, {
         method: 'POST',
-        headers: { 'content-type': 'application/json', authorization: `Bearer ${opts.token}` },
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${opts.token}`, ...clientHeaders() },
         body: JSON.stringify({ schemaVersion: SCHEMA_VERSION, rollups: chunk }),
       });
     } catch (e) {
@@ -102,11 +105,25 @@ export async function pushRollups(opts: {
       return { ok: false, accepted, error };
     }
     if (!res.ok) {
+      // 426 Upgrade Required == the backend refused this CLI as too old. Surface
+      // an actionable message instead of a raw HTTP code, and prime the update
+      // notifier so the next interactive command repeats the nudge.
+      if (res.status === 426) {
+        const latest = res.headers.get('x-codenomics-latest');
+        if (latest) recordLatest(latest);
+        const error = `sync rejected: this codenomics CLI is too old for the benchmark server${latest ? ` (latest ${latest})` : ''}. Upgrade: npm i -g codenomics@latest`;
+        writeSyncState({ ...readSyncState(), lastError: error, lastAttemptAt: nowIso });
+        return { ok: false, accepted, error };
+      }
       const detail = await res.text().catch(() => '');
       const error = `sync rejected (HTTP ${res.status}): ${detail.slice(0, 300)}`;
       writeSyncState({ ...readSyncState(), lastError: error, lastAttemptAt: nowIso });
       return { ok: false, accepted, error };
     }
+    // The server advertises the latest published version on every success; record
+    // it so an out-of-date CLI gets nudged even when npm's registry is unreachable.
+    const advertised = res.headers.get('x-codenomics-latest');
+    if (advertised) recordLatest(advertised);
     const body = (await res.json().catch(() => ({}))) as { accepted?: number };
     accepted += body.accepted ?? chunk.length;
   }

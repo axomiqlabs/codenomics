@@ -14,7 +14,14 @@ on your machine.
   you run `codenomics summarize`, via your own `claude` CLI).
 - `reports/` — the report artifacts you generate.
 
-Nothing is transmitted anywhere by any current command.
+No command uploads your data — prompts, code, transcripts, tool output, metrics,
+and file paths all stay on your machine. The only network request the tool makes
+on its own is an optional **version check** (at most once a day) against the public
+npm registry to see whether a newer release exists; it sends no information about
+you and is suppressed by `NO_UPDATE_NOTIFIER=1` or `CODENOMICS_NO_UPDATE_CHECK=1`
+(and never runs on non-interactive/CI/`--json` invocations). The opt-in benchmark
+sync below is the only path that sends anything off-machine, and it sends only the
+aggregates described there.
 
 ## The dashboard
 

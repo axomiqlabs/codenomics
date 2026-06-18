@@ -15,14 +15,8 @@ const COMMANDS: Record<string, { summary: string; load: () => Promise<{ run: (ar
 };
 
 async function readVersion(): Promise<string> {
-  const { readFile } = await import('node:fs/promises');
-  const url = new URL('../../package.json', import.meta.url);
-  try {
-    const pkg = JSON.parse(await readFile(url, 'utf8')) as { version?: string };
-    return pkg.version ?? '0.0.0';
-  } catch {
-    return '0.0.0';
-  }
+  // Lazily imported so the bare `--version`/help paths stay free of core modules.
+  return (await import('../core/version.js')).cliVersion();
 }
 
 function printHelp(): void {
@@ -61,7 +55,13 @@ async function main(): Promise<number> {
   const { ensureDisclosure } = await import('./first-run.js');
   if (!(await ensureDisclosure())) return 1;
   const mod = await entry.load();
-  return mod.run(rest);
+  const code = await mod.run(rest);
+
+  // Passive "newer version available" nudge, AFTER the command's own output so it
+  // reads as a footer. Self-gated (interactive TTY only, ≤daily, opt-out env) and
+  // never throws — a slow/failed check just shows nothing. See update-check.ts.
+  await (await import('../core/update-check.js')).maybeNotifyUpdate(cmd, rest);
+  return code;
 }
 
 main().then(

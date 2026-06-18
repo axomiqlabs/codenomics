@@ -54,7 +54,41 @@ nav.top .links a { color: var(--ink-2); font-size: 14.5px; font-weight: 500; }
 nav.top .links a:hover { color: var(--ink); }
 nav.top .spacer { flex: 1; }
 nav.top .ghost { color: var(--ink-2); font-size: 14.5px; font-weight: 500; }
-@media (max-width: 820px) { nav.top .links { display: none; } }
+
+/* hamburger toggle — hidden on desktop, injected by nav.js, shown ≤820px */
+.nav-toggle {
+  display: none; order: 99; margin-left: 6px;
+  width: 40px; height: 40px; padding: 0;
+  flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  background: transparent; border: 1px solid var(--line); border-radius: 9px; cursor: pointer;
+}
+.nav-toggle span { display: block; width: 18px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform .2s ease, opacity .2s ease; }
+nav.top.open .nav-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+nav.top.open .nav-toggle span:nth-child(2) { opacity: 0; }
+nav.top.open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* mobile menu panel — built by nav.js (clones links + GitHub + CTA); shown only when open ≤820px */
+.nav-panel { display: none; }
+
+@media (max-width: 820px) {
+  .nav-toggle { display: flex; }
+  /* bar collapses to brand + hamburger — everything else lives in the panel */
+  nav.top .links,
+  nav.top > .wrap > .ghost,
+  nav.top > .wrap > .btn.primary { display: none; }
+  nav.top.open .nav-panel {
+    display: flex; flex-direction: column;
+    position: absolute; top: 64px; left: 0; right: 0;
+    padding: 8px 20px 18px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 10px 28px rgba(15,23,42,.10);
+  }
+  .nav-panel > a:not(.btn) { padding: 13px 2px; font-size: 16px; font-weight: 500; color: var(--ink-2); border-top: 1px solid var(--line-2); }
+  .nav-panel > a:not(.btn):first-child { border-top: none; }
+  .nav-panel > a:not(.btn):hover { color: var(--ink); }
+  .nav-panel .btn.primary { margin-top: 14px; }
+}
 
 /* buttons */
 .btn {
@@ -320,3 +354,91 @@ footer.site .legal { margin-top: 40px; padding-top: 24px; border-top: 1px solid 
   .hero .wrap.hero-split { grid-template-columns: 1fr; }
   .hero-art { max-width: 460px; margin: 20px auto 0; }   /* stack illustration under copy, centered — stays visible on mobile */
 }
+
+/* blog / article */
+.post-meta { margin-top: 20px; font-size: 14px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.post-meta .sep { color: var(--faint); }
+.prose table { width: 100%; border-collapse: collapse; margin: 26px 0; font-size: 15px; }
+.prose thead th { text-align: left; font-weight: 700; color: var(--ink); border-bottom: 2px solid var(--line); padding: 10px 12px; font-size: 12px; letter-spacing: .03em; text-transform: uppercase; }
+.prose tbody td { padding: 12px; border-bottom: 1px solid var(--line-2); color: var(--ink-2); }
+.prose tbody tr:last-child td { border-bottom: none; }
+.prose td.num, .prose th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); white-space: nowrap; }
+.prose tr.win td { background: var(--pos-soft); }
+.prose td strong { color: var(--ink); }
+.post-tag { display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:2px 7px; border-radius:100px; margin-left:4px; }
+.post-tag.good { color: var(--pos); background: var(--pos-soft); }
+.post-tag.bad { color: #b91c1c; background: #fef2f2; }
+/* table -> stacked cards on mobile so a wide numeric table never overflows/clips */
+@media (max-width: 640px) {
+  .prose table, .prose tbody, .prose tr, .prose td { display: block; width: 100%; }
+  .prose thead { position: absolute; left: -9999px; }   /* visually hidden, kept for a11y/screen readers */
+  .prose table { margin: 22px 0; }
+  .prose tbody tr { border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px 10px; margin: 14px 0; }
+  .prose tbody tr.win { border-color: var(--pos); background: var(--pos-soft); }
+  .prose tbody td { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line-2); text-align: right; }
+  .prose tbody td:last-child { border-bottom: none; }
+  .prose tbody td::before { content: attr(data-label); text-align: left; font-size: 12px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .prose tbody td:first-child { display: block; text-align: left; padding: 8px 0 11px; font-size: 18px; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); }
+  .prose tbody td:first-child::before { content: none; }   /* model name is the card title — no label */
+  .prose tbody tr.win td { background: transparent; }       /* tint comes from the row, not each cell */
+}
+
+/* blog index list */
+.post-list { display: flex; flex-direction: column; margin-top: 8px; }
+.post-card { display: block; padding: 26px 0; border-bottom: 1px solid var(--line); }
+.post-card:last-child { border-bottom: none; }
+.post-card .post-date { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); }
+.post-card h3 { font-size: 25px; margin: 8px 0; color: var(--ink); letter-spacing: -.02em; }
+.post-card:hover h3 { color: var(--brand-2); }
+.post-card p { color: var(--ink-2); font-size: 16px; margin: 0; }
+.post-card .readmore { display:inline-block; margin-top:12px; color: var(--brand); font-weight:600; font-size:15px; }
+
+/* ── Quick-install modal (install-modal.js) ──────────────────────────────── */
+dialog.install-modal {
+  width: min(520px, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+dialog.install-modal::backdrop { background: rgba(15,23,42,.45); backdrop-filter: blur(2px); }
+.install-modal .im-head { position: relative; padding: 26px 26px 0; }
+.install-modal .im-head form { position: absolute; top: 14px; right: 14px; margin: 0; }
+.install-modal .im-close {
+  width: 32px; height: 32px; line-height: 1; font-size: 15px; cursor: pointer;
+  color: var(--muted); background: #fff; border: 1px solid var(--line); border-radius: 8px;
+}
+.install-modal .im-close:hover { color: var(--ink); border-color: var(--faint); }
+.install-modal .im-head h3 { font-size: 22px; letter-spacing: -.02em; margin-top: 12px; }
+.install-modal .im-sub { color: var(--muted); font-size: 14.5px; margin-top: 8px; }
+.install-modal .im-tabs { display: flex; gap: 8px; padding: 18px 26px 0; }
+.install-modal .im-tab {
+  flex: 1; padding: 9px 10px; cursor: pointer;
+  font: 600 14px/1 var(--sans); color: var(--muted);
+  background: var(--soft); border: 1px solid var(--line); border-radius: 9px;
+}
+.install-modal .im-tab:hover { color: var(--ink); }
+.install-modal .im-tab.active { color: var(--brand); background: var(--brand-soft); border-color: #e0e3ff; }
+.install-modal .im-steps { padding: 16px 26px 4px; }
+.install-modal .im-step { display: flex; gap: 14px; padding: 9px 0; }
+.install-modal .im-n {
+  flex: none; width: 26px; height: 26px; border-radius: 100px;
+  font: 700 13px/26px var(--sans); text-align: center; color: #fff; background: var(--brand);
+}
+.install-modal .im-body { flex: 1; min-width: 0; }
+.install-modal .im-body h4 { font-size: 15px; }
+.install-modal .im-body p { font-size: 14px; color: var(--ink-2); margin: 4px 0 8px; }
+.install-modal .im-body .cmd { font-size: 14px; }
+.install-modal .im-note { font-size: 13px; color: var(--muted); }
+.install-modal code {
+  font-family: var(--mono); font-size: 13px;
+  background: var(--soft); padding: 1px 5px; border-radius: 5px;
+}
+.install-modal .im-foot {
+  margin-top: 10px; padding: 16px 26px; border-top: 1px solid var(--line-2);
+  background: var(--soft); font-size: 13px; color: var(--muted);
+}
+.install-modal .im-foot code { background: #fff; border: 1px solid var(--line); }

@@ -5,6 +5,9 @@
 <script>if(location.hostname.endsWith(".pages.dev"))location.replace("https://codenomics.ai"+location.pathname+location.search+location.hash);</script>
 <script>if(location.hostname==="127.0.0.1"||location.hostname==="localhost")addEventListener("DOMContentLoaded",function(){var b=document.createElement("div");b.textContent="DEV";b.style.cssText="position:fixed;bottom:12px;right:12px;z-index:9999;background:#d97706;color:#fff;font:700 11px/1 ui-monospace,monospace;letter-spacing:.08em;padding:5px 9px;border-radius:999px;box-shadow:0 2px 8px rgba(15,23,42,.2)";document.body.appendChild(b)});</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script defer src="nav.js"></script>
+<script defer src="install-modal.js"></script>
+<script defer src="analytics.js"></script>
 <link rel="canonical" href="https://codenomics.ai/">
 <title>Codenomics — Know what each shipped change actually costs</title>
 <meta name="description" content="Codenomics turns your AI coding agents' logs into true cost per commit — compute plus the human attention behind it — across Claude Code, Codex, and Gemini. Local-first, your code never leaves your machine.">
@@ -28,10 +31,11 @@
       <a href="methodology.html">Methodology</a>
       <a href="pricing.html">Pricing</a>
       <a href="about.html">About</a>
+      <a href="/blog/">Blog</a>
     </div>
     <div class="spacer"></div>
     <a class="ghost" href="https://github.com/axomiqlabs/codenomics">GitHub</a>
-    <a class="btn primary" href="#start">Get started</a>
+    <a class="btn primary" href="#start" data-install-open>Quick install</a>
   </div>
 </nav>
 
@@ -42,13 +46,13 @@
     <h1>Know what each shipped change actually costs.</h1>
     <p class="lede">Every token dashboard tells you what you burned. Codenomics tells you what you <em>got</em> — the true cost per commit, compute plus the human attention behind it, across Claude Code, Codex, and Gemini. All computed on your machine.</p>
     <div class="cta-row">
-      <a class="btn primary lg" href="#start">Start measuring — free</a>
+      <a class="btn primary lg" href="#start" data-install-open>Start measuring — free</a>
       <a class="btn outline lg" href="methodology.html">How the math works →</a>
     </div>
     <div class="cta-row" style="margin-top:20px">
       <div class="cmd">
         <span><span class="prompt">$</span> npx codenomics init</span>
-        <button onclick="navigator.clipboard.writeText('npx codenomics init');this.textContent='copied'">copy</button>
+        <button data-beacon="copy:init" onclick="navigator.clipboard.writeText('npx codenomics init');this.textContent='copied'">copy</button>
       </div>
     </div>
     </div><!-- /hero-copy -->
@@ -347,7 +351,7 @@
     <div class="cta-row" style="justify-content:center;margin-top:28px">
       <div class="cmd" style="font-size:16px;padding:14px 18px">
         <span><span class="prompt">$</span> npx codenomics init</span>
-        <button onclick="navigator.clipboard.writeText('npx codenomics init');this.textContent='copied'">copy</button>
+        <button data-beacon="copy:init" onclick="navigator.clipboard.writeText('npx codenomics init');this.textContent='copied'">copy</button>
       </div>
     </div>
     <details class="quickstart">
@@ -375,6 +379,7 @@
         <a href="#how">How it works</a>
         <a href="methodology.html">Methodology</a>
         <a href="pricing.html">Pricing</a>
+        <a href="/blog/">Blog</a>
       </div>
       <div>
         <h4>Company</h4>

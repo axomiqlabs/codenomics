@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 440" role="img" aria-labelledby="ttl desc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif">
+  <title id="ttl">Rank inversion: token cost versus true cost per commit</title>
+  <desc id="desc">Ranked by token (compute) cost the order is GPT-5.5 cheapest then Opus 4.7, Opus 4.8, Fable 5. Ranked by true cost per commit the order flips: Fable 5 cheapest then Opus 4.7, Opus 4.8, GPT-5.5. Fable 5 and GPT-5.5 swap ends and their lines cross.</desc>
+
+  <!-- column guides -->
+  <line x1="305" y1="96" x2="305" y2="398" stroke="#e7e9ee" stroke-width="2"/>
+  <line x1="455" y1="96" x2="455" y2="398" stroke="#e7e9ee" stroke-width="2"/>
+
+  <!-- headers -->
+  <text x="300" y="40" text-anchor="end" font-size="13" font-weight="700" letter-spacing="1" fill="#64748b">RANKED BY TOKEN COST</text>
+  <text x="300" y="59" text-anchor="end" font-size="12.5" fill="#94a3b8">compute $ / commit · cheapest on top</text>
+  <text x="460" y="40" text-anchor="start" font-size="13" font-weight="700" letter-spacing="1" fill="#64748b">RANKED BY TRUE COST</text>
+  <text x="460" y="59" text-anchor="start" font-size="12.5" fill="#94a3b8">all-in $ / commit · cheapest on top</text>
+
+  <!-- connectors (behind nodes) -->
+  <path d="M305,205 L455,205" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M305,290 L455,290" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M305,120 L455,375" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M305,375 L455,120" stroke="#15a34a" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+
+  <!-- crossing marker -->
+  <circle cx="380" cy="247.5" r="6" fill="#ffffff"/>
+  <circle cx="380" cy="247.5" r="3" fill="#94a3b8"/>
+
+  <!-- nodes -->
+  <g stroke="#ffffff" stroke-width="2">
+    <circle cx="305" cy="120" r="5.5" fill="#dc2626"/>
+    <circle cx="305" cy="205" r="5.5" fill="#94a3b8"/>
+    <circle cx="305" cy="290" r="5.5" fill="#94a3b8"/>
+    <circle cx="305" cy="375" r="5.5" fill="#15a34a"/>
+    <circle cx="455" cy="120" r="5.5" fill="#15a34a"/>
+    <circle cx="455" cy="205" r="5.5" fill="#94a3b8"/>
+    <circle cx="455" cy="290" r="5.5" fill="#94a3b8"/>
+    <circle cx="455" cy="375" r="5.5" fill="#dc2626"/>
+  </g>
+
+  <!-- left labels (compute $/commit) -->
+  <g text-anchor="end">
+    <text x="292" y="117" font-size="16" font-weight="700" fill="#b91c1c">GPT&#8209;5.5</text>
+    <text x="292" y="136" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" fill="#64748b">$4.78</text>
+    <text x="292" y="202" font-size="16" font-weight="700" fill="#334155">Opus 4.7</text>
+    <text x="292" y="221" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" fill="#64748b">$6.51</text>
+    <text x="292" y="287" font-size="16" font-weight="700" fill="#334155">Opus 4.8</text>
+    <text x="292" y="306" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" fill="#64748b">$7.50</text>
+    <text x="292" y="372" font-size="16" font-weight="700" fill="#15803d">Fable 5</text>
+    <text x="292" y="391" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" fill="#64748b">$9.40</text>
+  </g>
+
+  <!-- right labels (true $/commit) -->
+  <g text-anchor="start">
+    <text x="468" y="117" font-size="16" font-weight="700" fill="#15803d">Fable 5</text>
+    <text x="468" y="136" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" fill="#64748b">$57.85</text>
+    <text x="468" y="202" font-size="16" font-weight="700" fill="#334155">Opus 4.7</text>
+    <text x="468" y="221" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" fill="#64748b">$74.61</text>
+    <text x="468" y="287" font-size="16" font-weight="700" fill="#334155">Opus 4.8</text>
+    <text x="468" y="306" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" fill="#64748b">$94.36</text>
+    <text x="468" y="372" font-size="16" font-weight="700" fill="#b91c1c">GPT&#8209;5.5</text>
+    <text x="468" y="391" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" fill="#64748b">$182.54</text>
+  </g>
+</svg>

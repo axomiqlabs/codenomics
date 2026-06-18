@@ -5,6 +5,9 @@
 <script>if(location.hostname.endsWith(".pages.dev"))location.replace("https://codenomics.ai"+location.pathname+location.search+location.hash);</script>
 <script>if(location.hostname==="127.0.0.1"||location.hostname==="localhost")addEventListener("DOMContentLoaded",function(){var b=document.createElement("div");b.textContent="DEV";b.style.cssText="position:fixed;bottom:12px;right:12px;z-index:9999;background:#d97706;color:#fff;font:700 11px/1 ui-monospace,monospace;letter-spacing:.08em;padding:5px 9px;border-radius:999px;box-shadow:0 2px 8px rgba(15,23,42,.2)";document.body.appendChild(b)});</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script defer src="nav.js"></script>
+<script defer src="install-modal.js"></script>
+<script defer src="analytics.js"></script>
 <link rel="canonical" href="https://codenomics.ai/about.html">
 <title>About — Codenomics by Axomiq Labs</title>
 <meta name="description" content="Codenomics is built by Axomiq Labs on one belief: token efficiency is the defining engineering metric of the agent era, and it should be measured by what ships, not what burns.">
@@ -24,10 +27,11 @@
       <a href="methodology.html">Methodology</a>
       <a href="pricing.html">Pricing</a>
       <a href="about.html">About</a>
+      <a href="/blog/">Blog</a>
     </div>
     <div class="spacer"></div>
     <a class="ghost" href="https://github.com/axomiqlabs/codenomics">GitHub</a>
-    <a class="btn primary" href="index.html#start">Get started</a>
+    <a class="btn primary" href="index.html#start" data-install-open>Quick install</a>
   </div>
 </nav>
 
@@ -100,7 +104,7 @@
         <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
         <p class="tagline">The true economics of your AI coding agents. By Axomiq Labs.</p>
       </div>
-      <div><h4>Product</h4><a href="index.html#how">How it works</a><a href="methodology.html">Methodology</a><a href="pricing.html">Pricing</a></div>
+      <div><h4>Product</h4><a href="index.html#how">How it works</a><a href="methodology.html">Methodology</a><a href="pricing.html">Pricing</a><a href="/blog/">Blog</a></div>
       <div><h4>Company</h4><a href="about.html">About</a><a href="privacy.html">Privacy</a></div>
       <div><h4>Developers</h4><a href="https://www.npmjs.com/package/codenomics">npm package</a><a href="https://github.com/axomiqlabs/codenomics">GitHub</a></div>
     </div>

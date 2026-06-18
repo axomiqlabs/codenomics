@@ -4,12 +4,28 @@ import { readDiagnostics } from '../../core/engine.js';
 import { dataDir } from '../../core/config.js';
 import { indexPath } from '../../core/store.js';
 import { allCollectors } from '../../collectors/registry.js';
+import { cliVersion } from '../../core/version.js';
+import { checkForUpdate } from '../../core/update-check.js';
 
 export async function run(_argv: string[]): Promise<number> {
   const loaded = loadConfig();
   let problems = 0;
 
-  console.log('# config');
+  console.log('# version');
+  console.log(`codenomics:     ${cliVersion()}`);
+  // doctor is an explicit diagnostic, so this is the one place we surface the
+  // update state directly (the daily registry cache still applies — see
+  // update-check.ts). A failed lookup is informational, never a "problem".
+  const upd = await checkForUpdate();
+  if (upd.latest == null) {
+    console.log('update check:   could not reach the npm registry (offline?)');
+  } else if (upd.updateAvailable) {
+    console.log(`update check:   ${upd.latest} available — run npm i -g codenomics@latest`);
+  } else {
+    console.log(`update check:   up to date (latest ${upd.latest})`);
+  }
+
+  console.log('\n# config');
   console.log(`user config:    ${loaded.userPath}${fs.existsSync(loaded.userPath) ? '' : '  (missing — run npx codenomics init)'}`);
   console.log(`project config: ${loaded.projectPath ?? '(none)'}`);
   console.log(`data dir:       ${dataDir()}`);

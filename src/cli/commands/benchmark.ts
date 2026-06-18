@@ -8,6 +8,7 @@ import { readIndex } from '../../core/store.js';
 import { pushRollups, readSyncState } from '../../core/sync-client.js';
 import { checkPersistentInstall, installAutoSync, uninstallAutoSync, autoSyncStatus } from '../../core/scheduler.js';
 import { BENCHMARK_CONSENT_TEXT, recordBenchmarkConsent, benchmarkConsent } from '../../core/consent.js';
+import { clientHeaders } from '../../core/version.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -62,9 +63,14 @@ async function join(argv: string[]): Promise<number> {
     try {
       const r = await fetch(`${endpoint}/v1/signup`, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', ...clientHeaders() },
         body: JSON.stringify({ email }),
       });
+      if (r.status === 426) {
+        const latest = r.headers.get('x-codenomics-latest');
+        console.error(`this codenomics CLI is too old to join the benchmark${latest ? ` (latest ${latest})` : ''}. Upgrade: npm i -g codenomics@latest`);
+        return 1;
+      }
       if (!r.ok) {
         console.error(`signup failed (HTTP ${r.status})`);
         return 1;

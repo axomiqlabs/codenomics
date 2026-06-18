@@ -87,6 +87,18 @@ export interface RollupV1 {
   activeMs: number;
 }
 
+/** A hashed project key — the ONLY representation of a project allowed to leave
+ *  the machine. Minted exclusively by `hashProject()` (sync-client.ts); the brand
+ *  makes it a type error to place a raw project name on the wire without hashing,
+ *  so a new Phase-2 sync path cannot silently bypass `buildPayload`. */
+export type ProjectHash = string & { readonly __projectHash: unique symbol };
+
+/** Wire form of a rollup row: identical to {@link RollupV1} but `project` MUST be a
+ *  hashed {@link ProjectHash}. This is the exact shape the sync client uploads. */
+export interface RollupV1Wire extends Omit<RollupV1, 'project'> {
+  project: ProjectHash;
+}
+
 export function sessionKey(s: Pick<SessionV1, 'vendor' | 'id'>): string {
   return `${s.vendor}:${s.id}`;
 }

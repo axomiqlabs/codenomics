@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { randomBytes } from 'node:crypto';
 import { parseArgs } from 'node:util';
 import { DEFAULT_CONFIG, saveUserConfig, userConfigPath, type CodenomicsConfig } from '../../core/config.js';
 import { ensureDataDir, readSummaries, summariesPath, writeSummaries } from '../../core/store.js';
@@ -30,8 +31,19 @@ export async function run(argv: string[]): Promise<number> {
     if (present) found.push(c.vendor);
   }
 
+  // Privacy hardening (PRIVACY.md #5): every config carries a per-install random
+  // salt so synced project-key hashes are not deterministic / dictionary-recoverable.
+  cfg.sync.salt = randomBytes(16).toString('hex');
+
   if (fs.existsSync(userConfigPath()) && !values.force) {
-    console.log(`config already exists: ${userConfigPath()} (use --force to overwrite)`);
+    // Don't clobber an existing config — but backfill a salt if it predates this
+    // (early adopters synced with an empty salt; this upgrades them in place).
+    const added = ensureSalt(userConfigPath());
+    console.log(
+      added
+        ? `config already exists: ${userConfigPath()} — added a sync salt (privacy hardening)`
+        : `config already exists: ${userConfigPath()} (use --force to overwrite)`,
+    );
   } else {
     saveUserConfig(cfg);
     console.log(`wrote ${userConfigPath()}`);
@@ -63,4 +75,18 @@ export async function run(argv: string[]): Promise<number> {
   console.log('  npx codenomics serve --open # local dashboard');
   console.log('  npx codenomics report weekly');
   return 0;
+}
+
+/** Backfill a random sync salt into an existing on-disk config if it lacks one,
+ *  touching no other field. Returns true if a salt was added. */
+function ensureSalt(configPath: string): boolean {
+  try {
+    const raw = JSON.parse(fs.readFileSync(configPath, 'utf8')) as { sync?: { salt?: string | null } };
+    if (raw.sync && typeof raw.sync.salt === 'string' && raw.sync.salt.length > 0) return false;
+    raw.sync = { ...(raw.sync ?? {}), salt: randomBytes(16).toString('hex') };
+    fs.writeFileSync(configPath, JSON.stringify(raw, null, 2) + '\n');
+    return true;
+  } catch {
+    return false;
+  }
 }

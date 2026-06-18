@@ -5,6 +5,9 @@
 <script>if(location.hostname.endsWith(".pages.dev"))location.replace("https://codenomics.ai"+location.pathname+location.search+location.hash);</script>
 <script>if(location.hostname==="127.0.0.1"||location.hostname==="localhost")addEventListener("DOMContentLoaded",function(){var b=document.createElement("div");b.textContent="DEV";b.style.cssText="position:fixed;bottom:12px;right:12px;z-index:9999;background:#d97706;color:#fff;font:700 11px/1 ui-monospace,monospace;letter-spacing:.08em;padding:5px 9px;border-radius:999px;box-shadow:0 2px 8px rgba(15,23,42,.2)";document.body.appendChild(b)});</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script defer src="nav.js"></script>
+<script defer src="install-modal.js"></script>
+<script defer src="analytics.js"></script>
 <link rel="canonical" href="https://codenomics.ai/pricing.html">
 <title>Pricing — Codenomics</title>
 <meta name="description" content="Codenomics is free and open-source for individuals. Team dashboards and enterprise cost-allocation are coming for engineering orgs.">
@@ -24,10 +27,11 @@
       <a href="methodology.html">Methodology</a>
       <a href="pricing.html">Pricing</a>
       <a href="about.html">About</a>
+      <a href="/blog/">Blog</a>
     </div>
     <div class="spacer"></div>
     <a class="ghost" href="https://github.com/axomiqlabs/codenomics">GitHub</a>
-    <a class="btn primary" href="index.html#start">Get started</a>
+    <a class="btn primary" href="index.html#start" data-install-open>Quick install</a>
   </div>
 </nav>
 
@@ -52,23 +56,23 @@
           <li>True cost per commit + all drivers</li>
           <li>Local dashboard &amp; session drill-down</li>
           <li>Budgets &amp; cron budget checks</li>
-          <li>Weekly / monthly reports + Slack</li>
+          <li>Weekly / monthly reports (Slack-ready)</li>
           <li>AI session recaps</li>
           <li>Unlimited history, unlimited projects</li>
         </ul>
-        <a class="btn outline lg" href="index.html#start">npx codenomics init</a>
+        <a class="btn outline lg" href="index.html#start" data-install-open>Quick install — free</a>
       </div>
 
       <div class="tier featured">
         <div class="ribbon">Coming soon</div>
         <div class="name">Team</div>
         <div class="price">$19<small> / dev / mo · planned</small></div>
-        <div class="desc">Know whether your agent spend is actually <em>good</em> — your true $/commit and model economics benchmarked against anonymized industry baselines, not just your own history. Predictable per-seat, and no one uploads code.</div>
+        <div class="desc">Know whether your agent spend is actually <em>good</em> — your true $/commit and model economics benchmarked against anonymized peer baselines as the cohort grows, not just your own history. Predictable per-seat, and no one uploads code.</div>
         <ul>
           <li><strong>Market benchmarks</strong> — your $/commit &amp; model mix vs anonymized cross-org baselines</li>
-          <li>Model-mix recommendations grounded in real cross-org outcomes</li>
+          <li>Model-mix recommendations that sharpen as the benchmark cohort grows</li>
           <li>Org-wide rollups, trends &amp; per-team / per-project cost allocation</li>
-          <li>Shared budgets &amp; Slack alerts</li>
+          <li>Shared budgets &amp; Slack-ready webhooks</li>
           <li>Aggregates-only sync — code never leaves devs' machines</li>
           <li>SSO &amp; 12-month retention</li>
           <li>Everything in Local</li>
@@ -96,8 +100,8 @@
 
     <figure class="figure benchmark">
       <img src="assets/illustrations/benchmark-curve.svg" width="760" height="320"
-           alt="A distribution of true cost per commit across teams with your position left of the peer median — the benchmark Team unlocks.">
-      <figcaption>What Team unlocks: your true $/commit placed against anonymized peer baselines.</figcaption>
+           alt="A distribution of true cost per commit across teams with your position left of the peer median — the benchmark Team unlocks (planned; cohorts appear only at five or more organizations).">
+      <figcaption>What Team unlocks (planned): your true $/commit placed against anonymized peer baselines as the cohort grows.</figcaption>
     </figure>
 
     <div class="center mt-l" id="waitlist">
@@ -132,7 +136,7 @@
         <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
         <p class="tagline">The true economics of your AI coding agents. By Axomiq Labs.</p>
       </div>
-      <div><h4>Product</h4><a href="index.html#how">How it works</a><a href="methodology.html">Methodology</a><a href="pricing.html">Pricing</a></div>
+      <div><h4>Product</h4><a href="index.html#how">How it works</a><a href="methodology.html">Methodology</a><a href="pricing.html">Pricing</a><a href="/blog/">Blog</a></div>
       <div><h4>Company</h4><a href="about.html">About</a><a href="privacy.html">Privacy</a></div>
       <div><h4>Developers</h4><a href="https://www.npmjs.com/package/codenomics">npm package</a><a href="https://github.com/axomiqlabs/codenomics">GitHub</a></div>
     </div>

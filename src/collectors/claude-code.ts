@@ -44,7 +44,7 @@ interface RawUsage {
 
 export const claudeCodeCollector: Collector = {
   vendor: 'claude-code',
-  parserVersion: 5, // detect deeply-nested (workflow) subagent transcripts for folding
+  parserVersion: 6, // recognize 'pr-link' as a passive event type (was tripping drift)
   capabilities: {
     commits: true,
     activeTime: 'exact',
@@ -154,7 +154,7 @@ export const claudeCodeCollector: Collector = {
       const KNOWN_PASSIVE = [
         'summary', 'system', 'file-history-snapshot', 'attachment', 'last-prompt', 'ai-title',
         'queue-operation', 'mode', 'progress', 'permission-mode', 'agent-name', 'custom-title',
-        'started', 'result', 'fork-context-ref',
+        'started', 'result', 'fork-context-ref', 'pr-link',
       ];
       if (type !== 'user' && type !== 'assistant' && type !== null && !KNOWN_PASSIVE.includes(type)) {
         drift(`unknown-type:${type}`);

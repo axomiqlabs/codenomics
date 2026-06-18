@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>if(location.hostname.endsWith(".pages.dev"))location.replace("https://codenomics.ai"+location.pathname+location.search+location.hash);</script>
+<script>if(location.hostname==="127.0.0.1"||location.hostname==="localhost")addEventListener("DOMContentLoaded",function(){var b=document.createElement("div");b.textContent="DEV";b.style.cssText="position:fixed;bottom:12px;right:12px;z-index:9999;background:#d97706;color:#fff;font:700 11px/1 ui-monospace,monospace;letter-spacing:.08em;padding:5px 9px;border-radius:999px;box-shadow:0 2px 8px rgba(15,23,42,.2)";document.body.appendChild(b)});</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script defer src="/nav.js"></script>
+<link rel="canonical" href="https://codenomics.ai/blog/the-cheapest-model-was-the-most-expensive.html">
+<title>The cheapest model on the invoice was the most expensive to ship with — Codenomics</title>
+<meta name="description" content="Two months of real coding-agent usage, measured as true cost per commit. The model with the priciest tokens shipped commits for the least money; the cheapest tokens were the most expensive to ship with. Why token counts get agent economics backwards.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://codenomics.ai/blog/the-cheapest-model-was-the-most-expensive.html">
+<meta property="og:title" content="The cheapest model on the invoice was the most expensive to ship with">
+<meta property="og:description" content="Two months of real coding-agent usage, measured as true cost per commit. The priciest tokens shipped work cheapest; the cheapest tokens cost the most. Why token counts get agent economics backwards.">
+<meta property="og:image" content="https://codenomics.ai/assets/illustrations/benchmark-curve.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The cheapest model on the invoice was the most expensive to ship with">
+<meta name="twitter:description" content="Two months of real coding-agent usage, measured as true cost per commit. The priciest tokens shipped work cheapest.">
+<meta name="twitter:image" content="https://codenomics.ai/assets/illustrations/benchmark-curve.svg">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
+    <div class="links">
+      <a href="/product.html">Product</a>
+      <a href="/index.html#how">How it works</a>
+      <a href="/methodology.html">Methodology</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/about.html">About</a>
+      <a href="/blog/">Blog</a>
+    </div>
+    <div class="spacer"></div>
+    <a class="ghost" href="https://github.com/axomiqlabs/codenomics">GitHub</a>
+    <a class="btn primary" href="/index.html#start">Get started</a>
+  </div>
+</nav>
+
+<header class="hero" style="padding-bottom:24px">
+  <div class="wrap narrow">
+    <span class="eyebrow">● Field notes</span>
+    <h1 style="font-size:46px">The cheapest model on the invoice was the most expensive to ship with.</h1>
+    <p class="lede" style="font-size:19px">I let coding agents do most of my work for two months and measured what each shipped change actually cost. The model with the highest token price shipped my commits for the least money — and the cheapest tokens were, by a wide margin, the most expensive thing I used.</p>
+    <div class="post-meta">
+      <span>By Axomiq Labs</span><span class="sep">·</span>
+      <span>June 2026</span><span class="sep">·</span>
+      <span>Measured with <a href="https://github.com/axomiqlabs/codenomics">Codenomics</a></span>
+    </div>
+  </div>
+</header>
+
+<section class="band" style="padding-top:18px">
+  <div class="wrap narrow prose">
+
+    <p>Token dashboards answer "how much did I burn?" That's the wrong question. The one a team actually has is "what did we <em>get</em> for it?" — cost per unit of shipped work, with the human time included, comparable across models. So I tracked every agent session for two months — tokens, prompts, and what actually shipped — and divided the cost by the commits.</p>
+    <p>The ranking came out backwards from the invoice. Here's what the number is, and why it flips.</p>
+
+    <h2 id="metric">What I measured</h2>
+    <p>The metric is true cost per commit:</p>
+    <div class="formula-block">
+<b>true $/commit</b> = ( compute $ + prompts × attention $ + active-time × hourly $ ) / commits
+    </div>
+    <p>Compute is real, cache-aware, API-equivalent dollars from the token counts. The other two terms are the part every other tool ignores: the <b>human</b> cost. A model that's cheap per token but needs ten prompts and constant supervision to land a change isn't cheap — it's spending <em>your</em> time, which is the most expensive thing in the room.</p>
+    <p>The driver values are yours to set, because the honest answer is "it depends on you." For the numbers below I used <b>$12 per interactive prompt</b> (context-switch + review) and <b>$200 per active engineering hour</b>. Your numbers will differ — so I also show the <b>compute-only</b> figure and the <b>prompts-per-commit</b>, which don't depend on any of that. The ranking is carried by those objective columns; the dollar totals just put a price on them.</p>
+
+    <h2 id="data">The data</h2>
+    <p>One developer (me), my real work, <b>23 Apr → 18 Jun 2026</b> (~8 weeks). Mostly Claude Code, with some Codex in the mix:</p>
+    <ul>
+      <li><b>1,421 sessions</b>, <b>819 commits</b></li>
+      <li><b>99%</b> of input tokens served from cache</li>
+      <li>Blended <b>compute</b> cost: <b>$6.90 / commit</b></li>
+      <li>Blended <b>true</b> cost (with the drivers above): <b>$81.46 / commit</b></li>
+    </ul>
+    <p>That gap — $6.90 of compute versus $81 of true cost — <em>is</em> the point. The tokens are the cheap part. Here's the per-model breakdown for the models I shipped real volume with:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Model (primary)</th>
+          <th class="num">Commits</th>
+          <th class="num">Compute&nbsp;$/commit</th>
+          <th class="num">Prompts/commit</th>
+          <th class="num">True&nbsp;$/commit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="win">
+          <td><strong>Claude Fable 5</strong> <span class="post-tag good">cheapest to ship</span></td>
+          <td class="num" data-label="Commits">96</td>
+          <td class="num" data-label="Compute $/commit">$9.40</td>
+          <td class="num" data-label="Prompts/commit">1.0</td>
+          <td class="num" data-label="True $/commit"><strong>$57.85</strong></td>
+        </tr>
+        <tr>
+          <td>Claude Opus 4.7</td>
+          <td class="num" data-label="Commits">317</td>
+          <td class="num" data-label="Compute $/commit">$6.51</td>
+          <td class="num" data-label="Prompts/commit">1.7</td>
+          <td class="num" data-label="True $/commit">$74.61</td>
+        </tr>
+        <tr>
+          <td>Claude Opus 4.8</td>
+          <td class="num" data-label="Commits">314</td>
+          <td class="num" data-label="Compute $/commit">$7.50</td>
+          <td class="num" data-label="Prompts/commit">2.2</td>
+          <td class="num" data-label="True $/commit">$94.36</td>
+        </tr>
+        <tr>
+          <td>GPT&#8209;5.5 <span class="post-tag bad">priciest to ship</span></td>
+          <td class="num" data-label="Commits">38</td>
+          <td class="num" data-label="Compute $/commit">$4.78</td>
+          <td class="num" data-label="Prompts/commit">10.6</td>
+          <td class="num" data-label="True $/commit"><strong>$182.54</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:14.5px;color:var(--muted);margin-top:-8px">Models with ≥10 commits. GPT‑5.5 is a small sample (38 commits via Codex) — held loosely, shown because the direction is stark. I also run Sonnet 4.6 as the automation lane (cron jobs, recaps), where there's no human in the loop; it lands those at ~$1.45 each — a different job, not part of this comparison.</p>
+
+    <h2 id="inversion">The inversion</h2>
+    <p>Read the two ends of that table:</p>
+    <ul>
+      <li><b>Fable 5 costs 25% more per commit on raw compute than Opus 4.8</b> ($9.40 vs $7.50) — yet ships each commit for <b>39% less</b> all-in ($57.85 vs $94.36). Why? It needed <b>less than half the prompts</b> — 1.0 versus 2.2. One prompt, one shipped commit. The token premium bought autonomy, and autonomy is cheaper than my attention.</li>
+      <li><b>GPT‑5.5 had the cheapest tokens of anything I ran</b> ($4.78/commit of compute) and was the <b>most expensive model I used</b>, at $182/commit true cost — because it took <b>10.6 prompts</b> to get a commit out the door.</li>
+    </ul>
+    <p>The cheap-token model was the expensive one. The expensive-token model was the cheap one. Every ranking that stops at the invoice gets this exactly backwards.</p>
+
+    <figure class="figure" style="margin:30px 0">
+      <img src="/assets/illustrations/cost-inversion.svg" width="760" height="440"
+           alt="A slope chart of four models. Ranked by token (compute) cost, cheapest first: GPT-5.5 $4.78, Opus 4.7 $6.51, Opus 4.8 $7.50, Fable 5 $9.40. Ranked by true cost per commit, cheapest first: Fable 5 $57.85, Opus 4.7 $74.61, Opus 4.8 $94.36, GPT-5.5 $182.54. Fable 5's line runs bottom-left to top-right and GPT-5.5's top-left to bottom-right — the two cross, so the cheapest tokens become the most expensive to ship and vice versa.">
+      <figcaption>Same four models, two rankings. Order by token cost and GPT&#8209;5.5 looks cheapest; order by <em>true</em> cost per commit and it's the most expensive by 3×. The cheap-token model and the pricey-token model swap ends.</figcaption>
+    </figure>
+
+    <h2 id="why">Why token counts can't tell you this</h2>
+    <p>This is also why the new vendor analytics don't answer the question. Anthropic now ships a Claude Code analytics API that reports commits, estimated cost, and tool-acceptance — useful, and a sign the category is real. But it's <b>single-vendor</b> (Claude only — it can't see the GPT‑5.5 row above), it's <b>raw counts plus estimated spend</b> with <b>no human-attention term</b>, and there's <b>no normalization</b> — no $/commit you can compare across models, and nothing to compare <em>you</em> against anyone else.</p>
+    <p>It can tell you what you burned on Claude. It can't tell you the pricier model was the cheaper one — and it can't tell you whether your number is any good. That last question — <em>is my $/commit good?</em> — is the one thing a single machine can never answer, because the answer lives across many teams. That's the piece we're building next: anonymized, aggregates-only, k‑anonymous baselines across orgs. This post is the single-developer version of the question that benchmark answers at scale.</p>
+
+    <h2 id="try">Try it on your own logs</h2>
+    <p>It runs locally. It reads the logs your agents already write — Claude Code, Codex, Gemini — and computes the table above for <em>your</em> work. <b>No code, prompts, or transcripts ever leave your machine; there's no account and no proxy.</b> It's open source (FSL‑1.1‑MIT).</p>
+    <div class="formula-block">
+$ npx codenomics init
+$ npx codenomics serve --open
+    </div>
+    <p>Point it at a month of your own sessions and check the ranking. My bet: the model you think is expensive is carrying you, and the cheap one is quietly costing you a fortune in prompts.</p>
+
+    <div class="note"><b>One developer, one workflow, ~8 weeks.</b> This is a personal case study that motivates the metric — not a cross-org benchmark (that's the part we're building). The dollar figures use my driver assumptions ($12/prompt, $200/hr); the <em>ranking</em> is driven by the objective columns — prompts and compute per commit. Run it on your own logs and you'll get your own table.</div>
+
+    <div class="cta-row mt-l">
+      <a class="btn primary lg" href="/index.html#start">Measure your own $/commit — free</a>
+      <a class="btn outline lg" href="/methodology.html">How the math works →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="brand" href="/"><span class="dot"></span>Codenomics</a>
+        <p class="tagline">The true economics of your AI coding agents. By Axomiq Labs.</p>
+      </div>
+      <div><h4>Product</h4><a href="/index.html#how">How it works</a><a href="/methodology.html">Methodology</a><a href="/pricing.html">Pricing</a><a href="/blog/">Blog</a></div>
+      <div><h4>Company</h4><a href="/about.html">About</a><a href="/privacy.html">Privacy</a></div>
+      <div><h4>Developers</h4><a href="https://www.npmjs.com/package/codenomics">npm package</a><a href="https://github.com/axomiqlabs/codenomics">GitHub</a></div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Axomiq Labs. Codenomics is licensed FSL-1.1-MIT.</span>
+      <span>Made for builders who count what ships.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

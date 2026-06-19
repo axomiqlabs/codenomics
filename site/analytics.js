@@ -19,14 +19,12 @@
   var isLocal = host === '127.0.0.1' || host === 'localhost';
   var ENDPOINT = isLocal ? 'http://127.0.0.1:3939/beacon' : PROD_BEACON;
 
-  function send(type) {
+  function send(type, value) {
     if (!ENDPOINT) return;
     try {
-      var body = JSON.stringify({
-        type: type,
-        path: location.pathname,
-        ref: document.referrer || null
-      });
+      var payload = { type: type, path: location.pathname, ref: document.referrer || null };
+      if (typeof value === 'number' && isFinite(value)) payload.v = Math.round(value);
+      var body = JSON.stringify(payload);
       if (navigator.sendBeacon) {
         navigator.sendBeacon(ENDPOINT, body); // text/plain; the ingest accepts it
       } else {
@@ -34,6 +32,25 @@
       }
     } catch (e) { /* analytics must never break the page */ }
   }
+
+  // Dwell: how long this page actually held attention. We accumulate only the
+  // time the tab is *visible*, then flush once when the visitor first leaves
+  // (visibilitychange->hidden is the reliable "leaving" signal; pagehide is the
+  // belt-and-braces fallback). Sent as a `dwell` event carrying elapsed ms in
+  // `v`, so the control panel can show median time-on-page per path. One dwell
+  // per pageview keeps the medians clean.
+  var visibleSince = document.visibilityState === 'visible' ? Date.now() : 0;
+  var dwellMs = 0, dwellSent = false;
+  function flushDwell() {
+    if (dwellSent) return;
+    if (visibleSince) { dwellMs += Date.now() - visibleSince; visibleSince = 0; }
+    if (dwellMs > 0) { dwellSent = true; send('dwell', dwellMs); }
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') flushDwell();
+    else if (!visibleSince && !dwellSent) visibleSince = Date.now();
+  });
+  window.addEventListener('pagehide', flushDwell);
 
   // Exposed so install-modal.js can emit its own funnel events.
   window.cnBeacon = send;

@@ -8,6 +8,14 @@ Releases ship to the public `main` branch as a single squashed commit per the
 promotion flow (see `CLAUDE.md`), so this file — not the public git history — is
 the human-readable record of what changed in each published version.
 
+## [0.3.1] — 2026-06-19
+
+- Registry re-release. `0.3.0` was published to npm before the CLI work below
+  (doctor version + update-status reporting, the passive update notifier, and
+  the per-command version handshake) reached `main`, so the published `0.3.0`
+  tarball didn't include it. `0.3.1` is the first npm build that does — no source
+  changes beyond the version bump.
+
 ## [0.3.0] — 2026-06-18
 
 - Marketing blog launched, leading with the "the cheapest model was the most

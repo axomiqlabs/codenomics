@@ -38,7 +38,10 @@ async function main(): Promise<number> {
 
   if (!cmd || cmd === 'help' || cmd === '--help' || cmd === '-h') {
     printHelp();
-    return cmd ? 0 : 1;
+    // Printing help is a successful outcome, including for a bare `codenomics`
+    // with no args — exit 0 so `codenomics && …` shell idioms and CI callers
+    // don't read the help screen as a failure.
+    return 0;
   }
   if (cmd === '--version' || cmd === '-v' || cmd === 'version') {
     console.log(await readVersion());

@@ -17,8 +17,19 @@ export async function run(argv: string[]): Promise<number> {
     },
   });
   if (values.help) {
-    console.log('usage: npx codenomics sync [--push] [--endpoint URL] [--token TOK] [--json]');
-    console.log('  (no flags) preview the exact aggregate payload that --push would send');
+    console.log(
+      [
+        'usage: npx codenomics sync [--push] [--endpoint URL] [--token TOK] [--json]',
+        '',
+        'Without --push, prints a human-readable preview of the aggregate payload that would be sent.',
+        '',
+        'Options:',
+        '  --push              upload the aggregate payload to the sync endpoint',
+        '  --endpoint <URL>    override the sync endpoint (default: config sync.endpoint)',
+        '  --token <TOK>       override the sync token (default: config sync.token or CODENOMICS_SYNC_TOKEN env)',
+        '  --json              in preview mode, print the raw payload as JSON instead of a summary',
+      ].join('\n'),
+    );
     return 0;
   }
 

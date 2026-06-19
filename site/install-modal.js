@@ -52,12 +52,9 @@
            '<button type="button" class="im-copy" data-copy="' + text + '">copy</button></div>';
   }
 
-  var dialog, steps, currentOS;
-
-  function beacon(type) { if (window.cnBeacon) window.cnBeacon(type); }
+  var dialog, steps;
 
   function renderSteps(os) {
-    currentOS = os;
     var d = OS[os];
     steps.innerHTML =
       '<div class="im-step"><div class="im-n">1</div><div class="im-body">' +
@@ -107,12 +104,7 @@
 
     dialog.addEventListener('click', function (e) {
       var tab = e.target.closest('.im-tab');
-      if (tab) {
-        var os = tab.getAttribute('data-os');
-        renderSteps(os);
-        beacon('install:tab:' + os);
-        return;
-      }
+      if (tab) { renderSteps(tab.getAttribute('data-os')); return; }
 
       var copy = e.target.closest('.im-copy');
       if (copy) {
@@ -120,8 +112,6 @@
         var prev = copy.textContent;
         copy.textContent = 'copied';
         setTimeout(function () { copy.textContent = prev; }, 1400);
-        // The money event: which command, on which OS.
-        beacon('install:copy:' + (copy.getAttribute('data-copy') === CMD ? 'run' : 'node') + ':' + currentOS);
         return;
       }
 
@@ -139,7 +129,6 @@
     if (!dialog) build();
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', ''); // ancient-browser fallback
-    beacon('install:open');
   }
 
   document.addEventListener('click', function (e) {

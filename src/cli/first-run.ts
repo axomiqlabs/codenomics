@@ -72,7 +72,9 @@ function disclosureText(): string {
     'What it writes:',
     `  • ${tilde(dataDir()).padEnd(22)} (local aggregates + cache)`,
     '',
-    'Network: none. Your transcripts never leave this machine.',
+    'Your transcripts never leave this machine — all analysis is local.',
+    'Network: an optional once-daily version check to registry.npmjs.org',
+    '         (interactive terminals only; opt out: CODENOMICS_NO_UPDATE_CHECK=1).',
     'Details: PRIVACY.md',
     '',
   ].join('\n');

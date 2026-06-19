@@ -16,7 +16,15 @@ export async function run(argv: string[]): Promise<number> {
     },
   });
   if (values.help) {
-    console.log('usage: npx codenomics init [--from <old claude-stats data dir>] [--force]');
+    console.log(
+      [
+        'usage: npx codenomics init [--from <dir>] [--force]',
+        '',
+        'Options:',
+        '  --from <dir>   import session recaps from an old claude-stats data directory',
+        '  --force        overwrite an existing user config (default: skip if present)',
+      ].join('\n'),
+    );
     return 0;
   }
 

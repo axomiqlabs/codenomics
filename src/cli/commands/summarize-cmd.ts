@@ -11,7 +11,16 @@ export async function run(argv: string[]): Promise<number> {
     },
   });
   if (values.help) {
-    console.log('usage: codenomics summarize [--limit N]   (requires the `claude` CLI on PATH)');
+    console.log(
+      [
+        'usage: codenomics summarize [--limit N]',
+        '',
+        'Generates AI recaps for recent sessions via the `claude` CLI (must be on PATH).',
+        '',
+        'Options:',
+        '  --limit <N>   number of recent sessions to recap (default: 25, max: 200)',
+      ].join('\n'),
+    );
     return 0;
   }
   const limit = Math.max(1, Math.min(200, parseInt(values.limit ?? positionals[0] ?? '25', 10) || 25));

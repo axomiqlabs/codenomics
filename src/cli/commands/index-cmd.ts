@@ -14,7 +14,15 @@ export async function run(argv: string[]): Promise<number> {
     },
   });
   if (values.help) {
-    console.log('usage: npx codenomics index [--vendor <claude-code|codex|gemini>] [--check-budgets]');
+    console.log(
+      [
+        'usage: npx codenomics index [--vendor <name>] [--check-budgets]',
+        '',
+        'Options:',
+        '  --vendor <name>   limit indexing to one vendor (claude-code, codex, gemini, …)',
+        '  --check-budgets   evaluate configured spend/token limits after indexing; exits 2 if any are breached',
+      ].join('\n'),
+    );
     return 0;
   }
 

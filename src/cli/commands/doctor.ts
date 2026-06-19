@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { parseArgs } from 'node:util';
 import { loadConfig } from '../../core/config.js';
 import { readDiagnostics } from '../../core/engine.js';
 import { dataDir } from '../../core/config.js';
@@ -7,7 +8,27 @@ import { allCollectors } from '../../collectors/registry.js';
 import { cliVersion } from '../../core/version.js';
 import { checkForUpdate } from '../../core/update-check.js';
 
-export async function run(_argv: string[]): Promise<number> {
+export async function run(argv: string[]): Promise<number> {
+  const { values } = parseArgs({
+    args: argv,
+    options: {
+      help: { type: 'boolean', default: false },
+    },
+    strict: false,
+  });
+  if (values.help) {
+    console.log(
+      [
+        'usage: npx codenomics doctor',
+        '',
+        'Diagnoses your codenomics setup: version, config validity, collector roots,',
+        'last index run stats, parse drift, and quarantined files.',
+        '',
+        'This command takes no options.',
+      ].join('\n'),
+    );
+    return 0;
+  }
   const loaded = loadConfig();
   let problems = 0;
 

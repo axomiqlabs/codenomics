@@ -22,10 +22,20 @@ export async function run(argv: string[]): Promise<number> {
     case 'status':
       return status();
     default:
-      console.log('usage: codenomics benchmark <join|leave|status>');
-      console.log('  join --email you@company.com   opt in: consent, sign up, auto-sync every 12h');
-      console.log('  leave                          opt out: stop auto-sync, disconnect');
-      console.log('  status                         show membership, schedule, last sync');
+      console.log(
+        [
+          'usage: codenomics benchmark <join|leave|status>',
+          '',
+          'Subcommands:',
+          '  join    opt in: record consent, sign up for an org token, enable 12h auto-sync',
+          '  leave   opt out: disconnect org token, remove auto-sync schedule',
+          '  status  show membership state, auto-sync schedule, and last sync result',
+          '',
+          'Options for `join`:',
+          '  --email <addr>   email address to associate with the benchmark org (required for new sign-up)',
+          '  --force          install the auto-sync schedule even when running from an npx cache path',
+        ].join('\n'),
+      );
       return sub ? 1 : 0;
   }
 }

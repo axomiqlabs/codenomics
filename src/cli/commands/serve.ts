@@ -14,7 +14,16 @@ export async function run(argv: string[]): Promise<number> {
     },
   });
   if (values.help) {
-    console.log('usage: npx codenomics serve [--port N] [--host 127.0.0.1] [--open]');
+    console.log(
+      [
+        'usage: npx codenomics serve [--port N] [--host addr] [--open]',
+        '',
+        'Options:',
+        '  --port <N>      port to listen on (default: config server.port)',
+        '  --host <addr>   bind address (default: config server.host, typically 127.0.0.1)',
+        '  --open          open the dashboard in the default browser after starting',
+      ].join('\n'),
+    );
     return 0;
   }
 

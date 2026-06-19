@@ -6,6 +6,7 @@ data/
 
 # internal-only: agent steering + private deploy runbook (never public)
 .claude/
+.codex/
 docs/deploy-cloudflare.md
 
 # captured screenshots (brand assets under */assets/brand are tracked explicitly)

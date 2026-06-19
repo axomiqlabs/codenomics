@@ -10,11 +10,23 @@ import { renderHtml } from '../../report/render-html.js';
 import { postToSlack } from '../../report/slack.js';
 
 const USAGE = [
-  'usage: npx codenomics report <weekly|monthly> [--at YYYY-MM-DD] [--format md|html|both] [--out dir] [--slack] [--stdout]',
+  'usage: npx codenomics report <weekly|monthly> [options]',
   '       npx codenomics report schedule [--period weekly|monthly] [--slack] [--install-cron]',
   '',
   'weekly covers the last complete ISO week (Mon–Sun); monthly the last complete',
   'calendar month. --at selects the period containing that date instead.',
+  '',
+  'Options (weekly|monthly):',
+  '  --at <YYYY-MM-DD>      generate the report for the period containing this date (default: last complete period)',
+  '  --format <md|html|both> output format (default: both)',
+  '  --out <dir>            directory to write report files (default: codenomics data/reports/)',
+  '  --slack                post the digest to the configured Slack webhook (config: report.slackWebhookUrl)',
+  '  --stdout               print markdown to stdout instead of writing files',
+  '',
+  'Options (schedule):',
+  '  --period <weekly|monthly>  period for the scheduled report (default: weekly)',
+  '  --slack                    include --slack in the scheduled command',
+  '  --install-cron             write the cron entry directly via `crontab` (default: print it)',
 ].join('\n');
 
 export async function run(argv: string[]): Promise<number> {

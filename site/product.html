@@ -7,7 +7,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script defer src="nav.js"></script>
 <script defer src="install-modal.js"></script>
-<script defer src="analytics.js"></script>
 <link rel="canonical" href="https://codenomics.ai/product.html">
 <title>Product — See your AI coding agent economics | Codenomics</title>
 <meta name="description" content="A look at the Codenomics dashboard: the model leaderboard by true cost per commit, per-session box scores, daily-burn heatmap, budgets and routing recommendations — all computed locally from your agents' own logs.">
@@ -56,7 +55,7 @@
     <a class="btn primary lg" href="index.html#start" data-install-open>Quick install — free</a>
     <div class="cmd" style="font-size:16px;padding:14px 18px">
       <span><span class="prompt">$</span> npx codenomics serve</span>
-      <button data-beacon="copy:serve" onclick="navigator.clipboard.writeText('npx codenomics serve');this.textContent='copied'">copy</button>
+      <button onclick="navigator.clipboard.writeText('npx codenomics serve');this.textContent='copied'">copy</button>
     </div>
   </div>
 </header>

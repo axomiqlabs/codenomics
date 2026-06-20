@@ -8,6 +8,21 @@ Releases ship to the public `main` branch as a single squashed commit per the
 promotion flow (see `CLAUDE.md`), so this file — not the public git history — is
 the human-readable record of what changed in each published version.
 
+## [0.4.0] — 2026-06-20
+
+- **Personal trend** in the dashboard: your True / Compute $/commit, prompts-per-commit
+  and cache-read share vs your own 8-week median — interactive line charts with a median
+  reference line and per-week hover. Local, no sign-up, useful from day one.
+- **Cross-org benchmark cohort fallback**: when your exact (vendor, model, source) cohort
+  is below the k-anonymity floor, the dashboard now shows the narrowest broader cohort that
+  has cleared its floor ("all your models", "all teams") instead of nothing.
+- **`codenomics benchmark join --key cnk_…`** and **`codenomics benchmark key`** — share one
+  key across your machines or your team so you count as a single org (k-anonymity counts
+  distinct orgs, not installs).
+- Dashboard polish: a clearer "baseline forming" state below the publish floor; Model
+  Economics lifts up beside the trend on wide viewports; methodology copy aligned with
+  PRIVACY.md.
+
 ## [0.3.1] — 2026-06-19
 
 - Registry re-release. `0.3.0` was published to npm before the CLI work below

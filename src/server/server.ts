@@ -15,6 +15,7 @@ import { sessionKey } from '../core/schema.js';
 import { allCollectors } from '../collectors/registry.js';
 import { summarizeSessions } from '../summarize.js';
 import { benchmarkPanel } from './benchmark.js';
+import { personalTrend } from './trend.js';
 import { installAutoSync, uninstallAutoSync, autoSyncStatus, checkPersistentInstall } from '../core/scheduler.js';
 import { pushRollups, readSyncState } from '../core/sync-client.js';
 import { recordBenchmarkConsent } from '../core/consent.js';
@@ -173,6 +174,12 @@ export function startServer(opts: ServerOptions = {}): http.Server {
         // the sync token stays server-side (never sent to the browser)
         const panel = await benchmarkPanel(readIndex().sessions, config);
         json(res, 200, panel);
+        return;
+      }
+
+      if (url.pathname === '/api/trend') {
+        // personal "you vs your own past" — local-only, no cloud, value at n=1
+        json(res, 200, personalTrend(readIndex().sessions, config));
         return;
       }
 

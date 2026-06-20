@@ -21,6 +21,11 @@ interface CohortAgg {
 function emptyAgg(): CohortAgg {
   return { input: 0, output: 0, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, reasoning: 0, sessions: 0, prompts: 0, commits: 0, activeMs: 0 };
 }
+function addInto(dst: CohortAgg, src: CohortAgg): void {
+  dst.input += src.input; dst.output += src.output; dst.cacheRead += src.cacheRead;
+  dst.cacheWrite5m += src.cacheWrite5m; dst.cacheWrite1h += src.cacheWrite1h; dst.reasoning += src.reasoning;
+  dst.sessions += src.sessions; dst.prompts += src.prompts; dst.commits += src.commits; dst.activeMs += src.activeMs;
+}
 function totalTokens(a: CohortAgg): number {
   return a.input + a.output + a.cacheRead + a.cacheWrite5m + a.cacheWrite1h;
 }
@@ -57,6 +62,9 @@ export interface BenchMetricResult {
   percentile?: number | null;
   atFloor?: boolean;
   atCeil?: boolean;
+  /** which fallback tier the distribution came from: 0 exact · 1 vendor · 2 all. */
+  tier?: number;
+  scope?: string;
 }
 
 export interface BenchPanel {
@@ -87,10 +95,11 @@ function locate(v: number, bp: Breakpoints): { percentile: number | null; atFloo
 
 async function fetchMetric(
   endpoint: string, token: string, m: MetricDef,
-  vendor: string, model: string, source: string, agg: CohortAgg,
+  vendor: string, model: string, source: string, aggsByTier: CohortAgg[],
 ): Promise<{ result: BenchMetricResult; auth?: boolean; netError?: boolean }> {
-  const yourValue = m.value(agg);
-  const base: BenchMetricResult = { key: m.key, label: m.label, format: m.format, lowerIsBetter: m.lowerIsBetter, yourValue, status: 'ok' };
+  // exact-cohort value by default; recomputed at the SERVED tier below so the
+  // comparison stays apples-to-apples when the cloud falls back to a broader cohort.
+  const base: BenchMetricResult = { key: m.key, label: m.label, format: m.format, lowerIsBetter: m.lowerIsBetter, yourValue: m.value(aggsByTier[0]!), status: 'ok' };
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
   try {
@@ -101,12 +110,14 @@ async function fetchMetric(
     });
     if (res.status === 401) return { result: { ...base, status: 'error' }, auth: true };
     if (!res.ok) return { result: { ...base, status: 'error' }, netError: true };
-    const body = (await res.json()) as { withheld?: boolean; n?: number; percentiles?: Breakpoints };
+    const body = (await res.json()) as { withheld?: boolean; n?: number; percentiles?: Breakpoints; tier?: number; scope?: string };
     if (body.withheld || !body.percentiles) return { result: { ...base, status: 'withheld' } };
+    const tier = typeof body.tier === 'number' && body.tier >= 0 && body.tier < aggsByTier.length ? body.tier : 0;
+    const yourValue = m.value(aggsByTier[tier]!); // same breadth as the served distribution
     const breakpoints = body.percentiles;
-    if (yourValue === null) return { result: { ...base, status: 'undefined', n: body.n, breakpoints } };
+    if (yourValue === null) return { result: { ...base, yourValue, status: 'undefined', n: body.n, breakpoints, tier, scope: body.scope } };
     const loc = locate(yourValue, breakpoints);
-    return { result: { ...base, status: 'ok', n: body.n, breakpoints, percentile: loc.percentile, atFloor: loc.atFloor, atCeil: loc.atCeil } };
+    return { result: { ...base, yourValue, status: 'ok', n: body.n, breakpoints, percentile: loc.percentile, atFloor: loc.atFloor, atCeil: loc.atCeil, tier, scope: body.scope } };
   } catch {
     return { result: { ...base, status: 'error' }, netError: true };
   } finally {
@@ -149,8 +160,19 @@ export async function benchmarkPanel(sessions: SessionV1[], cfg: CodenomicsConfi
   const agg = byCohort.get(key)!;
   const [vendor, model, source] = key.split('|') as [string, string, string];
 
+  // your aggregates at each fallback breadth: T0 exact · T1 all your models for this
+  // vendor · T2 all your vendors — so "your value" matches whatever tier the cloud serves.
+  const aggT1 = emptyAgg();
+  const aggT2 = emptyAgg();
+  for (const [k, a] of byCohort) {
+    const [v, , s] = k.split('|') as [string, string, string];
+    if (s === source) addInto(aggT2, a);
+    if (v === vendor && s === source) addInto(aggT1, a);
+  }
+  const aggsByTier = [agg, aggT1, aggT2];
+
   const fetched = await Promise.all(
-    METRICS.map((m) => fetchMetric(endpoint, token, m, vendor, model, source, agg)),
+    METRICS.map((m) => fetchMetric(endpoint, token, m, vendor, model, source, aggsByTier)),
   );
   const metrics = fetched.map((f) => f.result);
   const panel: BenchPanel = {

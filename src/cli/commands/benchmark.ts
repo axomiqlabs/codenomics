@@ -21,18 +21,23 @@ export async function run(argv: string[]): Promise<number> {
       return leave();
     case 'status':
       return status();
+    case 'key':
+      return printKey();
     default:
       console.log(
         [
-          'usage: codenomics benchmark <join|leave|status>',
+          'usage: codenomics benchmark <join|leave|status|key>',
           '',
           'Subcommands:',
           '  join    opt in: record consent, sign up for an org token, enable 12h auto-sync',
           '  leave   opt out: disconnect org token, remove auto-sync schedule',
           '  status  show membership state, auto-sync schedule, and last sync result',
+          "  key     print this machine's benchmark key (share it to add another machine or your team as ONE org)",
           '',
           'Options for `join`:',
-          '  --email <addr>   email address to associate with the benchmark org (required for new sign-up)',
+          '  --email <addr>   email to associate with a NEW benchmark org (required for new sign-up)',
+          '  --key <cnk_…>    join an EXISTING org by key instead of creating a new one — use the',
+          '                   same key on all your machines / across your team so you count as one org',
           '  --force          install the auto-sync schedule even when running from an npx cache path',
         ].join('\n'),
       );
@@ -45,6 +50,7 @@ async function join(argv: string[]): Promise<number> {
     args: argv,
     options: {
       email: { type: 'string' },
+      key: { type: 'string' }, // join an EXISTING org by key (shared identity) instead of signing up
       force: { type: 'boolean', default: false }, // schedule despite an npx-cache bin path
     },
   });
@@ -62,12 +68,25 @@ async function join(argv: string[]): Promise<number> {
   // (re)installs the auto-sync schedule). Only sign up — minting a NEW org — when
   // there is no token yet. This prevents accidental duplicate orgs on re-join.
   let token = config.sync.token ?? '';
+  const providedKey = (values.key ?? '').trim();
   if (token) {
     console.log('• already joined — reusing your org; re-enabling auto-sync.');
+  } else if (providedKey) {
+    // Join an EXISTING org by key. The cloud tags every contribution by the
+    // token's org, so sharing one key across machines/teammates makes them count
+    // as ONE org — k-anonymity counts distinct orgs, not installs.
+    if (!/^cnk_[0-9a-f]+$/i.test(providedKey)) {
+      console.error('that does not look like a codenomics key (expected cnk_…). Get it with `codenomics benchmark key` on a joined machine.');
+      return 1;
+    }
+    token = providedKey;
+    saveUserConfig(mergeConfig(config, { sync: { token } }));
+    recordBenchmarkConsent('(joined via shared key)');
+    console.log('✓ linked to an existing benchmark org via key — this machine contributes under that org (one org, not a new one).');
   } else {
     const email = (values.email ?? '').trim().toLowerCase();
     if (!EMAIL_RE.test(email)) {
-      console.error('a valid email is required:  codenomics benchmark join --email you@company.com');
+      console.error('to join: `--email you@company.com` for a NEW org, or `--key cnk_…` to join an existing one (run `codenomics benchmark key` on your first machine to get it).');
       return 1;
     }
     try {
@@ -98,6 +117,8 @@ async function join(argv: string[]): Promise<number> {
     saveUserConfig(mergeConfig(config, { sync: { token } }));
     recordBenchmarkConsent(email);
     console.log('✓ joined the benchmark — email recorded, token saved.');
+    console.log('  Adding another machine or your team? Run `codenomics benchmark key` here, then');
+    console.log('  `codenomics benchmark join --key <that-key>` there — so you count as ONE org.');
   }
 
   // schedule auto-sync (refuse from an ephemeral npx cache unless --force)
@@ -147,5 +168,21 @@ function status(): number {
   console.log(`auto-sync:  ${sched.installed ? `${sched.mechanism} · ${sched.schedule}` : 'not scheduled'}`);
   console.log(`last sync:  ${state.lastSyncedAt ? `${state.lastSyncedAt} · ${state.acceptedRows} rows` : 'never'}`);
   if (state.lastError) console.log(`last error: ${state.lastError}`);
+  return 0;
+}
+
+function printKey(): number {
+  const { config } = loadConfig();
+  const token = config.sync.token;
+  if (!token) {
+    console.error('not joined — run `codenomics benchmark join --email you@company.com` first.');
+    return 1;
+  }
+  // the key to stdout (pipeable/copyable); the how-to to stderr so it can't pollute a copy
+  console.log(token);
+  console.error('');
+  console.error('Share this key to add another machine or your whole team as ONE org:');
+  console.error(`  codenomics benchmark join --key ${token}`);
+  console.error('(k-anonymity counts distinct orgs — one shared key keeps you from looking like many.)');
   return 0;
 }

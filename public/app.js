@@ -441,7 +441,7 @@ function renderCard(m){
       <div class="bc-tick" style="left:${medPct}%"></div>
       <div class="bc-marker ${good?'good':'bad'}" style="left:${youPct}%"></div>
     </div>
-    <div class="bc-foot"><span class="${good?'good':'bad'}">${pctText}</span><span class="bc-dim">median ${benchFmt(bp.p50,m.format)} · n=${m.n} · ${dir}</span></div>
+    <div class="bc-foot"><span class="${good?'good':'bad'}">${pctText}</span><span class="bc-dim">${m.scope&&m.scope!=='exact'?(m.scope==='all'?'all teams · ':'all models · '):''}median ${benchFmt(bp.p50,m.format)} · n=${m.n} · ${dir}</span></div>
   </div>`;
 }
 // Friendly off-state shown before the user has joined — value first, one email +
@@ -459,6 +459,15 @@ function benchJoin(title, body, btnLabel){
     </form>
     <div class="bj-fine">By joining, you agree to receive product updates by email — unsubscribe anytime. Your benchmark aggregates stay anonymous and are never linked to your email. On joining, codenomics auto-syncs <b>aggregates only</b> every 12h (day · vendor · model · <b>hashed</b> project · counts — never code, prompts, or paths); preview anytime with <code>codenomics sync</code>. <a href="https://codenomics.ai/privacy.html" target="_blank" rel="noopener">Privacy</a>.</div>
     <div class="bj-msg" id="benchJoinMsg"></div>
+  </div>`;
+}
+// Connected but the cohort hasn't reached the publish floor yet — every metric is
+// withheld. One clear "forming" card beats a wall of six identical "field hidden"
+// cards, which reads as broken rather than as a baseline that's still filling in.
+function benchForming(){
+  return `<div class="bench-join">
+    <div class="bj-title">Your baseline is forming</div>
+    <div class="bj-body">You're connected and your anonymized aggregates are counting. Comparisons unlock automatically once your cohort reaches <b>8 contributing organizations</b> — until then there's nothing yet to compare against. Your code and prompts never leave this machine; check back as more teams join.</div>
   </div>`;
 }
 function ago(iso){
@@ -479,13 +488,91 @@ function syncLine(){
   const err = s.lastError ? ` · <span class="bs-err">last error: ${esc(String(s.lastError).slice(0,80))}</span>` : '';
   return `<div class="bench-sync">${auto} · last synced <b>${ago(s.lastSyncedAt)}</b>${err}</div>`;
 }
+// ---- personal trend ("you vs your own past": local, no cloud, no sign-up) ----
+let TREND = null;
+function trendFmt(v, format){
+  if (v === null || v === undefined) return '—';
+  if (format === 'usd') return '$' + (v < 1 ? v.toFixed(2) : v < 100 ? v.toFixed(1) : Math.round(v).toLocaleString('en-US'));
+  if (format === 'pct') return (v*100).toFixed(0) + '%';
+  return v < 10 ? v.toFixed(1) : Math.round(v).toLocaleString('en-US');
+}
+function fmtWk(ms){
+  return ms == null ? '' : new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+function trendDeltaText(m){
+  if (m.deltaFrac === null || m.direction === null || m.direction === 'flat') return '~flat vs median';
+  return `${m.deltaFrac < 0 ? '↓' : '↑'}${Math.round(Math.abs(m.deltaFrac)*100)}% vs median`;
+}
+// Auto-scaled line+area sparkline with a dashed median reference + one hoverable
+// point per week, so the shape is real and reading a week needs no mental math.
+function trendChart(m, weekStarts){
+  const present = m.series.filter(v => v !== null);
+  if (present.length < 2) return '<div class="tr-nochart">building history…</div>';
+  const W = 560, H = 46, padX = 6, padT = 9, padB = 9;
+  let lo = Math.min(...present), hi = Math.max(...present);
+  if (hi === lo) { hi = lo + 1; lo = lo - 1; } else { const p = (hi - lo) * 0.14; lo -= p; hi += p; }
+  const n = m.series.length;
+  const X = (i) => padX + (W - 2*padX) * (n > 1 ? i/(n-1) : 0.5);
+  const Y = (v) => padT + (H - padT - padB) * (1 - (v - lo)/(hi - lo));
+  const pts = [];
+  m.series.forEach((v, i) => { if (v !== null) pts.push({ i, x: X(i), y: Y(v), v }); });
+  const line = pts.map((p, k) => (k ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
+  const last = pts[pts.length - 1];
+  const area = `M${pts[0].x.toFixed(1)} ${(H-padB).toFixed(1)} ` + pts.map(p => 'L' + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ') + ` L${last.x.toFixed(1)} ${(H-padB).toFixed(1)} Z`;
+  const stroke = m.direction === 'better' ? 'var(--green)' : m.direction === 'worse' ? 'var(--orange)' : 'var(--brand)';
+  const fill = m.direction === 'better' ? 'rgba(16,185,129,.10)' : m.direction === 'worse' ? 'rgba(234,88,12,.10)' : 'rgba(79,70,229,.08)';
+  const med = m.median != null ? `<line class="tr-med" x1="${padX}" x2="${W-padX}" y1="${Y(m.median).toFixed(1)}" y2="${Y(m.median).toFixed(1)}"/>` : '';
+  const dots = pts.map(p => {
+    const wk = fmtWk(weekStarts && weekStarts[p.i]);
+    const val = esc(trendFmt(p.v, m.format));
+    return `<circle class="tr-pt${p === last ? ' cur' : ''}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p === last ? 3.2 : 2}" data-wk="${wk}" data-v="${val}"${p === last ? ` style="fill:${stroke}"` : ''}><title>Week of ${wk}: ${val}</title></circle>`;
+  }).join('');
+  return `<svg class="tr-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(m.label)} trend">${med}<path d="${area}" fill="${fill}" stroke="none"/><path d="${line}" fill="none" stroke="${stroke}" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg>`;
+}
+function renderTrend(t){
+  if (!t || !t.metrics) return '';
+  if (!t.enough){
+    return `<div class="trend-box"><div class="tr-title">Your trend</div><div class="tr-empty">Keep using codenomics — after a couple of weeks your $/commit and efficiency trends show here. No sign-up, all local.</div></div>`;
+  }
+  const rows = t.metrics.map((m) => {
+    const dcls = m.direction === 'better' ? 'good' : m.direction === 'worse' ? 'bad' : 'flat';
+    return `<div class="tr-row">
+      <div class="tr-head"><span class="tr-label">${esc(m.label)}</span><span class="tr-vals"><span class="tr-now">${trendFmt(m.current, m.format)}</span><span class="tr-delta ${dcls}">${trendDeltaText(m)}</span></span></div>
+      ${trendChart(m, t.weekStarts)}
+    </div>`;
+  }).join('');
+  return `<div class="trend-box"><div class="tr-title">Your ${t.weeks}-week trend <span class="tr-sub">· vs your own median · hover a point for that week</span></div>${rows}</div>`;
+}
+// One-time, delegated hover wiring (survives panel re-renders): a styled tooltip +
+// point highlight for the nearest week.
+let _trendTip = null;
+function initTrendHover(){
+  if (_trendTip) return;
+  _trendTip = document.createElement('div');
+  _trendTip.className = 'tr-tip';
+  _trendTip.style.display = 'none';
+  document.body.appendChild(_trendTip);
+  document.addEventListener('mousemove', (e) => {
+    const svg = e.target.closest ? e.target.closest('svg.tr-chart') : null;
+    if (!svg) { _trendTip.style.display = 'none'; document.querySelectorAll('.tr-pt.hot').forEach((p) => p.classList.remove('hot')); return; }
+    const pts = [...svg.querySelectorAll('.tr-pt')];
+    if (!pts.length) { _trendTip.style.display = 'none'; return; }
+    let best = null, bd = Infinity;
+    for (const p of pts) { const r = p.getBoundingClientRect(); const d = Math.abs(r.left + r.width/2 - e.clientX); if (d < bd) { bd = d; best = p; } }
+    pts.forEach((p) => p.classList.toggle('hot', p === best));
+    _trendTip.textContent = 'Week of ' + best.dataset.wk + ' · ' + best.dataset.v;
+    _trendTip.style.display = 'block';
+    _trendTip.style.left = e.clientX + 'px';
+    _trendTip.style.top = (e.clientY - 10) + 'px';
+  });
+}
 function renderBench(p){
   const el = $('#benchPanel');
   if (!p.configured){
     el.innerHTML = benchJoin(
       'See where you stand',
       'See how your <b>$/commit</b>, prompts-per-commit, and cache efficiency compare to other teams — computed from anonymous totals only. Your code and prompts never leave this machine.',
-      'Join free — see your ranking');
+      'Join free — see your ranking') + renderTrend(TREND);
     wireJoinForm();
     return;
   }
@@ -501,7 +588,11 @@ function renderBench(p){
   if (!p.metrics) return void (el.innerHTML = benchMsg(p.message || 'No sessions yet to compare.'));
   const c = p.cohort;
   const head = `<div class="bench-cohort"><span class="bench-on">● connected</span> · your cohort · <b>${esc(VENDOR_TAG[c.vendor]||c.vendor)}</b> · ${badge(c.model)} · ${esc(c.source)} · <b>${c.sessions}</b> sessions, <b>${c.commits}</b> commits · last ${p.windowDays}d <button class="bench-dc" id="benchDcBtn" title="disconnect">disconnect</button></div>`;
-  el.innerHTML = head + syncLine() + `<div class="bench-grid">${p.metrics.map(renderCard).join('')}</div>`;
+  // When the whole cohort is still below the publish floor, every metric is
+  // withheld; show one "forming" card instead of six identical "field hidden" ones.
+  const forming = p.metrics.length > 0 && p.metrics.every((m) => m.status === 'withheld');
+  const body = forming ? benchForming() + renderTrend(TREND) : `<div class="bench-grid">${p.metrics.map(renderCard).join('')}</div>`;
+  el.innerHTML = head + syncLine() + body;
   const dc = $('#benchDcBtn');
   if (dc) dc.addEventListener('click', async ()=>{ await cfetch('/api/benchmark/disconnect', { method:'POST' }); loadBenchmark(); });
 }
@@ -536,13 +627,18 @@ async function joinBenchmark(ev){
 }
 async function loadBenchmark(){
   try {
-    const r = await cfetch('/api/benchmark');
-    renderBench(await r.json());
+    const [tr, br] = await Promise.all([
+      cfetch('/api/trend').then((r) => r.json()).catch(() => null),
+      cfetch('/api/benchmark').then((r) => r.json()),
+    ]);
+    TREND = tr;
+    renderBench(br);
   } catch {
     $('#benchPanel').innerHTML = benchMsg('benchmark unavailable');
   }
 }
 
+initTrendHover();
 load();
 loadReports();
 loadBenchmark();

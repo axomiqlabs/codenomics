@@ -46,15 +46,17 @@
 
 <div class="kpis" id="kpis"></div>
 
+<div class="econ-row">
 <section id="benchSection">
   <h2>How you compare <span class="hint">see how your cost per shipped commit ranks against other teams — from anonymous totals only; your code and prompts never leave this machine</span></h2>
   <div id="benchPanel" class="bench-panel"><div class="bench-msg">loading…</div></div>
 </section>
 
-<section>
+<section class="econ-table">
   <h2>Model Economics <span class="hint">sorted by TRUE $/COMMIT = (compute $ + prompts × attention $) per shipped commit — lower wins · click a model to filter</span></h2>
   <div class="panel-table"><div style="overflow-x:auto"><table id="modelTable"></table></div></div>
 </section>
+</div>
 
 <section>
   <h2>Daily Burn <span class="hint">API-equivalent $ per day, stacked by model family</span></h2>
